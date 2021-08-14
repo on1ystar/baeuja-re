@@ -1,0 +1,7 @@
+configs/
+__pycache__
+*test*
+model/dir
+model/srcdir
+model/flacDir
+model/kaldi
