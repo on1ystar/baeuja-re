@@ -24,6 +24,7 @@ logFile=stt_with_log.txt
 resultFile=stt_result.txt
 
 # model directory
+### need to change, how to read config file in sh_script
 modelDir=/home/ubuntu/aiServer/1412s-peach/ai-server/flask/model
 
 

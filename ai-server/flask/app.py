@@ -20,7 +20,7 @@ runPath = ""
 outputFileName = ""
 currentPath = ""
 
-# set path
+# set path from config file
 def setConfig():
 	with open('./configs/conf.json') as f:
 		config = json.load(f)
@@ -29,17 +29,23 @@ def setConfig():
 	currentPath = config['currentPath']
 
 # download wav file
+# url: download link
+# fileName: saved file name 
 def downloadWavFile(url, fileName = None):
 	if not fileName:
-		fileName = url.split('/')[-1] # url에서 파일의 이름만을 추출
+		# extract file name from url
+		fileName = url.split('/')[-1]
 
 	with open(fileName, "wb") as file:
-		response = get(url) # url로부터 파일 다운로드
-		file.write(response.content) # 로컬에 저장
+		# download from url
+		response = get(url)
+		# save to local
+		file.write(response.content) 
 	
 	return fileName
 
 # read stt output from file
+# filename: decode log file
 def getSTTResult(fileName):
 	resultFile = open(fileName, 'r')
 	result = resultFile.read()
@@ -85,7 +91,8 @@ def evaluationUserSpeech():
 		# calculate score
 		sttScore = calculateScore()
 
-		return jsonify({ # 점수 및 STT 결과 리턴
+		# return successed, score and stt result
+		return jsonify({
 				"success":True,
 				"data":{
 					"translatedSentence": sttResult,
