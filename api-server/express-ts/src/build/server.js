@@ -18,13 +18,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = __importStar(require("express"));
-var app = express.default();
+var express_1 = __importDefault(require("express"));
+var helmet_1 = __importDefault(require("helmet"));
+// import morgan from 'morgan';
+var cors = __importStar(require("cors"));
+var rootRouter_1 = __importDefault(require("./routers/rootRouter"));
+// console.log(morgan);
+var app = express_1.default();
+// const logger = morgan('dev');
 var port = Number(process.env.PORT) || 4000;
-app.get('/', function (req, res) {
-    res.send('start');
-});
+app.use(helmet_1.default());
+app.set('views', process.cwd() + '/src/views');
+// app.use(logger);
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use(cors.default);
+app.use('/', rootRouter_1.default); // 루트 라우트
 app.listen(port, function () {
     // eslint-disable-next-line no-console
     return console.log("\u2705 Server listening on api.k-peach.io");
