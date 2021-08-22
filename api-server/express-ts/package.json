@@ -1,0 +1,43 @@
+{
+  "name": "express-ts",
+  "version": "1.0.0",
+  "description": "baeuja api server with express and typescript",
+  "main": "src/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev:ts": "nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
+    "dev:js": "tsc && nodemon build/server.js",
+    "test": "nodemon --exec 'ts-node' src/test.ts",
+    "db:connect": "ts-node src/db/index.ts"
+  },
+  "author": "on1ystar",
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.7",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^14.0.26",
+    "@types/pg": "^8.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.2.1",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.20.0",
+    "aws-sdk": "^2.973.0",
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^13.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.1"
+  }
+}
