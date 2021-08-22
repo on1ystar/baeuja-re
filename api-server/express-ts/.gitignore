@@ -121,3 +121,4 @@ dist
 .eslintrc.json
 .prettierrc.json
 .vscode
+src/test.ts
