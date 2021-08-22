@@ -1,8 +1,8 @@
 import express from 'express';
 
-const rootRouter = express.Router();
+const rootRouter: express.Router = express.Router();
 
-rootRouter.get('/', (req, res) => {
+rootRouter.get('/', (req: express.Request, res: express.Response): any => {
   res.send('<h2>Welcome to Peach API</h2>');
 });
 
