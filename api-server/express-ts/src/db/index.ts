@@ -28,6 +28,17 @@ const pool: pg.Pool = new pg.Pool({
 //   }
 // })();
 
+// db connect 확인
+// (async function () {
+//   try {
+//     const client: pg.PoolClient = await pool.connect();
+//     return console.log('db conneted !');
+//   } catch (error) {
+//     console.error('db connecting error: ', error.stack);
+//     return error;
+//   }
+// })();
+
 // 단일 쿼리 수행
 export const dbPool = {
   query: (text: string, params: any[]) => pool.query(text, params)

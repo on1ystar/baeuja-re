@@ -4,9 +4,10 @@
   "description": "baeuja api server with express and typescript",
   "main": "src/server.js",
   "scripts": {
-    "build": "tsc",
-    "dev:ts": "nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
-    "dev:js": "tsc && nodemon build/server.js",
+    "api-docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml",
+    "build": "npm run api-docs && tsc",
+    "dev:ts": "npm run api-docs && nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
+    "dev:js": "npm run api-docs && tsc && nodemon build/server.js",
     "test": "nodemon --exec 'ts-node' src/test.ts",
     "db:connect": "ts-node src/db/index.ts"
   },
@@ -17,6 +18,8 @@
     "@types/morgan": "^1.9.3",
     "@types/node": "^14.0.26",
     "@types/pg": "^8.6.1",
+    "@types/swagger-ui-express": "^4.1.3",
+    "@types/yamljs": "^0.2.31",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "eslint": "^7.32.0",
@@ -38,6 +41,9 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "morgan": "^1.10.0",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "swagger-cli": "^4.0.4",
+    "swagger-ui-express": "^4.1.6",
+    "yamljs": "^0.3.0"
   }
 }
