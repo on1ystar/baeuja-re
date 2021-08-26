@@ -1,0 +1,245 @@
+/learning/contents:
+  get:
+    tags:
+      - learning
+    summary: content 리스트 요청
+    security:
+      - bearerAuth: []
+    responses:
+      200-304:
+        description: 요청 성공
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Contents'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+/learning/contents/{contentId}:
+  get:
+    tags:
+      - learning
+    summary: 특정 content 추가 정보(더 보기) 요청
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: contentId
+        in: path
+        description: 추가 정보(더 보기) 요청할 contentId
+        required: true
+        schema:
+          type: number
+    responses:
+      200-304:
+        description: 요청 성공
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Content'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+/learning/contents/{contentId}/units:
+  get:
+    tags:
+      - learning
+    summary: content 터치 시 learning unit 리스트 요청
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: contentId
+        in: path
+        description: 터치한 contentId
+        required: true
+        schema:
+          type: number
+    responses:
+      200-304-K-POP:
+        description: 요청 성공 (K-POPcontent 터치 시)
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/UnitsInKPOP'
+      200-304-Others:
+        description: 요청 성공 (K-DRAMA or K-MOVIE content 터치 시)
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/UnitsInOthers'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+/learning/contents/{contentId}/units/{unitIndex}:
+  get:
+    tags:
+      - learning
+    summary: learning unit 터치 시 학습 문장 리스트 요청(메인 학습 화면)
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: contentId
+        in: path
+        description: 터치한 content Id
+        required: true
+        schema:
+          type: number
+      - name: unitIndex
+        in: path
+        description: 터치한 learning unit index
+        required: true
+        schema:
+          type: number
+    responses:
+      200-304:
+        description: 요청 성공
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Unit'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+/learning/sentence-history/{sentenceId}:
+  post:
+    tags:
+      - learning
+    summary: 성우 음성 재생/사용자 음성 재생 학습 기록 저장 요청
+    security:
+      - bearerAuth: []
+    parameters:
+      content:
+        application/json:
+          schema:
+            properties:
+              perfectVoiceCounts:
+                type: number
+                description: 성우 음성 재생 횟수
+              userVoiceCounts:
+                type: number
+                description: 사용자 음성 재생 횟수
+      required: true
+    responses:
+      200-304:
+        description: 요청 성공
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Word'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+/learning/word/{wordId}:
+  get:
+    tags:
+      - learning
+    summary: 터치한 단어 요청 (단어 학습 화면)
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: wordId
+        in: path
+        description: 터치한 word id
+        required: true
+        schema:
+          type: number
+    responses:
+      200-304:
+        description: 요청 성공
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Word'
+      400-BadRequest:
+        description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      401-UnauthorizedError:
+        description: Access token이 없거나 유효하지 않음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+      404-NotFound:
+        description: 서버는 요청받은 리소스를 찾을 수 없음
+        content:
+          application/json:
+            schema:
+              $ref: '../../openapi.yaml#/components/schemas/Error'
+$ref: '../users/users.yaml'
