@@ -187,37 +187,86 @@ Unit:
               originalTranslatedText:
                 type: string
                 example: day
-UserSentenceHistory:
+SentencePerfectVoiceHistory:
   type: object
   properties:
     success:
       type: boolean
       example: true
-    userSentenceHistory:
+    sentenceHistory:
       type: object
       properties:
         userId:
           type: number
         sentenceId:
           type: number
-        counts:
-          type: number
-          description: 학습 횟수
         perfectVoiceCounts:
           type: number
           description: 성우 음성 재생 횟수
+SentenceUserVoiceHistory:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentenceHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        sentenceId:
+          type: number
         userVoiceCounts:
           type: number
           description: 사용자 음성 재생 횟수
-        averageScore:
+SentenceEvaluation:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    evaluatedSentence:
+      type: object
+      properties:
+        sentenceEvaluationCounts:
           type: number
-        highestScore:
+          description: 이 문장에 대한 발음 평가 횟수
+        userId:
           type: number
-        learningRate:
+        sentenceId:
           type: number
-        latestLearningAt:
+        score:
+          type: number
+        sttResult:
           type: string
-          description: 최근 학습 시각
+        userVoiceUri:
+          type: string
+          description: 저장된 사용자 음성 경로
+    pitchData:
+      type: object
+      properties:
+        perfectVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+        userVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
 Word:
   type: object
   properties:
@@ -290,7 +339,39 @@ User:
           usageTime:
             type: string
             description: 앱 사용 시간
-
+# -------------------------- history -------------------------- #
+UserSentenceHistory:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    userSentenceHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        sentenceId:
+          type: number
+        counts:
+          type: number
+          description: 학습 횟수
+        perfectVoiceCounts:
+          type: number
+          description: 성우 음성 재생 횟수
+        userVoiceCounts:
+          type: number
+          description: 사용자 음성 재생 횟수
+        averageScore:
+          type: number
+        highestScore:
+          type: number
+        learningRate:
+          type: number
+        latestLearningAt:
+          type: string
+          description: 최근 학습 시각
+# -------------------------- error -------------------------- #
 Error:
   type: object
   properties:

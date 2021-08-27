@@ -22,10 +22,14 @@ servers:
   - url: http://localhost:4000/
   - url: https://api.peach.io/
 tags:
-  - name: user
+  - name: users
     description: user APIs
-  - name: learning
-    description: learning APIs
+  - name: learning/contents
+    description: learning content and unit APIs
+  - name: learning/sentences
+    description: learning sentence APIs
+  - name: learning/words
+    description: learning word APIs
 paths:
   $ref: './paths/index.yaml'
 components:

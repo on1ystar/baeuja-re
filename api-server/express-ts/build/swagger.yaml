@@ -9,15 +9,19 @@ servers:
   - url: 'http://localhost:4000/'
   - url: 'https://api.peach.io/'
 tags:
-  - name: user
+  - name: users
     description: user APIs
-  - name: learning
-    description: learning APIs
+  - name: learning/contents
+    description: learning content and unit APIs
+  - name: learning/sentences
+    description: learning sentence APIs
+  - name: learning/words
+    description: learning word APIs
 paths:
   /learning/contents:
     get:
       tags:
-        - learning
+        - learning/contents
       summary: content 리스트 요청
       security:
         - bearerAuth: []
@@ -49,7 +53,7 @@ paths:
   '/learning/contents/{contentId}':
     get:
       tags:
-        - learning
+        - learning/contents
       summary: 특정 content 추가 정보(더 보기) 요청
       security:
         - bearerAuth: []
@@ -88,7 +92,7 @@ paths:
   '/learning/contents/{contentId}/units':
     get:
       tags:
-        - learning
+        - learning/contents
       summary: content 터치 시 learning unit 리스트 요청
       security:
         - bearerAuth: []
@@ -130,10 +134,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/learning/contents/{contentId}/units/{unitIndex}/sentences':
+  '/learning/contents/{contentId}/units/{unitIndex}':
     get:
       tags:
-        - learning
+        - learning/contents
       summary: learning unit 터치 시 학습 문장 리스트 요청(메인 학습 화면)
       security:
         - bearerAuth: []
@@ -156,7 +160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Sentences'
+                $ref: '#/components/schemas/Unit'
         400-BadRequest:
           description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
           content:
@@ -175,10 +179,99 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  '/learning/word/{wordId}':
+  '/learning/sentences/{sentenceId}/perfect-voice':
+    post:
+      tags:
+        - learning/sentences
+      summary: 성우 음성 재생 학습 기록 저장 요청
+      security:
+        - bearerAuth: []
+      responses:
+        200-304:
+          description: 요청 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentencePerfectVoiceHistory'
+        400-BadRequest:
+          description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401-UnauthorizedError:
+          description: Access token이 없거나 유효하지 않음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/learning/sentences/{sentenceId}/user-voice':
+    post:
+      tags:
+        - learning/sentences
+      summary: 사용자 음성 재생 학습 기록 저장 요청
+      security:
+        - bearerAuth: []
+      responses:
+        200-304:
+          description: 요청 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentenceUserVoiceHistory'
+        400-BadRequest:
+          description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401-UnauthorizedError:
+          description: Access token이 없거나 유효하지 않음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/learning/sentences/{sentenceId}/evaluation':
+    post:
+      tags:
+        - learning/sentences
+      summary: 문장 녹음 및 발음 평가 요청
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                userVoice:
+                  type: string
+                  description: file to upload
+                  format: binary
+      responses:
+        200-304:
+          description: 요청 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentenceEvaluation'
+        400-BadRequest:
+          description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401-UnauthorizedError:
+          description: Access token이 없거나 유효하지 않음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/learning/words/{wordId}':
     get:
       tags:
-        - learning
+        - learning/words
       summary: 터치한 단어 요청 (단어 학습 화면)
       security:
         - bearerAuth: []
@@ -232,7 +325,7 @@ components:
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         contents:
           type: array
           items:
@@ -257,7 +350,7 @@ components:
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         content:
           type: object
           properties:
@@ -278,7 +371,7 @@ components:
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         units:
           type: array
           items:
@@ -313,7 +406,7 @@ components:
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         units:
           type: array
           items:
@@ -345,12 +438,12 @@ components:
                   latestLearningAt:
                     type: string
                     description: 최근 학습 시간(안했으면 null)
-    Sentences:
+    Unit:
       type: object
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         unit:
           type: object
           description: 유튜브 영상을 위한 unit 객체
@@ -415,12 +508,92 @@ components:
                   originalTranslatedText:
                     type: string
                     example: day
+    SentencePerfectVoiceHistory:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        sentenceHistory:
+          type: object
+          properties:
+            userId:
+              type: number
+            sentenceId:
+              type: number
+            perfectVoiceCounts:
+              type: number
+              description: 성우 음성 재생 횟수
+    SentenceUserVoiceHistory:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        sentenceHistory:
+          type: object
+          properties:
+            userId:
+              type: number
+            sentenceId:
+              type: number
+            userVoiceCounts:
+              type: number
+              description: 사용자 음성 재생 횟수
+    SentenceEvaluation:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        evaluatedSentence:
+          type: object
+          properties:
+            sentenceEvaluationCounts:
+              type: number
+              description: 이 문장에 대한 발음 평가 회수
+            userId:
+              type: number
+            sentenceId:
+              type: number
+            score:
+              type: number
+            sttResult:
+              type: string
+            userVoiceUri:
+              type: string
+              description: 저장된 사용자 음성 경로
+        pitchData:
+          type: object
+          properties:
+            perfectVoice:
+              type: object
+              properties:
+                time:
+                  type: array
+                  items:
+                    type: number
+                hz:
+                  type: array
+                  items:
+                    type: number
+            userVoice:
+              type: object
+              properties:
+                time:
+                  type: array
+                  items:
+                    type: number
+                hz:
+                  type: array
+                  items:
+                    type: number
     Word:
       type: object
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         words:
           type: array
           items:
@@ -442,12 +615,30 @@ components:
                 type: string
               importance:
                 type: string
+              isBookmark:
+                type: boolean
+              relatedSentences:
+                type: array
+                description: 단어가 포함된 예시 문장 리스트
+                items:
+                  type: object
+                  properties:
+                    sentenceId:
+                      type: number
+                    unitIndex:
+                      type: number
+                    contentId:
+                      type: number
+                    koreanText:
+                      type: string
+                    translatedText:
+                      type: string
     User:
       type: object
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
+          example: true
         users:
           type: array
           items:
@@ -468,12 +659,42 @@ components:
               usageTime:
                 type: string
                 description: 앱 사용 시간
+    UserSentenceHistory:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        userSentenceHistory:
+          type: object
+          properties:
+            userId:
+              type: number
+            sentenceId:
+              type: number
+            counts:
+              type: number
+              description: 학습 횟수
+            perfectVoiceCounts:
+              type: number
+              description: 성우 음성 재생 횟수
+            userVoiceCounts:
+              type: number
+              description: 사용자 음성 재생 횟수
+            averageScore:
+              type: number
+            highestScore:
+              type: number
+            learningRate:
+              type: number
+            latestLearningAt:
+              type: string
+              description: 최근 학습 시각
     Error:
       type: object
       properties:
         success:
           type: boolean
-          description: 요청 성공/실패
           example: false
         errorMessage:
           type: string
