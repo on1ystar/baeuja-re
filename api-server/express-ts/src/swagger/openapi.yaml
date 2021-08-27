@@ -1,0 +1,41 @@
+# response 될 스키마들만 따로 정의
+# 태그별로 정의하자
+# paths
+#   dev.user.yaml
+# schemas
+#   User
+#   UserDTO...
+# responses(하나의 파일에)
+#   200
+#   400
+# parameters는 나중에 분리하고 일단 paths에 적자
+# schemas 파일 하나로 하자
+# User 정보 일단 다 표시
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  title: BAEUJA API DOCS for DEV
+  description: '`BAEUJA` TEAM의 API 문서입니다'
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:4000/
+  - url: https://api.peach.io/
+tags:
+  - name: users
+    description: user APIs
+  - name: learning/contents
+    description: learning content and unit APIs
+  - name: learning/sentences
+    description: learning sentence APIs
+  - name: learning/words
+    description: learning word APIs
+paths:
+  $ref: './paths/index.yaml'
+components:
+  parameters:
+    $ref: './parameters.yaml'
+  schemas:
+    $ref: './schemas.yaml'
+  securitySchemes:
+    $ref: './securitySchemas.yaml'
