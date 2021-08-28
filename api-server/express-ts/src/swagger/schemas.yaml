@@ -142,51 +142,54 @@ Unit:
         endTime:
           type: string
           example: 0:32
-    sentences:
-      type: array
-      items:
-        type: object
-        properties:
-          sentenceId:
-            type: number
-            example: 1
-          koreanText:
-            type: string
-            example: 낮에는 따사로운 인간적인 여자
-          translatedText:
-            type: string
-            example: A warm, humane woman during the day.
-          perfectVoiceUri:
-            type: string
-            example: https://cdn.k-peach.io/perfect-voice/test.wav
-          startTime:
-            type: string
-            example: 0:18
-          endTime:
-            type: string
-            example: 0:21
-          isBookmark:
-            type: boolean
-            example: false
-          words:
-            type: array
-            items:
-              type: object
-              wordId:
+        sentences:
+          type: array
+          items:
+            type: object
+            properties:
+              sentenceId:
                 type: number
                 example: 1
-              prevKoreanText:
+              koreanText:
                 type: string
-                example: 낮
-              prevTranslatedText:
+                example: 낮에는 따사로운 인간적인 여자
+              translatedText:
                 type: string
-                example: day
-              originalKoreanText:
+                example: A warm, humane woman during the day.
+              perfectVoiceUri:
                 type: string
-                example: 낮
-              originalTranslatedText:
+                example: https://cdn.k-peach.io/perfect-voice/test.wav
+              startTime:
                 type: string
-                example: day
+                example: 0:18
+              endTime:
+                type: string
+                example: 0:21
+              isBookmark:
+                type: boolean
+                example: false
+              words:
+                type: array
+                items:
+                  type: object
+                  wordId:
+                    type: number
+                    example: 1
+                  sentenceId:
+                    type: number
+                    example: 1
+                  prevKoreanText:
+                    type: string
+                    example: 낮
+                  prevTranslatedText:
+                    type: string
+                    example: day
+                  originalKoreanText:
+                    type: string
+                    example: 낮
+                  originalTranslatedText:
+                    type: string
+                    example: day
 SentencePerfectVoiceHistory:
   type: object
   properties:

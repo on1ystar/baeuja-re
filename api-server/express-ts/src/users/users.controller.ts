@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { getNowKO } from '../../date';
-import { dbPool } from '../../db';
-import { CreateUserDTO } from 'src/dto/dev/user/create.user.dto';
+import { getNowKO } from '../utils/Date';
+import { pool } from '../db';
+import { CreateUserDTO } from 'src/users/dto/create.user.dto';
 
 // POST /dev/user
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response): Promise<any> => {
   const user: CreateUserDTO = req.body as CreateUserDTO;
   try {
-    const result = await dbPool.query(
+    const result = await pool.query(
       'INSERT INTO users("email", "nickname", "country", "device_os",  "created_at", "latest_login", "modified_at") VALUES($1,$2,$3,$4,$5,$6,$7)',
       [
         user.email,
