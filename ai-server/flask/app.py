@@ -62,9 +62,10 @@ def calculateScore():
 @app.route('/evaluation', methods = ['GET', 'POST'])
 def evaluationUserSpeech():
 	if request.method == 'POST':
-
+		print("POST!!")
 		# get wav file
-		downloadedFileName = downloadWavFile("https://" + request.json['path']))
+		downloadedFileName = 
+#downloadedFileName = downloadWavFile("https://" + request.json['path']))
 
 		# make command call to subprocess
 		command = runPath + ' ' + currentPath + downloadedFileName

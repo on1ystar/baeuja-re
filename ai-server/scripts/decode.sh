@@ -1,11 +1,12 @@
 #!/bin/bash
-decoder=/home/ubuntu/aiServer/1412s-peach/ai-server/flask/model/kaldi/online2-wav-nnet3-latgen-faster
-currentDir=/home/ubuntu/aiServer/1412s-peach/ai-server/flask/model
-. ${currentDir}/cmd.sh
-. ${currentDir}/path.sh
+modelDir=/home/ubuntu/aiServer/1412s-peach/ai-server/model
+scriptDir=/home/ubuntu/aiServer/1412s-peach/ai-server/scripts
+decoder=$modelDir/kaldi/online2-wav-nnet3-latgen-faster
+. ${scriptDir}/cmd.sh
+. ${scriptDir}/path.sh
 #KALDI_ROOT=/home/ubuntu/aiServer/flask/model/kaldi
-srcdir=${currentDir}/srcdir
-dir=${currentDir}/dir
+srcdir=${modelDir}/srcdir
+dir=${modelDir}/dir
 filename=$1
 
 do_endpointing=false
