@@ -1,3 +1,6 @@
+/**
+  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
+*/
 import { pool } from '../db';
 
 export default class UserSentenceEvaluation {

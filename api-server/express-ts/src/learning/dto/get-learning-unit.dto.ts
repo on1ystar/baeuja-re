@@ -1,6 +1,6 @@
-/*
-  메인(문장) 학습 화면 구성을 위한 DTO
-  version: PEAC-161 get learning unit with sentences for main learning UI
+/**
+  @description 메인(문장) 학습 화면 구성을 위한 DTO
+  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
  */
 import { DatabaseError, QueryResult } from 'pg';
 import { pool } from '../../db';
@@ -15,6 +15,7 @@ interface WordType {
   readonly originalKoreanText: string;
   readonly originalTranslatedText: string;
 }
+
 interface SentenceType {
   readonly sentenceId: number;
   readonly koreanText: string;

@@ -1,6 +1,6 @@
-/*
-    발음 평가 요청을 위한 DTO
-    version: PEAC-39-learning-unit-sentence-with-evaluation / doing evaluateUserVoice
+/**
+  @description 발음 평가 요청을 위한 DTO
+  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
 */
 
 import { DatabaseError, QueryResult } from 'pg';

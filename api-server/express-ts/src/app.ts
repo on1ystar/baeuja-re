@@ -1,3 +1,12 @@
+/**
+    @author 정성진(on1ystar)
+    @email tjdwls0607@naver.com
+    @version 1.0, PEAC-39 learning-unit-sentence-with-evaluation
+    @copyright BAEUJA
+    @script npm run dev:js
+    @script npm run dev:ts
+    @description BAEUJA API SERVER ENTRY POINT
+*/
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
