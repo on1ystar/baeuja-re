@@ -3,13 +3,11 @@
   version: PEAC-161 get learning unit with sentences for main learning UI
  */
 import { DatabaseError, QueryResult } from 'pg';
-import { Sentence } from 'src/entities/sentence.entity';
-import { Unit } from 'src/entities/unit.entity';
-import { Word } from 'src/entities/word.entity';
 import { pool } from '../../db';
+import { Word } from '../../entities/word.entity';
 
 // ------------------ class properties를 위한 interface ------------------
-interface WordType extends Word {
+interface WordType {
   readonly wordId: number;
   readonly sentenceId: number;
   readonly prevKoreanText: string;
@@ -17,8 +15,7 @@ interface WordType extends Word {
   readonly originalKoreanText: string;
   readonly originalTranslatedText: string;
 }
-
-interface SentenceType extends Sentence {
+interface SentenceType {
   readonly sentenceId: number;
   readonly koreanText: string;
   readonly translatedText: string;
@@ -29,7 +26,7 @@ interface SentenceType extends Sentence {
   readonly words: WordType[];
 }
 
-interface UnitType extends Unit {
+interface UnitType {
   readonly unitIndex: number;
   readonly contentId: number;
   readonly youtubeUrl: string;
@@ -39,7 +36,7 @@ interface UnitType extends Unit {
 // --------------------------------------------------------------------
 
 // getInstance(userId: number, unitIndex: number, contentId: number)를 호출해서 인스턴스 생성
-export class GetLearningUnitDTO {
+export default class GetLearningUnitDTO {
   readonly unit: UnitType;
 
   readonly sentences: SentenceType[];
@@ -99,7 +96,7 @@ export class GetLearningUnitDTO {
       };
       return unit;
     } catch (error) {
-      console.error('Error: getUnit function ');
+      console.error('Error: GetLearningUnitDTO getUnit function ');
       throw error;
     }
   }
@@ -129,7 +126,7 @@ export class GetLearningUnitDTO {
       const sentences: SentenceType[] = queryResult.rows;
       return sentences;
     } catch (error) {
-      console.error('Error: getSentences function ');
+      console.error('Error: GetLearningUnitDTO getSentences function ');
       throw error;
     }
   }
@@ -158,7 +155,7 @@ export class GetLearningUnitDTO {
       const words: WordType[] = queryResult.rows;
       return words;
     } catch (error) {
-      console.error('Error: getWords function ');
+      console.error('Error: GetLearningUnitDTO getWords function ');
       console.error(error);
       throw error;
     }

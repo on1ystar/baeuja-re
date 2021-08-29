@@ -1,5 +1,5 @@
 /*
-    version: PEAC-39-learning-unit-sentence-with-evaluation
+    version: PEAC-161 get learning unit with sentences for main learning UI
 */
 
 import express, { Application } from 'express';

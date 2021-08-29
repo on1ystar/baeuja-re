@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getNowKO } from '../utils/Date';
 import { pool } from '../db';
-import { CreateUserDTO } from 'src/users/dto/create.user.dto';
+import { CreateUserDTO } from './dto/create.user.dto';
 
 // POST /dev/user
 export const createUser = async (req: Request, res: Response): Promise<any> => {
