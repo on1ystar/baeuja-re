@@ -1,5 +1,6 @@
 /*
     /learning/*
+    version: PEAC-161 get learning unit with sentences for main learning UI
 */
 
 import express, { Router } from 'express';

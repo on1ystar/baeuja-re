@@ -1,7 +1,6 @@
-import AWS from 'aws-sdk';
-import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { Credentials } from '@aws-sdk/types';
-import conf from './index';
+import conf from '../../config';
 
 // const awsConfig = new AWS.Config({
 //   accessKeyId: conf.peachApi.accessKey,
@@ -10,8 +9,8 @@ import conf from './index';
 // });
 
 const credentials: Credentials = {
-  accessKeyId: String(conf.peachApi.accessKey),
-  secretAccessKey: String(conf.peachApi.secretKey)
+  accessKeyId: conf.peachApi.accessKey as string,
+  secretAccessKey: conf.peachApi.secretKey as string
 };
 
 export const s3Client: S3Client = new S3Client({

@@ -1,5 +1,6 @@
 /* 
     메인(문장) 학습 페이지를 위한 컨트롤러
+    version: PEAC-161 get learning unit with sentences for main learning UI
 */
 
 import { Response, Request } from 'express';

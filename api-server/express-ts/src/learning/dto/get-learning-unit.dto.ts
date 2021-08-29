@@ -1,5 +1,6 @@
 /*
   메인(문장) 학습 화면 구성을 위한 DTO
+  version: PEAC-161 get learning unit with sentences for main learning UI
  */
 import { DatabaseError, QueryResult } from 'pg';
 import { Sentence } from 'src/entities/sentence.entity';
@@ -74,12 +75,12 @@ export class GetLearningUnitDTO {
     }
   }
 
-  // SELECT unit
   static async getUnit(
     unitIndex: number,
     contentId: number
   ): Promise<UnitType> {
     try {
+      // SELECT unit table for (youtube_url, start_time, end_time)
       const queryResult: QueryResult<any> = await pool.query(
         'SELECT youtube_url as "youtubeUrl", start_time as "startTime", end_time as "endTime" FROM unit WHERE "unit_index" = $1 AND "content_id" = $2',
         [unitIndex, contentId]
@@ -103,13 +104,13 @@ export class GetLearningUnitDTO {
     }
   }
 
-  // FULL JOIN sentence ON user_sentence_history
   static async getSentences(
     userId: number,
     unitIndex: number,
     contentId: number
   ): Promise<SentenceType[]> {
     try {
+      // FULL JOIN sentence ON user_sentence_history for (sentence_id, korean_text, translated_text, perfect_voice_uri, start_time, end_time, is_bookmark)
       const queryResult: QueryResult<any> = await pool.query(
         'SELECT s.sentence_id as "sentenceId", s.korean_text as "koreanText", s.translated_text as "translatedText", s.perfect_voice_uri as "perfectVoiceUrl", s.start_time as "startTime", s.end_time as "endTime", COALESCE(h.is_bookmark, false) as "isBookmark"\
             FROM sentence as s \
@@ -133,11 +134,11 @@ export class GetLearningUnitDTO {
     }
   }
 
-  // JOIN word ON sentence
   static async getWords(
     unitIndex: number,
     contentId: number
   ): Promise<WordType[]> {
+    // JOIN word ON sentence for (word_id, sentence_id, original_korean_text, prev_korean_text,, prev_translated_text, original_korean_text, originalKoreanText, original_translated_text)
     const queryResult: QueryResult<any> = await pool.query(
       'SELECT w.word_id as "wordId", w.sentence_id as "sentenceId", w.original_korean_text, w.prev_korean_text as "prevKoreanText",w.prev_translated_text as "prevTranslatedText",w.original_korean_text as "originalKoreanText",w.original_translated_text as "originalTranslatedText"\
           FROM word as w \
