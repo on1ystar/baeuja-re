@@ -99,7 +99,7 @@ export class GetLearningUnitDTO {
       };
       return unit;
     } catch (error) {
-      console.error('Error: getWords function ');
+      console.error('Error: getUnit function ');
       throw error;
     }
   }
@@ -159,6 +159,7 @@ export class GetLearningUnitDTO {
       return words;
     } catch (error) {
       console.error('Error: getWords function ');
+      console.error(error);
       throw error;
     }
   }

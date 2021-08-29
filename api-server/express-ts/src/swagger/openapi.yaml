@@ -20,7 +20,7 @@ info:
     name: MIT
 servers:
   - url: http://localhost:4000/
-  - url: https://api.peach.io/
+  - url: https://api.k-peach.io/
 tags:
   - name: users
     description: user APIs
