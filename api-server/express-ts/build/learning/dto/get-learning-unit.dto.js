@@ -47,10 +47,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetLearningUnitDTO = void 0;
-/*
-  메인(문장) 학습 화면 구성을 위한 DTO
-  version: PEAC-161 get learning unit with sentences for main learning UI
+/**
+  @description 메인(문장) 학습 화면 구성을 위한 DTO
+  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
  */
 var pg_1 = require("pg");
 var db_1 = require("../../db");
@@ -108,7 +107,7 @@ var GetLearningUnitDTO = /** @class */ (function () {
                         return [2 /*return*/, unit];
                     case 2:
                         error_2 = _a.sent();
-                        console.error('Error: getUnit function ');
+                        console.error('Error: GetLearningUnitDTO getUnit function ');
                         throw error_2;
                     case 3: return [2 /*return*/];
                 }
@@ -136,7 +135,7 @@ var GetLearningUnitDTO = /** @class */ (function () {
                         return [2 /*return*/, sentences];
                     case 2:
                         error_3 = _a.sent();
-                        console.error('Error: getSentences function ');
+                        console.error('Error: GetLearningUnitDTO getSentences function ');
                         throw error_3;
                     case 3: return [2 /*return*/];
                 }
@@ -163,7 +162,7 @@ var GetLearningUnitDTO = /** @class */ (function () {
                             return [2 /*return*/, words];
                         }
                         catch (error) {
-                            console.error('Error: getWords function ');
+                            console.error('Error: GetLearningUnitDTO getWords function ');
                             console.error(error);
                             throw error;
                         }
@@ -174,5 +173,5 @@ var GetLearningUnitDTO = /** @class */ (function () {
     };
     return GetLearningUnitDTO;
 }());
-exports.GetLearningUnitDTO = GetLearningUnitDTO;
+exports.default = GetLearningUnitDTO;
 //# sourceMappingURL=get-learning-unit.dto.js.map

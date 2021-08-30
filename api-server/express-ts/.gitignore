@@ -122,3 +122,4 @@ dist
 .prettierrc.json
 .vscode
 src/test.ts
+build/

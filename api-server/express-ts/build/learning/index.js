@@ -1,6 +1,6 @@
 "use strict";
-/*
-    version: PEAC-39-learning-unit-sentence-with-evaluation
+/**
+    @version PEAC-161 get learning unit with sentences for main learning UI
 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };

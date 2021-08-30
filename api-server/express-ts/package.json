@@ -7,7 +7,8 @@
     "api-docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml",
     "build": "npm run api-docs && tsc",
     "dev:ts": "npm run api-docs && nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
-    "dev:js": "npm run api-docs && tsc && nodemon build/server.js",
+    "dev:js": "npm run api-docs &&  tsc && cross-env RUN=tesing nodemon build/server.js",
+    "pm2": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --watch",
     "test": "nodemon --exec 'ts-node' src/test.ts",
     "db:connect": "ts-node src/db/index.ts"
   },
@@ -22,6 +23,7 @@
     "@types/yamljs": "^0.2.31",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
+    "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.1",

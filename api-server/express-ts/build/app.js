@@ -3,6 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+    @author 정성진(on1ystar)
+    @email tjdwls0607@naver.com
+    @version 1.0, PEAC-39 learning-unit-sentence-with-evaluation
+    @copyright BAEUJA
+    @script npm run dev:js
+    @script npm run dev:ts
+    @description BAEUJA API SERVER ENTRY POINT
+*/
 var express_1 = __importDefault(require("express"));
 var helmet_1 = __importDefault(require("helmet"));
 var morgan_1 = __importDefault(require("morgan"));
