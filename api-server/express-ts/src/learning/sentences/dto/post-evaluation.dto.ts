@@ -4,7 +4,7 @@
 */
 
 import { DatabaseError, QueryResult } from 'pg';
-import { pool } from '../../db';
+import { pool } from '../../../db';
 
 interface SentenceType {
   readonly sentenceId: number;

@@ -52,17 +52,16 @@ var UserSentenceEvaluation = /** @class */ (function () {
         this.createdAt = createdAt;
         this.sentenceEvaluationCounts = sentenceEvaluationCounts;
         this.insert = function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b, error_1;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var _a, error_1;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _c.trys.push([0, 3, , 4]);
+                        _b.trys.push([0, 3, , 4]);
                         _a = this;
-                        _b = parseInt;
-                        return [4 /*yield*/, db_1.pool.query('SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2', [this.userId, this.sentenceId])];
+                        return [4 /*yield*/, UserSentenceEvaluation.getSentenceEvaluationCounts(this.userId, this.sentenceId)];
                     case 1:
                         _a.sentenceEvaluationCounts =
-                            _b.apply(void 0, [(_c.sent()).rows[0].count]) + 1;
+                            _b.sent();
                         return [4 /*yield*/, db_1.pool.query('INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)\
     VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [
                                 this.sentenceEvaluationCounts,
@@ -75,17 +74,15 @@ var UserSentenceEvaluation = /** @class */ (function () {
                                 this.createdAt
                             ])];
                     case 2:
-                        _c.sent();
+                        _b.sent();
                         return [2 /*return*/, {
                                 sentenceEvaluationCounts: this.sentenceEvaluationCounts,
                                 userId: this.userId,
                                 sentenceId: this.sentenceId,
-                                score: this.score,
-                                sttResult: this.sttResult,
                                 userVoiceUri: this.userVoiceUri
                             }];
                     case 3:
-                        error_1 = _c.sent();
+                        error_1 = _b.sent();
                         console.error('Error: UserSentenceEvaluation insert function ');
                         throw error_1;
                     case 4: return [2 /*return*/];
@@ -93,9 +90,26 @@ var UserSentenceEvaluation = /** @class */ (function () {
             });
         }); };
     }
-    UserSentenceEvaluation.prototype.getSentenceEvaluationCounts = function () {
-        return this.sentenceEvaluationCounts;
-    };
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    UserSentenceEvaluation.getSentenceEvaluationCounts = function (userId, sentenceId) { return __awaiter(void 0, void 0, void 0, function () {
+        var sentenceEvaluationCounts, _a, error_2;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    _a = parseInt;
+                    return [4 /*yield*/, db_1.pool.query('SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2', [userId, sentenceId])];
+                case 1:
+                    sentenceEvaluationCounts = _a.apply(void 0, [(_b.sent()).rows[0].count]) + 1;
+                    return [2 /*return*/, sentenceEvaluationCounts];
+                case 2:
+                    error_2 = _b.sent();
+                    console.error('Error: UserSentenceEvaluation getSentenceEvaluationCounts function ');
+                    throw error_2;
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); };
     return UserSentenceEvaluation;
 }());
 exports.default = UserSentenceEvaluation;

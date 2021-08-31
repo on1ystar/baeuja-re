@@ -1,0 +1,103 @@
+/* eslint-disable no-console */
+/** 
+ @description 문장 학습을 위한 컨트롤러
+ @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
+ */
+
+import axios from 'axios';
+import { Response, Request } from 'express';
+import conf from '../../config';
+import PostEvaluationDTO from './dto/post-evaluation.dto';
+import UserSentenceEvaluation from '../../entities/user-sentence-evaluation.entity';
+import { getNowKO } from '../../utils/Date';
+import { MulterError } from 'multer';
+import { s3Client } from '../../utils/s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+
+// const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
+const FORMAT = 'wav';
+const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
+
+// /sentences/:sentenceId/units/evaluation
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const evaluateUserVoice = async (req: Request, res: Response) => {
+  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const { sentenceId } = req.params;
+
+  try {
+    // request params 유효성 검사
+    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+
+    // 사용자 음성 파일 s3 저장
+    // 사용자가 요청한 문장의 발음 평가 기록 횟수
+    const sentenceEvaluationCounts =
+      await UserSentenceEvaluation.getSentenceEvaluationCounts(
+        userId,
+        parseInt(sentenceId)
+      );
+    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
+    const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: conf.bucket.data,
+        Key,
+        Body: req.file?.buffer
+        // ACL: 'public-read'
+      })
+    );
+    console.info('Success S3 upload--------------');
+
+    // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
+    const postEvaluationDTO = await PostEvaluationDTO.getInstance(
+      userId,
+      userVoiceUri,
+      parseInt(sentenceId)
+    );
+
+    // request to ai server
+    // let {
+    //   evaluatedSentence, // eslint-disable-next-line prefer-const
+    //   pitchData
+    // }: {
+    //   evaluatedSentence: { score: number; sttResult: string };
+    //   pitchData: {
+    //     perfectVoice: { hz: string; time: string };
+    //     userVoice: { hz: string; time: string };
+    //   };
+    // } = (
+    //   await axios({
+    //     method: 'post',
+    //     url: `${AI_SERVER_URL}/evaluation`,
+    //     data: {
+    //       ...postEvaluationDTO
+    //     }
+    //   })
+    // ).data;
+
+    // 발음 평가 결과 DB 저장
+    const userSentenceEvaluation = new UserSentenceEvaluation(
+      userId,
+      parseInt(sentenceId),
+      50, // evaluatedSentence.score,
+      'testing', // evaluatedSentence.sttResult,
+      userVoiceUri,
+      false,
+      getNowKO()
+    );
+    await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
+    // evaluatedSentence = {
+    //   ...evaluatedSentence,
+    //   ...(await userSentenceEvaluation.insert())
+    // };
+
+    return res
+      .status(200)
+      .json({ success: true, evaluatedSentence: 'test', pitchData: 'test' });
+  } catch (error) {
+    if (error instanceof MulterError) console.log('MulterError ');
+    console.error(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  }
+};

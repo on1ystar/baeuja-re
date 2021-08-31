@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const port: number = process.env.RUN === 'tesing' ? 3000 : 4001;
+const port: number = process.env.RUN === ('js' || 'pm2') ? 3000 : 4001;
 
 app.listen(port, (): void =>
   // eslint-disable-next-line no-console
