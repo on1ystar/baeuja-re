@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
-  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
+  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
 */
 var db_1 = require("../db");
 var UserSentenceEvaluation = /** @class */ (function () {
@@ -101,6 +101,7 @@ var UserSentenceEvaluation = /** @class */ (function () {
                     return [4 /*yield*/, db_1.pool.query('SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2', [userId, sentenceId])];
                 case 1:
                     sentenceEvaluationCounts = _a.apply(void 0, [(_b.sent()).rows[0].count]) + 1;
+                    console.log(sentenceEvaluationCounts);
                     return [2 /*return*/, sentenceEvaluationCounts];
                 case 2:
                     error_2 = _b.sent();

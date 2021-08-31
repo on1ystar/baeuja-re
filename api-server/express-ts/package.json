@@ -6,10 +6,10 @@
   "scripts": {
     "api-docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml",
     "build": "npm run api-docs && tsc",
-    "dev:ts": "npm run api-docs && cross-env RUN=js nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
-    "dev:js": "npm run api-docs &&  tsc && cross-env RUN=js nodemon build/server.js",
-    "pm2:start": "npm run api-docs && tsc && cross-env RUN=pm2 sudo pm2 start ecosystem.config.js --watch",
-    "pm2:reload": "cross-env RUN=pm2 sudo pm2 reload baeuja-api-server",
+    "dev:ts": "npm run api-docs && cross-env RUN=dev nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
+    "dev:js": "npm run api-docs &&  tsc && cross-env RUN=build nodemon build/server.js",
+    "pm2:start": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --watch '*.ts'",
+    "pm2:reload": "sudo pm2 reload baeuja-api-server ",
     "test": "nodemon --exec 'ts-node' src/test.ts",
     "db:connect": "ts-node src/db/index.ts"
   },
