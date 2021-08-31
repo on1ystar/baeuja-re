@@ -1,19 +1,9 @@
 "use strict";
+/* eslint-disable no-console */
 /**
-    @description 메인(문장) 학습 페이지를 위한 컨트롤러
-    @version PEAC-39 learning-unit-sentence-with-evaluation / doing evaluateUserVoice
-*/
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
+ @description 메인(문장) 학습 페이지를 위한 컨트롤러
+ @version PEAC-39 learning-unit-sentence-with-evaluation / doing evaluateUserVoice
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -55,47 +45,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.evaluateUserVoice = exports.getLearningUnit = void 0;
-var axios_1 = __importDefault(require("axios"));
 var config_1 = __importDefault(require("../config"));
 var post_evaluation_dto_1 = __importDefault(require("./dto/post-evaluation.dto"));
 var get_learning_unit_dto_1 = __importDefault(require("./dto/get-learning-unit.dto"));
 var user_sentence_evaluation_entity_1 = __importDefault(require("../entities/user-sentence-evaluation.entity"));
-var Date_1 = require("../utils/Date");
-// const PREFIX = 'user-voice'; // S3 bucket 폴더
-// const FORMAT = 'wav';
+var multer_1 = require("multer");
+var s3_1 = require("../utils/s3");
+var client_s3_1 = require("@aws-sdk/client-s3");
 // const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
+var FORMAT = 'wav';
 var AI_SERVER_URL = "http://" + config_1.default.peachAi.ip;
 // /learning/contents/:contentId/units/:unitIndex
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 exports.getLearningUnit = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, _a, unitIndex, contentId, learningUnitDTO, error_1;
+    var userId, _a, unitIndex, contentId, getLearningUnitDTO, error_1;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 userId = Number((_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.substring(7));
                 _a = req.params, unitIndex = _a.unitIndex, contentId = _a.contentId;
-                // request params 유효성 검사
-                if (isNaN(parseInt(unitIndex)) || isNaN(parseInt(unitIndex))) {
-                    return [2 /*return*/, res
-                            .status(400)
-                            .json({ success: false, errorMessage: 'invalid input syntax' })];
-                }
                 _c.label = 1;
             case 1:
                 _c.trys.push([1, 3, , 4]);
+                // request params 유효성 검사
+                if (isNaN(parseInt(unitIndex)) || isNaN(parseInt(unitIndex)))
+                    throw new Error("invalid params's syntax");
                 return [4 /*yield*/, get_learning_unit_dto_1.default.getInstance(userId, parseInt(unitIndex), parseInt(contentId))];
             case 2:
-                learningUnitDTO = _c.sent();
-                return [2 /*return*/, res.status(200).json(learningUnitDTO)];
+                getLearningUnitDTO = _c.sent();
+                return [2 /*return*/, res.status(200).json(getLearningUnitDTO)];
             case 3:
                 error_1 = _c.sent();
-                console.error(error_1.code);
-                if (error_1.message === 'noData') {
-                    // db에 row가 없는 경우
-                    return [2 /*return*/, res
-                            .status(404)
-                            .json({ success: false, errorMessage: error_1.message })];
-                }
+                console.error(error_1);
                 return [2 /*return*/, res
                         .status(400)
                         .json({ success: false, errorMessage: error_1.message })];
@@ -104,54 +86,81 @@ exports.getLearningUnit = function (req, res) { return __awaiter(void 0, void 0,
     });
 }); };
 // /sentences/:sentenceId/units/evaluation
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 exports.evaluateUserVoice = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, sentenceId, userVoiceUri, postEvaluationDTO, _a, evaluatedSentence, pitchData, userSentenceEvaluation, error_2;
-    var _b;
+    var userId, sentenceId, sentenceEvaluationCounts, Key, userVoiceUri, postEvaluationDTO, error_2;
+    var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                userId = Number((_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.substring(7));
+                userId = Number((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.substring(7));
                 sentenceId = req.params.sentenceId;
-                userVoiceUri = 'https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/test.wav';
-                // request params 유효성 검사
-                if (isNaN(parseInt(sentenceId))) {
-                    return [2 /*return*/, res
-                            .status(400)
-                            .json({ success: false, errorMessage: 'invalid input syntax' })];
-                }
                 _c.label = 1;
             case 1:
-                _c.trys.push([1, 5, , 6]);
-                return [4 /*yield*/, post_evaluation_dto_1.default.getInstance(userId, userVoiceUri, parseInt(sentenceId))];
+                _c.trys.push([1, 4, , 5]);
+                // request params 유효성 검사
+                if (isNaN(parseInt(sentenceId)))
+                    throw new Error("invalid params's syntax");
+                sentenceEvaluationCounts = user_sentence_evaluation_entity_1.default.getSentenceEvaluationCounts(userId, parseInt(sentenceId));
+                Key = "user-voice/" + userId + "/" + sentenceId + "/" + sentenceEvaluationCounts + "." + FORMAT;
+                userVoiceUri = "https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/" + Key;
+                return [4 /*yield*/, s3_1.s3Client.send(new client_s3_1.PutObjectCommand({
+                        Bucket: config_1.default.bucket.data,
+                        Key: Key,
+                        Body: (_b = req.file) === null || _b === void 0 ? void 0 : _b.buffer
+                        // ACL: 'public-read'
+                    }))];
             case 2:
-                postEvaluationDTO = _c.sent();
-                return [4 /*yield*/, axios_1.default({
-                        method: 'post',
-                        url: AI_SERVER_URL + "/evaluation",
-                        data: __assign({}, postEvaluationDTO)
-                    })];
+                _c.sent();
+                console.info('Success S3 upload--------------');
+                return [4 /*yield*/, post_evaluation_dto_1.default.getInstance(userId, userVoiceUri, parseInt(sentenceId))];
             case 3:
-                _a = (_c.sent()).data, evaluatedSentence = _a.evaluatedSentence, pitchData = _a.pitchData;
-                userSentenceEvaluation = new user_sentence_evaluation_entity_1.default(userId, parseInt(sentenceId), evaluatedSentence.score, evaluatedSentence.sttResult, userVoiceUri, false, Date_1.getNowKO());
-                return [4 /*yield*/, userSentenceEvaluation.insert()];
-            case 4:
-                evaluatedSentence = _c.sent();
+                postEvaluationDTO = _c.sent();
+                // request to ai server
+                // let {
+                //   evaluatedSentence, // eslint-disable-next-line prefer-const
+                //   pitchData
+                // }: {
+                //   evaluatedSentence: { score: number; sttResult: string };
+                //   pitchData: {
+                //     perfectVoice: { hz: string; time: string };
+                //     userVoice: { hz: string; time: string };
+                //   };
+                // } = (
+                //   await axios({
+                //     method: 'post',
+                //     url: `${AI_SERVER_URL}/evaluation`,
+                //     data: {
+                //       ...postEvaluationDTO
+                //     }
+                //   })
+                // ).data;
+                // // 발음 평가 결과 DB 저장
+                // const userSentenceEvaluation = new UserSentenceEvaluation(
+                //   userId,
+                //   parseInt(sentenceId),
+                //   50, // evaluatedSentence.score,
+                //   'testing', // evaluatedSentence.sttResult,
+                //   userVoiceUri,
+                //   false,
+                //   getNowKO()
+                // );
+                // evaluatedSentence = {
+                //   ...evaluatedSentence,
+                //   ...(await userSentenceEvaluation.insert())
+                // };
                 return [2 /*return*/, res
                         .status(200)
-                        .json({ success: true, evaluatedSentence: evaluatedSentence, pitchData: pitchData })];
-            case 5:
+                        .json({ success: true, evaluatedSentence: 'test', pitchData: 'test' })];
+            case 4:
                 error_2 = _c.sent();
-                console.error(error_2.code);
-                if (error_2.message === 'noData') {
-                    // db에 row가 없는 경우
-                    return [2 /*return*/, res
-                            .status(404)
-                            .json({ success: false, errorMessage: error_2.message })];
-                }
+                if (error_2 instanceof multer_1.MulterError)
+                    console.log('MulterError ');
+                console.error(error_2);
                 return [2 /*return*/, res
-                        .status(parseInt(error_2.code))
+                        .status(400)
                         .json({ success: false, errorMessage: error_2.message })];
-            case 6: return [2 /*return*/];
+            case 5: return [2 /*return*/];
         }
     });
 }); };

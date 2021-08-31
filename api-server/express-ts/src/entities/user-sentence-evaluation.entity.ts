@@ -1,5 +1,5 @@
 /**
-  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
+  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
 */
 import { pool } from '../db';
 
@@ -15,21 +15,38 @@ export default class UserSentenceEvaluation {
     public sentenceEvaluationCounts?: number
   ) {}
 
-  getSentenceEvaluationCounts() {
-    return this.sentenceEvaluationCounts;
-  }
-
-  insert = async () => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static getSentenceEvaluationCounts = async (
+    userId: number,
+    sentenceId: number
+  ) => {
     try {
-      this.sentenceEvaluationCounts =
+      const sentenceEvaluationCounts =
         parseInt(
           (
             await pool.query(
               'SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2',
-              [this.userId, this.sentenceId]
+              [userId, sentenceId]
             )
           ).rows[0].count
         ) + 1;
+      console.log(sentenceEvaluationCounts);
+      return sentenceEvaluationCounts;
+    } catch (error) {
+      console.error(
+        'Error: UserSentenceEvaluation getSentenceEvaluationCounts function '
+      );
+      throw error;
+    }
+  };
+
+  insert = async () => {
+    try {
+      this.sentenceEvaluationCounts =
+        await UserSentenceEvaluation.getSentenceEvaluationCounts(
+          this.userId,
+          this.sentenceId
+        );
       await pool.query(
         'INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)\
     VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
@@ -48,8 +65,6 @@ export default class UserSentenceEvaluation {
         sentenceEvaluationCounts: this.sentenceEvaluationCounts,
         userId: this.userId,
         sentenceId: this.sentenceId,
-        score: this.score,
-        sttResult: this.sttResult,
         userVoiceUri: this.userVoiceUri
       };
     } catch (error) {

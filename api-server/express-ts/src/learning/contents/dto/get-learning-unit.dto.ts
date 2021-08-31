@@ -1,10 +1,10 @@
 /**
   @description 메인(문장) 학습 화면 구성을 위한 DTO
-  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
+  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
  */
-import { DatabaseError, QueryResult } from 'pg';
-import { pool } from '../../db';
-import { Word } from '../../entities/word.entity';
+import { QueryResult } from 'pg';
+import { pool } from '../../../db';
+import { Word } from '../../../entities/word.entity';
 
 // ------------------ class properties를 위한 interface ------------------
 interface WordType {
@@ -83,13 +83,9 @@ export default class GetLearningUnitDTO {
         'SELECT youtube_url as "youtubeUrl", start_time as "startTime", end_time as "endTime" FROM unit WHERE "unit_index" = $1 AND "content_id" = $2',
         [unitIndex, contentId]
       );
-      if (!queryResult.rowCount) {
-        throw new DatabaseError(
-          'unitIndex or contentsId does not exist',
-          0,
-          'noData'
-        );
-      }
+      if (!queryResult.rowCount)
+        throw new Error('unitIndex or contentId does not exist');
+
       const unit: UnitType = {
         unitIndex,
         contentId,
@@ -117,13 +113,9 @@ export default class GetLearningUnitDTO {
             WHERE s.content_id = $2 AND s.unit_index = $3 ',
         [userId, contentId, unitIndex]
       );
-      if (!queryResult.rowCount) {
-        throw new DatabaseError(
-          'unitIndex or contentsId does not exist',
-          0,
-          'noData'
-        );
-      }
+      if (!queryResult.rowCount)
+        throw new Error('unitIndex or contentId does not exist');
+
       const sentences: SentenceType[] = queryResult.rows;
       return sentences;
     } catch (error) {
@@ -145,19 +137,14 @@ export default class GetLearningUnitDTO {
           WHERE s.unit_index = $1 AND s.content_id = $2',
       [unitIndex, contentId]
     );
-    if (!queryResult.rowCount) {
-      throw new DatabaseError(
-        'unitIndex or contentsId does not exist',
-        0,
-        'noData'
-      );
-    }
+    if (!queryResult.rowCount)
+      throw new Error('unitIndex or contentId does not exist');
+
     try {
       const words: WordType[] = queryResult.rows;
       return words;
     } catch (error) {
       console.error('Error: GetLearningUnitDTO getWords function ');
-      console.error(error);
       throw error;
     }
   }

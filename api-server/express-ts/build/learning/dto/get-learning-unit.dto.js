@@ -47,11 +47,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
-  @description 메인(문장) 학습 화면 구성을 위한 DTO
-  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
- */
-var pg_1 = require("pg");
 var db_1 = require("../../db");
 // --------------------------------------------------------------------
 // getInstance(userId: number, unitIndex: number, contentId: number)를 호출해서 인스턴스 생성
@@ -99,9 +94,8 @@ var GetLearningUnitDTO = /** @class */ (function () {
                         return [4 /*yield*/, db_1.pool.query('SELECT youtube_url as "youtubeUrl", start_time as "startTime", end_time as "endTime" FROM unit WHERE "unit_index" = $1 AND "content_id" = $2', [unitIndex, contentId])];
                     case 1:
                         queryResult = _a.sent();
-                        if (!queryResult.rowCount) {
-                            throw new pg_1.DatabaseError('unitIndex or contentsId does not exist', 0, 'noData');
-                        }
+                        if (!queryResult.rowCount)
+                            throw new Error('unitIndex or contentId does not exist');
                         unit = __assign({ unitIndex: unitIndex,
                             contentId: contentId }, queryResult.rows[0]);
                         return [2 /*return*/, unit];
@@ -128,9 +122,8 @@ var GetLearningUnitDTO = /** @class */ (function () {
             WHERE s.content_id = $2 AND s.unit_index = $3 ', [userId, contentId, unitIndex])];
                     case 1:
                         queryResult = _a.sent();
-                        if (!queryResult.rowCount) {
-                            throw new pg_1.DatabaseError('unitIndex or contentsId does not exist', 0, 'noData');
-                        }
+                        if (!queryResult.rowCount)
+                            throw new Error('unitIndex or contentId does not exist');
                         sentences = queryResult.rows;
                         return [2 /*return*/, sentences];
                     case 2:
@@ -154,16 +147,14 @@ var GetLearningUnitDTO = /** @class */ (function () {
           WHERE s.unit_index = $1 AND s.content_id = $2', [unitIndex, contentId])];
                     case 1:
                         queryResult = _a.sent();
-                        if (!queryResult.rowCount) {
-                            throw new pg_1.DatabaseError('unitIndex or contentsId does not exist', 0, 'noData');
-                        }
+                        if (!queryResult.rowCount)
+                            throw new Error('unitIndex or contentId does not exist');
                         try {
                             words = queryResult.rows;
                             return [2 /*return*/, words];
                         }
                         catch (error) {
                             console.error('Error: GetLearningUnitDTO getWords function ');
-                            console.error(error);
                             throw error;
                         }
                         return [2 /*return*/];
