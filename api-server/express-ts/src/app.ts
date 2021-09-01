@@ -16,6 +16,7 @@ import path from 'path';
 import usersApp from './users';
 import cors from 'cors';
 import learningApp from './learning';
+import appRouter from './app.router';
 
 const app: Application = express();
 const logger = morgan('dev');
@@ -27,6 +28,7 @@ app.use(express.json()); // request body parsing
 app.use(express.urlencoded({ extended: true })); // url query prameter parsing
 usersApp.use(cors()); // cors 모듈
 
+app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
 app.use('/users', usersApp); // injecting users app
 app.use('/learning', learningApp); // injecting learning app
