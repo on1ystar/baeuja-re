@@ -1,6 +1,7 @@
 "use strict";
 // db test
 // import { dbPool } from './db';
+Object.defineProperty(exports, "__esModule", { value: true });
 // (async function () {
 //   try {
 //     const { rows } = await dbPool.query(
@@ -27,12 +28,11 @@
 // };
 // (async function () {
 //   try {
-//     const perfectVoicesList = (
-//       await s3Client.send(new ListObjectsCommand(bucketParams))
-//     ).Contents;
-//     console.log(perfectVoicesList);
+//     if (await UserUnitHistory.findOne(1, 2, 1)) {
+//       await new UserUnitHistory(1, 2, 1).updateCounts();
+//     } else await new UserUnitHistory(1, 2, 1).insert();
 //   } catch (error) {
-//     return console.error('ListObjectsCommandOutput Error', error.stack);
+//     return console.error(error);
 //   }
 // })();
 //# sourceMappingURL=test.js.map

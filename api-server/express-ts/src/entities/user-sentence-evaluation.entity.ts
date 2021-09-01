@@ -1,7 +1,9 @@
 /**
-  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
+  @description user_sentence_evaluation entity with repository
+  @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
 */
 import { pool } from '../db';
+import { getNowKO } from '../utils/Date';
 
 export default class UserSentenceEvaluation {
   constructor(
@@ -10,8 +12,8 @@ export default class UserSentenceEvaluation {
     readonly score: number,
     readonly sttResult: string,
     readonly userVoiceUri: string,
-    readonly isPublic: boolean,
-    readonly createdAt: string,
+    readonly isPublic?: boolean,
+    readonly createdAt?: string,
     public sentenceEvaluationCounts?: number
   ) {}
 
@@ -40,7 +42,7 @@ export default class UserSentenceEvaluation {
     }
   };
 
-  insert = async () => {
+  create = async () => {
     try {
       this.sentenceEvaluationCounts =
         await UserSentenceEvaluation.getSentenceEvaluationCounts(
@@ -49,7 +51,7 @@ export default class UserSentenceEvaluation {
         );
       await pool.query(
         'INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)\
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+    VALUES($1,$2,$3,$4,$5,$6, DEFAULT, $7)',
         [
           this.sentenceEvaluationCounts,
           this.userId,
@@ -57,8 +59,7 @@ export default class UserSentenceEvaluation {
           this.score,
           this.sttResult,
           this.userVoiceUri,
-          this.isPublic,
-          this.createdAt
+          getNowKO()
         ]
       );
       return {

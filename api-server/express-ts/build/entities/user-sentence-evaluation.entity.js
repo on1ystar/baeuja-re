@@ -37,9 +37,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
-  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
+  @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
 */
 var db_1 = require("../db");
+var Date_1 = require("../utils/Date");
 var UserSentenceEvaluation = /** @class */ (function () {
     function UserSentenceEvaluation(userId, sentenceId, score, sttResult, userVoiceUri, isPublic, createdAt, sentenceEvaluationCounts) {
         var _this = this;
@@ -51,7 +52,7 @@ var UserSentenceEvaluation = /** @class */ (function () {
         this.isPublic = isPublic;
         this.createdAt = createdAt;
         this.sentenceEvaluationCounts = sentenceEvaluationCounts;
-        this.insert = function () { return __awaiter(_this, void 0, void 0, function () {
+        this.create = function () { return __awaiter(_this, void 0, void 0, function () {
             var _a, error_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -63,15 +64,14 @@ var UserSentenceEvaluation = /** @class */ (function () {
                         _a.sentenceEvaluationCounts =
                             _b.sent();
                         return [4 /*yield*/, db_1.pool.query('INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)\
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [
+    VALUES($1,$2,$3,$4,$5,$6, DEFAULT, $7)', [
                                 this.sentenceEvaluationCounts,
                                 this.userId,
                                 this.sentenceId,
                                 this.score,
                                 this.sttResult,
                                 this.userVoiceUri,
-                                this.isPublic,
-                                this.createdAt
+                                Date_1.getNowKO()
                             ])];
                     case 2:
                         _b.sent();

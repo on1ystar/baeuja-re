@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
+ @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
  */
 
 import axios from 'axios';
@@ -9,7 +9,6 @@ import { Response, Request } from 'express';
 import conf from '../../config';
 import PostEvaluationDTO from './dto/post-evaluation.dto';
 import UserSentenceEvaluation from '../../entities/user-sentence-evaluation.entity';
-import { getNowKO } from '../../utils/Date';
 import { MulterError } from 'multer';
 import { s3Client } from '../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
@@ -86,14 +85,12 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       parseInt(sentenceId),
       evaluatedSentence.score,
       evaluatedSentence.sttResult,
-      userVoiceUri,
-      false,
-      getNowKO()
+      userVoiceUri
     );
     // await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
     evaluatedSentence = {
       ...evaluatedSentence,
-      ...(await userSentenceEvaluation.insert())
+      ...(await userSentenceEvaluation.create())
     };
 
     return res
@@ -107,3 +104,5 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       .json({ success: false, errorMessage: error.message });
   }
 };
+
+export const storePerfectVoiceCounts = (req: Request, res: Response) => {};

@@ -1,8 +1,12 @@
-export interface UserContentHistory {
-  userId: number;
-  contentId: number;
-  counts?: number;
-  latestLearningAt?: string;
-  learningTime?: string;
-  progressRate?: number;
+import { pool } from '../db';
+
+export class UserContentHistory {
+  constructor(
+    readonly userId?: number,
+    readonly contentId?: number,
+    readonly counts?: number,
+    readonly latestLearningAt?: string,
+    readonly learningTime?: string,
+    readonly progressRate?: number
+  ) {}
 }
