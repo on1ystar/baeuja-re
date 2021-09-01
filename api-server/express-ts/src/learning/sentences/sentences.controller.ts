@@ -12,6 +12,7 @@ import UserSentenceEvaluation from '../../entities/user-sentence-evaluation.enti
 import { MulterError } from 'multer';
 import { s3Client } from '../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 
 // const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
 const FORMAT = 'wav';
@@ -35,8 +36,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
         parseInt(sentenceId)
       );
     const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
-    // const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
-    const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/words/가려지다.wav`;
+    const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
+    // const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/words/가려지다.wav`;
     await s3Client.send(
       new PutObjectCommand({
         Bucket: conf.bucket.data,
@@ -105,4 +106,50 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
   }
 };
 
-export const storePerfectVoiceCounts = (req: Request, res: Response) => {};
+export const recordUserVoiceCounts = async (req: Request, res: Response) => {
+  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const { sentenceId } = req.params;
+
+  try {
+    // request params 유효성 검사
+    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    const perfectVoiceCounts = await new UserSentenceHistory(
+      userId,
+      parseInt(sentenceId)
+    ).updateUserVoiceCounts();
+
+    return res.status(200).json({
+      success: true,
+      sentenceHistory: { userId, sentenceId, perfectVoiceCounts }
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  }
+};
+export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
+  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const { sentenceId } = req.params;
+
+  try {
+    // request params 유효성 검사
+    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+
+    const userVoiceCounts = await new UserSentenceHistory(
+      userId,
+      parseInt(sentenceId)
+    ).updateUserVoiceCounts();
+
+    return res.status(200).json({
+      success: true,
+      sentenceHistory: { userId, sentenceId, userVoiceCounts }
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  }
+};

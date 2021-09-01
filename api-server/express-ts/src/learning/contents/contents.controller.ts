@@ -5,6 +5,8 @@
  */
 
 import { Response, Request } from 'express';
+import { Sentence } from '../../entities/sentence.entity';
+import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 import { UserUnitHistory } from '../../entities/user-unit-history.entity.';
 import GetLearningUnitDTO from './dto/get-learning-unit.dto';
 
@@ -41,13 +43,19 @@ export const getLearningUnit = async (req: Request, res: Response) => {
         parseInt(unitIndex),
         parseInt(contentId)
       ).updateCounts();
-    // 존재하지 않으면 학습 기록 생성
-    else
+    // 존재하지 않으면 유닛 및 포함된 문장 학습 기록 생성
+    else {
       await new UserUnitHistory(
         userId,
         parseInt(unitIndex),
         parseInt(contentId)
       ).create();
+      const sentenceIdList = await Sentence.findByUnit(
+        parseInt(unitIndex),
+        parseInt(contentId)
+      );
+      await UserSentenceHistory.createList(userId, sentenceIdList);
+    }
 
     return res.status(200).json(getLearningUnitDTO);
   } catch (error) {

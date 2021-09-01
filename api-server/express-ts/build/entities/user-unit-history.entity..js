@@ -57,7 +57,7 @@ var UserUnitHistory = /** @class */ (function () {
                         return [4 /*yield*/, db_1.pool.query('INSERT INTO user_unit_history VALUES($1, $2, $3, DEFAULT, $4)', [this.userId, this.unitIndex, this.contentId, Date_1.getNowKO()])];
                     case 1:
                         _a.sent();
-                        console.log("inserted user_unit_history table's column");
+                        console.log("inserted user_unit_history table's row");
                         return [3 /*break*/, 3];
                     case 2:
                         error_1 = _a.sent();
@@ -74,7 +74,7 @@ var UserUnitHistory = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, db_1.pool.query('UPDATE user_unit_history SET counts = counts + 1 WHERE user_id = $1 AND unit_index = $2 AND content_id = $3', [this.userId, this.unitIndex, this.contentId])];
+                        return [4 /*yield*/, db_1.pool.query('UPDATE user_unit_history SET counts = counts + 1, latest_learning_at = $1 WHERE user_id = $2 AND unit_index = $3 AND content_id = $4', [Date_1.getNowKO(), this.userId, this.unitIndex, this.contentId])];
                     case 1:
                         _a.sent();
                         console.log("updated user_unit_history table's counts ++ ");

@@ -8,6 +8,6 @@ import { getLearningUnit } from './contents.controller';
 
 const contentsRouter: Router = express.Router();
 
-contentsRouter.get('/:contentId/units/:unitIndex', getLearningUnit);
+contentsRouter.get('/:contentId/units/:unitIndex', getLearningUnit); // 학습 유닛에 포함된 유닛, 문장, 단어 요청
 
 export default contentsRouter;

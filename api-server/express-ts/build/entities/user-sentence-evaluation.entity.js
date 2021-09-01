@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+  @description user_sentence_evaluation entity with repository
   @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
 */
 var db_1 = require("../db");

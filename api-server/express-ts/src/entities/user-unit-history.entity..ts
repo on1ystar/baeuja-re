@@ -42,7 +42,7 @@ export class UserUnitHistory {
         'INSERT INTO user_unit_history VALUES($1, $2, $3, DEFAULT, $4)',
         [this.userId, this.unitIndex, this.contentId, getNowKO()]
       );
-      console.log("inserted user_unit_history table's column");
+      console.log("inserted user_unit_history table's row");
     } catch (error) {
       console.log('Error: UserUnitHistory insert function ');
       throw error;
@@ -53,8 +53,8 @@ export class UserUnitHistory {
   updateCounts = async () => {
     try {
       await pool.query(
-        'UPDATE user_unit_history SET counts = counts + 1 WHERE user_id = $1 AND unit_index = $2 AND content_id = $3',
-        [this.userId, this.unitIndex, this.contentId]
+        'UPDATE user_unit_history SET counts = counts + 1, latest_learning_at = $1 WHERE user_id = $2 AND unit_index = $3 AND content_id = $4',
+        [getNowKO(), this.userId, this.unitIndex, this.contentId]
       );
       console.log("updated user_unit_history table's counts ++ ");
     } catch (error) {
