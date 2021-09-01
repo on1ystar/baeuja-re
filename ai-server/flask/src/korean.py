@@ -19,7 +19,7 @@ def getKoreanText(log_file: str) -> str:
 	"""
 
 	# open log file
-    reader = io.open(log_file, 'r', encoding='utf8')
+	reader = io.open(log_file, 'r', encoding='utf8')
 
 	# korean regex
 	regex_korean = re.compile('[^가-힣]+') 

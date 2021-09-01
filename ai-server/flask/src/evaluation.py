@@ -25,7 +25,7 @@ def getNormalized(data: list) -> list:
 		normalized_data.append((data[i] - min_value) / (max_value - min_value))
 	return normalized_data
 
-def getPitch(wav_file: str, sample_rate=16000: int) -> list:
+def getPitch(wav_file: str, sample_rate=16000) -> list:
 	"""
 	:get pitch from wav file
 	:param wavFile: str, wave file path
@@ -100,5 +100,5 @@ def getDTWScore(perfect_pitch: list, user_pitch: list, duration: float) -> int:
 		return 3
 	elif dtw_distance < duration * 10:
 		return 2
-	else
+	else:
 		return 1
