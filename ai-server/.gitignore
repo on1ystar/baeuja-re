@@ -2,3 +2,7 @@ configs/
 model
 flask/configs
 tmp
+*test*
+*.flac
+*.wav
+*.m4a
