@@ -1,12 +1,12 @@
 export class Unit {
   constructor(
-    readonly unit_index?: number,
-    readonly content_id?: number,
-    readonly youtube_url?: string,
-    readonly start_time?: string,
-    readonly end_time?: string,
-    readonly thumbnail_uri?: string,
-    readonly created_at?: string,
-    readonly modified_at?: string
+    readonly unitIndex: number,
+    readonly contentId: number,
+    readonly youtubeUrl?: string,
+    readonly startTime?: string,
+    readonly endTime?: string,
+    readonly thumbnailUri?: string,
+    readonly createdAt?: string,
+    readonly modifiedAt?: string
   ) {}
 }

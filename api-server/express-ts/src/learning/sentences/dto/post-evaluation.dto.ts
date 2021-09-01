@@ -27,7 +27,8 @@ export default class PostEvaluationDTO {
     try {
       const sentence: SentenceType = {
         sentenceId,
-        ...(await this.getSentence(sentenceId))
+        ...(await this.getSentence(sentenceId)),
+        perfectVoiceUri: `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/sentences/${sentenceId}.wav`
       };
       return new PostEvaluationDTO(userId, userVoiceUri, sentence);
     } catch (error) {
@@ -38,11 +39,11 @@ export default class PostEvaluationDTO {
   static getSentence = async (sentenceId: number) => {
     try {
       const queryResult: QueryResult<any> = await pool.query(
-        'SELECT  korean_text as "koreanText", perfect_voice_uri as "perfectVoiceUri" FROM sentence WHERE sentence_id = $1',
+        'SELECT  korean_text as "koreanText" FROM sentence WHERE sentence_id = $1',
         [sentenceId]
       );
       if (!queryResult.rowCount) {
-        throw new DatabaseError('sentenceId does not exist', 0, 'noData');
+        throw new Error('sentenceId does not exist');
       }
       return queryResult.rows[0];
     } catch (error) {

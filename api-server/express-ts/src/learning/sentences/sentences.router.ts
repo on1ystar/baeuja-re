@@ -5,7 +5,11 @@
 
 import express, { Router } from 'express';
 import { upload } from '../../utils/Multer';
-import { evaluateUserVoice } from './sentences.controller';
+import {
+  evaluateUserVoice,
+  recordPerfectVoiceCounts,
+  recordUserVoiceCounts
+} from './sentences.controller';
 
 const sentencesRouter: Router = express.Router();
 
@@ -14,5 +18,7 @@ sentencesRouter.post(
   upload.single('userVoice'),
   evaluateUserVoice
 );
+sentencesRouter.post('/:sentenceId/user-voice', recordUserVoiceCounts);
+sentencesRouter.post('/:sentenceId/perfect-voice', recordPerfectVoiceCounts);
 
 export default sentencesRouter;
