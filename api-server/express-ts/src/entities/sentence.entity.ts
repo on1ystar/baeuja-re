@@ -1,8 +1,8 @@
-import { pool } from '../db';
-
 /**
   @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
 */
+import { pool } from '../db';
+
 export class Sentence {
   constructor(
     readonly sentenceId: number,

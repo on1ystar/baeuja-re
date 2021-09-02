@@ -55,16 +55,12 @@ export default class GetLearningUnitDTO {
   ): Promise<GetLearningUnitDTO> {
     try {
       const unit: UnitType = await this.getUnit(unitIndex, contentId);
-      const sentences: SentenceType[] = await this.getSentences(
-        userId,
-        unitIndex,
-        contentId
-      );
+      const sentences: SentenceType[] = await this.getSentences(userId, unitIndex, contentId);
       const words: Word[] = await this.getWords(unitIndex, contentId);
       const mappedSentences = sentences.map((sentence: SentenceType) => {
         return {
           ...sentence,
-          words: words.filter(word => word.sentenceId === sentence.sentenceId)
+          words: words.filter(word => word.sentenceId === sentence.sentenceId),
         };
       });
       return new GetLearningUnitDTO(unit, mappedSentences);
@@ -73,23 +69,19 @@ export default class GetLearningUnitDTO {
     }
   }
 
-  static async getUnit(
-    unitIndex: number,
-    contentId: number
-  ): Promise<UnitType> {
+  static async getUnit(unitIndex: number, contentId: number): Promise<UnitType> {
     try {
       // SELECT unit table for (youtube_url, start_time, end_time)
       const queryResult: QueryResult<any> = await pool.query(
         'SELECT youtube_url as "youtubeUrl", start_time as "startTime", end_time as "endTime" FROM unit WHERE "unit_index" = $1 AND "content_id" = $2',
         [unitIndex, contentId]
       );
-      if (!queryResult.rowCount)
-        throw new Error('unitIndex or contentId does not exist');
+      if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
 
       const unit: UnitType = {
         unitIndex,
         contentId,
-        ...queryResult.rows[0]
+        ...queryResult.rows[0],
       };
       return unit;
     } catch (error) {
@@ -113,8 +105,7 @@ export default class GetLearningUnitDTO {
             WHERE s.content_id = $2 AND s.unit_index = $3 ',
         [userId, contentId, unitIndex]
       );
-      if (!queryResult.rowCount)
-        throw new Error('unitIndex or contentId does not exist');
+      if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
 
       const sentences: SentenceType[] = queryResult.rows;
       return sentences;
@@ -124,10 +115,7 @@ export default class GetLearningUnitDTO {
     }
   }
 
-  static async getWords(
-    unitIndex: number,
-    contentId: number
-  ): Promise<WordType[]> {
+  static async getWords(unitIndex: number, contentId: number): Promise<WordType[]> {
     // JOIN word ON sentence for (word_id, sentence_id, original_korean_text, prev_korean_text,, prev_translated_text, original_korean_text, originalKoreanText, original_translated_text)
     const queryResult: QueryResult<any> = await pool.query(
       'SELECT w.word_id as "wordId", w.sentence_id as "sentenceId", w.original_korean_text, w.prev_korean_text as "prevKoreanText",w.prev_translated_text as "prevTranslatedText",w.original_korean_text as "originalKoreanText",w.original_translated_text as "originalTranslatedText"\
@@ -137,8 +125,7 @@ export default class GetLearningUnitDTO {
           WHERE s.unit_index = $1 AND s.content_id = $2',
       [unitIndex, contentId]
     );
-    if (!queryResult.rowCount)
-      throw new Error('unitIndex or contentId does not exist');
+    if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
 
     try {
       const words: WordType[] = queryResult.rows;
