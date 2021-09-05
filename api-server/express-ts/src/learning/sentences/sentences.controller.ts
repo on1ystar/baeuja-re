@@ -30,12 +30,15 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
+    console.time('evaluateUserVoice');
     const sentenceEvaluationCounts =
       await UserSentenceEvaluation.getSentenceEvaluationCounts(
         userId,
         parseInt(sentenceId)
       );
-    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
+    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${
+      req.file?.originalname.split('.')[1]
+    }`;
     const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
     // const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/words/가려지다.wav`;
     await s3Client.send(
@@ -54,7 +57,6 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       userVoiceUri,
       parseInt(sentenceId)
     );
-
     // responsed to ai server
     let {
       // eslint-disable-next-line prefer-const
@@ -94,6 +96,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       ...(await userSentenceEvaluation.create())
     };
 
+    console.timeEnd('evaluateUserVoice');
     return res
       .status(200)
       .json({ success: true, evaluatedSentence, pitchData });

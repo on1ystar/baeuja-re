@@ -31,7 +31,9 @@ export class UserSentenceHistory {
       await pool.query(ARRAY_INSERT_SQL);
       console.log("inserted user_sentence_history table's rows");
     } catch (error) {
-      console.log('Error: UserSentenceHistory createList function ');
+      console.log(
+        'Error: user-sentence-history.entity.ts createList function '
+      );
       throw error;
     }
   };
@@ -49,7 +51,7 @@ export class UserSentenceHistory {
       return perfectVoiceCounts;
     } catch (error) {
       console.log(
-        'Error: UserSentenceHistory updatePerfectVoiceCounts function '
+        'Error: user-sentence-history.entity.ts updatePerfectVoiceCounts function '
       );
       throw error;
     }
@@ -67,7 +69,9 @@ export class UserSentenceHistory {
       console.log("updated user_sentence_history table's user_voice_counts");
       return userVoiceCounts;
     } catch (error) {
-      console.log('Error: UserSentenceHistory updateUserVoiceCounts function ');
+      console.log(
+        'Error: user-sentence-history.entity.ts updateUserVoiceCounts function '
+      );
       throw error;
     }
   };

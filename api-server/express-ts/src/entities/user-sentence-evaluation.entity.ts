@@ -32,7 +32,9 @@ export default class UserSentenceEvaluation {
             )
           ).rows[0].count
         ) + 1;
-      console.log(sentenceEvaluationCounts);
+      console.log(
+        `userId: ${userId} sentenceId: ${sentenceId} sentenceEvaluationCounts: ${sentenceEvaluationCounts}`
+      );
       return sentenceEvaluationCounts;
     } catch (error) {
       console.error(

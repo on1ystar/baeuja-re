@@ -102,7 +102,7 @@ var UserSentenceEvaluation = /** @class */ (function () {
                     return [4 /*yield*/, db_1.pool.query('SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2', [userId, sentenceId])];
                 case 1:
                     sentenceEvaluationCounts = _a.apply(void 0, [(_b.sent()).rows[0].count]) + 1;
-                    console.log(sentenceEvaluationCounts);
+                    console.log("userId: " + userId + " sentenceId: " + sentenceId + " sentenceEvaluationCounts: " + sentenceEvaluationCounts);
                     return [2 /*return*/, sentenceEvaluationCounts];
                 case 2:
                     error_2 = _b.sent();

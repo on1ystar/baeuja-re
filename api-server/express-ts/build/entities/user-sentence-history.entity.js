@@ -74,7 +74,7 @@ var UserSentenceHistory = /** @class */ (function () {
                         return [2 /*return*/, perfectVoiceCounts];
                     case 2:
                         error_1 = _a.sent();
-                        console.log('Error: UserSentenceHistory updatePerfectVoiceCounts function ');
+                        console.log('Error: user-sentence-history.entity.ts updatePerfectVoiceCounts function ');
                         throw error_1;
                     case 3: return [2 /*return*/];
                 }
@@ -94,7 +94,7 @@ var UserSentenceHistory = /** @class */ (function () {
                         return [2 /*return*/, userVoiceCounts];
                     case 2:
                         error_2 = _a.sent();
-                        console.log('Error: UserSentenceHistory updateUserVoiceCounts function ');
+                        console.log('Error: user-sentence-history.entity.ts updateUserVoiceCounts function ');
                         throw error_2;
                     case 3: return [2 /*return*/];
                 }
@@ -116,7 +116,7 @@ var UserSentenceHistory = /** @class */ (function () {
                     return [3 /*break*/, 3];
                 case 2:
                     error_3 = _a.sent();
-                    console.log('Error: UserSentenceHistory createList function ');
+                    console.log('Error: user-sentence-history.entity.ts createList function ');
                     throw error_3;
                 case 3: return [2 /*return*/];
             }
