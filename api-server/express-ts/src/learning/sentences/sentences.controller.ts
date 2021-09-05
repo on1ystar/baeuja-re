@@ -26,14 +26,14 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
     const sentenceEvaluationCounts =
       await UserSentenceEvaluation.getSentenceEvaluationCounts(
         userId,
-        parseInt(sentenceId)
+        +sentenceId
       );
     const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
     const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
@@ -52,7 +52,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     const postEvaluationDTO = await PostEvaluationDTO.getInstance(
       userId,
       userVoiceUri,
-      parseInt(sentenceId)
+      +sentenceId
     );
 
     // responsed to ai server
@@ -83,7 +83,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     // 발음 평가 결과 DB 저장
     const userSentenceEvaluation = new UserSentenceEvaluation(
       userId,
-      parseInt(sentenceId),
+      +sentenceId,
       evaluatedSentence.score,
       evaluatedSentence.sttResult,
       userVoiceUri
@@ -112,15 +112,15 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
     const perfectVoiceCounts = await new UserSentenceHistory(
       userId,
-      parseInt(sentenceId)
+      +sentenceId
     ).updateUserVoiceCounts();
 
     return res.status(200).json({
       success: true,
-      sentenceHistory: { userId, sentenceId, perfectVoiceCounts }
+      sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
     });
   } catch (error) {
     console.error(error);
@@ -135,16 +135,16 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
 
     const userVoiceCounts = await new UserSentenceHistory(
       userId,
-      parseInt(sentenceId)
+      +sentenceId
     ).updateUserVoiceCounts();
 
     return res.status(200).json({
       success: true,
-      sentenceHistory: { userId, sentenceId, userVoiceCounts }
+      sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
     });
   } catch (error) {
     console.error(error);

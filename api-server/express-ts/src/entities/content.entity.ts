@@ -1,12 +1,18 @@
-export interface Content {
-  contentId?: number;
-  classification?: string;
-  title?: string;
-  artist?: string;
-  director?: string;
-  description?: string;
-  youtubeUrl?: string;
-  thumbnailUri?: string;
-  createdAt?: string;
-  modifiedAt?: string;
+/**
+  @version feature/api/PEAC-38-learning-list-api
+*/
+
+export class Content {
+  constructor(
+    readonly contentId: number,
+    readonly classification: string,
+    readonly title: string,
+    readonly description: string,
+    readonly youtubeUrl: string,
+    readonly thumbnailUri: string,
+    readonly artist?: string,
+    readonly director?: string,
+    readonly createdAt?: string,
+    readonly modifiedAt?: string
+  ) {}
 }

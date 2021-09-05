@@ -1,10 +1,10 @@
 /**
   @description 메인(문장) 학습 화면 구성을 위한 DTO
-  @version feature/api/PEAC-39-PEAC-162-user-voice-save-to-s3
+  @version feature/api/PEAC-38-learning-list-api
  */
 import { QueryResult } from 'pg';
 import { pool } from '../../../db';
-import { Word } from '../../../entities/word.entity';
+import { Unit } from '../../../entities/unit.entity';
 
 // ------------------ class properties를 위한 interface ------------------
 interface WordType {
@@ -37,7 +37,7 @@ interface UnitType {
 // --------------------------------------------------------------------
 
 // getInstance(userId: number, unitIndex: number, contentId: number)를 호출해서 인스턴스 생성
-export default class GetLearningUnitDTO {
+export default class GetUnitDTO {
   readonly unit: UnitType;
 
   readonly sentences: SentenceType[];
@@ -47,45 +47,34 @@ export default class GetLearningUnitDTO {
     this.sentences = sentences;
   }
 
-  // GetLearningUnitDTO 객체 반환
+  // GetUnitDTO 객체 반환
   static async getInstance(
     userId: number,
     unitIndex: number,
     contentId: number
-  ): Promise<GetLearningUnitDTO> {
+  ): Promise<GetUnitDTO> {
     try {
-      const unit: UnitType = await this.getUnit(unitIndex, contentId);
-      const sentences: SentenceType[] = await this.getSentences(userId, unitIndex, contentId);
-      const words: Word[] = await this.getWords(unitIndex, contentId);
+      const unit: UnitType = await Unit.findOne(
+        unitIndex,
+        contentId,
+        'youtubeUrl',
+        'startTime',
+        'endTime'
+      );
+      const sentences: SentenceType[] = await this.getSentences(
+        userId,
+        unitIndex,
+        contentId
+      );
+      const words: WordType[] = await this.getWords(unitIndex, contentId);
       const mappedSentences = sentences.map((sentence: SentenceType) => {
         return {
           ...sentence,
-          words: words.filter(word => word.sentenceId === sentence.sentenceId),
+          words: words.filter(word => word.sentenceId === sentence.sentenceId)
         };
       });
-      return new GetLearningUnitDTO(unit, mappedSentences);
+      return new GetUnitDTO(unit, mappedSentences);
     } catch (error) {
-      throw error;
-    }
-  }
-
-  static async getUnit(unitIndex: number, contentId: number): Promise<UnitType> {
-    try {
-      // SELECT unit table for (youtube_url, start_time, end_time)
-      const queryResult: QueryResult<any> = await pool.query(
-        'SELECT youtube_url as "youtubeUrl", start_time as "startTime", end_time as "endTime" FROM unit WHERE "unit_index" = $1 AND "content_id" = $2',
-        [unitIndex, contentId]
-      );
-      if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
-
-      const unit: UnitType = {
-        unitIndex,
-        contentId,
-        ...queryResult.rows[0],
-      };
-      return unit;
-    } catch (error) {
-      console.error('Error: GetLearningUnitDTO getUnit function ');
       throw error;
     }
   }
@@ -105,17 +94,21 @@ export default class GetLearningUnitDTO {
             WHERE s.content_id = $2 AND s.unit_index = $3 ',
         [userId, contentId, unitIndex]
       );
-      if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
+      if (!queryResult.rowCount)
+        throw new Error('unitIndex or contentId does not exist');
 
       const sentences: SentenceType[] = queryResult.rows;
       return sentences;
     } catch (error) {
-      console.error('Error: GetLearningUnitDTO getSentences function ');
+      console.error('Error: get-unit.dto.ts getSentences function ');
       throw error;
     }
   }
 
-  static async getWords(unitIndex: number, contentId: number): Promise<WordType[]> {
+  static async getWords(
+    unitIndex: number,
+    contentId: number
+  ): Promise<WordType[]> {
     // JOIN word ON sentence for (word_id, sentence_id, original_korean_text, prev_korean_text,, prev_translated_text, original_korean_text, originalKoreanText, original_translated_text)
     const queryResult: QueryResult<any> = await pool.query(
       'SELECT w.word_id as "wordId", w.sentence_id as "sentenceId", w.original_korean_text, w.prev_korean_text as "prevKoreanText",w.prev_translated_text as "prevTranslatedText",w.original_korean_text as "originalKoreanText",w.original_translated_text as "originalTranslatedText"\
@@ -125,13 +118,14 @@ export default class GetLearningUnitDTO {
           WHERE s.unit_index = $1 AND s.content_id = $2',
       [unitIndex, contentId]
     );
-    if (!queryResult.rowCount) throw new Error('unitIndex or contentId does not exist');
+    if (!queryResult.rowCount)
+      throw new Error('unitIndex or contentId does not exist');
 
     try {
       const words: WordType[] = queryResult.rows;
       return words;
     } catch (error) {
-      console.error('Error: GetLearningUnitDTO getWords function ');
+      console.error('Error: get-unit.dto.ts getWords function ');
       throw error;
     }
   }

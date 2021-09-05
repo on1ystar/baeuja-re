@@ -1,7 +1,9 @@
 /**
-  @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
+  @version feature/api/PEAC-38-learning-list-api
 */
 import { pool } from '../db';
+import { snakeCase } from 'snake-case';
+import { getSelectColumns } from '../utils/Query';
 
 export class Sentence {
   constructor(
@@ -20,21 +22,30 @@ export class Sentence {
   ) {}
 
   // 유닛에 해당하는 문장 리스트
-  static findByUnit = async (unitIndex: number, contentId: number) => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static findByUnit = async (
+    unitIndex: number,
+    contentId: number,
+    ..._columns: string[]
+  ) => {
     try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
       const queryResult = await pool.query(
-        'SELECT sentence_id as "sentenceId" FROM sentence WHERE unit_index = $1 AND content_id = $2',
+        `SELECT ${SELECT_COLUMNS} FROM sentence WHERE unit_index = $1 AND content_id = $2`,
         [unitIndex, contentId]
       );
       if (!queryResult.rowCount)
         throw new Error('unitIndex or contentId does not exist');
 
-      const sentenceIdList: number[] = queryResult.rows.map(
-        row => row.sentenceId
-      );
-      return sentenceIdList;
+      return queryResult.rows;
     } catch (error) {
-      console.log('Error: Sentence findByUnit function ');
+      console.log('Error: sentence.entity.ts findByUnit function ');
       throw error;
     }
   };
