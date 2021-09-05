@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
+ @version hotfix/api/perfect-voice-counts
  */
 
 import axios from 'axios';
