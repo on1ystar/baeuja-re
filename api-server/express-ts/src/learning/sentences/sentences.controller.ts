@@ -106,17 +106,20 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
   }
 };
 
-export const recordUserVoiceCounts = async (req: Request, res: Response) => {
+// /sentences/:sentenceId/perfect-voice
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
 
   try {
     // request params 유효성 검사
     if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+
     const perfectVoiceCounts = await new UserSentenceHistory(
       userId,
       parseInt(sentenceId)
-    ).updateUserVoiceCounts();
+    ).updatePerfectVoiceCounts();
 
     return res.status(200).json({
       success: true,
@@ -129,14 +132,16 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
       .json({ success: false, errorMessage: error.message });
   }
 };
-export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
+
+// /sentences/:sentenceId/user-voice
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const recordUserVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
 
   try {
     // request params 유효성 검사
     if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
-
     const userVoiceCounts = await new UserSentenceHistory(
       userId,
       parseInt(sentenceId)
