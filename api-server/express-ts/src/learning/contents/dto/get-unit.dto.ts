@@ -2,8 +2,7 @@
   @description 메인(문장) 학습 화면 구성을 위한 DTO
   @version feature/api/PEAC-38-learning-list-api
  */
-import { QueryResult } from 'pg';
-import { pool } from '../../../db';
+import { Sentence } from '../../../entities/sentence.entity';
 import { Unit } from '../../../entities/unit.entity';
 
 // ------------------ class properties를 위한 interface ------------------
@@ -42,7 +41,7 @@ export default class GetUnitDTO {
 
   readonly sentences: SentenceType[];
 
-  constructor(unit: UnitType, sentences: any) {
+  constructor(unit: UnitType, sentences: SentenceType[]) {
     this.unit = unit;
     this.sentences = sentences;
   }
@@ -57,16 +56,34 @@ export default class GetUnitDTO {
       const unit: UnitType = await Unit.findOne(
         unitIndex,
         contentId,
+        'unitIndex',
+        'contentId',
         'youtubeUrl',
         'startTime',
         'endTime'
       );
-      const sentences: SentenceType[] = await this.getSentences(
-        userId,
+      const sentences: SentenceType[] =
+        await Sentence.fullJoinUserSentenceHistory(
+          userId,
+          contentId,
+          unitIndex,
+          'Sentence.sentenceId',
+          'Sentence.koreanText',
+          'Sentence.translatedText',
+          'Sentence.perfectVoiceUri',
+          'Sentence.startTime',
+          'Sentence.endTime'
+        );
+      const words: WordType[] = await Sentence.joinWord(
+        contentId,
         unitIndex,
-        contentId
+        'Word.wordId',
+        'Word.sentenceId',
+        'Word.prevKoreanText',
+        'Word.prevTranslatedText',
+        'Word.originalKoreanText',
+        'Word.originalTranslatedText'
       );
-      const words: WordType[] = await this.getWords(unitIndex, contentId);
       const mappedSentences = sentences.map((sentence: SentenceType) => {
         return {
           ...sentence,
@@ -75,57 +92,7 @@ export default class GetUnitDTO {
       });
       return new GetUnitDTO(unit, mappedSentences);
     } catch (error) {
-      throw error;
-    }
-  }
-
-  static async getSentences(
-    userId: number,
-    unitIndex: number,
-    contentId: number
-  ): Promise<SentenceType[]> {
-    try {
-      // FULL JOIN sentence ON user_sentence_history for (sentence_id, korean_text, translated_text, perfect_voice_uri, start_time, end_time, is_bookmark)
-      const queryResult: QueryResult<any> = await pool.query(
-        'SELECT s.sentence_id as "sentenceId", s.korean_text as "koreanText", s.translated_text as "translatedText", s.perfect_voice_uri as "perfectVoiceUrl", s.start_time as "startTime", s.end_time as "endTime", COALESCE(h.is_bookmark, false) as "isBookmark"\
-            FROM sentence as s \
-            FULL JOIN (SELECT user_id, sentence_id, is_bookmark FROM user_sentence_history WHERE user_id = $1) as h \
-            ON s.sentence_id = h.sentence_id \
-            WHERE s.content_id = $2 AND s.unit_index = $3 ',
-        [userId, contentId, unitIndex]
-      );
-      if (!queryResult.rowCount)
-        throw new Error('unitIndex or contentId does not exist');
-
-      const sentences: SentenceType[] = queryResult.rows;
-      return sentences;
-    } catch (error) {
-      console.error('Error: get-unit.dto.ts getSentences function ');
-      throw error;
-    }
-  }
-
-  static async getWords(
-    unitIndex: number,
-    contentId: number
-  ): Promise<WordType[]> {
-    // JOIN word ON sentence for (word_id, sentence_id, original_korean_text, prev_korean_text,, prev_translated_text, original_korean_text, originalKoreanText, original_translated_text)
-    const queryResult: QueryResult<any> = await pool.query(
-      'SELECT w.word_id as "wordId", w.sentence_id as "sentenceId", w.original_korean_text, w.prev_korean_text as "prevKoreanText",w.prev_translated_text as "prevTranslatedText",w.original_korean_text as "originalKoreanText",w.original_translated_text as "originalTranslatedText"\
-          FROM word as w \
-          JOIN sentence as s \
-          ON s.sentence_id = w.sentence_id \
-          WHERE s.unit_index = $1 AND s.content_id = $2',
-      [unitIndex, contentId]
-    );
-    if (!queryResult.rowCount)
-      throw new Error('unitIndex or contentId does not exist');
-
-    try {
-      const words: WordType[] = queryResult.rows;
-      return words;
-    } catch (error) {
-      console.error('Error: get-unit.dto.ts getWords function ');
+      console.error('❌ Error: get-unit.dto.ts getInstance function');
       throw error;
     }
   }

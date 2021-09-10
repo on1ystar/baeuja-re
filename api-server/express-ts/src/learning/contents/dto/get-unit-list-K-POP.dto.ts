@@ -1,5 +1,5 @@
 /**
- * @description 학습 유닛 리스트 화면 구성을 위한 DTO
+ * @description 학습 유닛 리스트 화면 구성을 위한 DTO (K-POP)
  * @version feature/api/PEAC-38-learning-list-api
  */
 
@@ -13,10 +13,10 @@ interface WordType {
 
 export default class GetUnitListKPOPDTO {
   constructor(
+    readonly contentId: number,
     readonly unitIndex: number,
     readonly thumbnailUri: string,
     readonly latestLearningAt: string,
-    readonly contentId: number,
     readonly sentencesCounts: number,
     readonly wordsCounts: number,
     readonly words: WordType[]
@@ -24,7 +24,7 @@ export default class GetUnitListKPOPDTO {
 
   static getInstance = async (userId: number, contentId: number) => {
     try {
-      const unitList = await Unit.leftJoinUserUnitHistoryByContent(
+      const unitList = await Unit.leftJoinUserUnitHistory(
         userId,
         contentId,
         'Unit.unitIndex',
@@ -33,9 +33,9 @@ export default class GetUnitListKPOPDTO {
       );
       const mappedUnitList = unitList.map(async unit => {
         const sentencesCounts = (
-          await Sentence.findByUnit(unit.unitIndex, contentId, 'sentence_id')
+          await Sentence.findByUnit(contentId, unit.unitIndex, 'sentenceId')
         ).length;
-        const words: WordType[] = await Unit.leftJoinSentenceAndWordByUnit(
+        const words: WordType[] = await Unit.leftJoinSentenceAndWord(
           contentId,
           unit.unitIndex,
           'Word.wordId',
@@ -43,10 +43,10 @@ export default class GetUnitListKPOPDTO {
         );
         const wordsCounts = words.length;
         return new GetUnitListKPOPDTO(
+          contentId,
           unit.unitIndex,
           unit.thumbnailUri,
           unit.latestLearningAt,
-          contentId,
           sentencesCounts,
           wordsCounts,
           words
@@ -54,7 +54,9 @@ export default class GetUnitListKPOPDTO {
       });
       return mappedUnitList;
     } catch (error) {
-      console.log('Error: get-unit-list-K-POP.dto.ts getInstance function');
+      console.error(
+        '❌ Error: get-unit-list-K-POP.dto.ts getInstance function'
+      );
       throw error;
     }
   };

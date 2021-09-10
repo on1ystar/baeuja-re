@@ -5,10 +5,12 @@
  */
 
 import { Response, Request } from 'express';
+import { Content } from '../../entities/content.entity';
 import { Sentence } from '../../entities/sentence.entity';
 import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 import { UserUnitHistory } from '../../entities/user-unit-history.entity.';
 import GetUnitListKPOPDTO from './dto/get-unit-list-K-POP.dto';
+import GetUnitListOthersDTO from './dto/get-unit-list-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
 
 // const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
@@ -24,13 +26,27 @@ export const getUnitList = async (req: Request, res: Response) => {
     if (isNaN(+contentId) || isNaN(userId))
       throw new Error('invalid syntax of params or access token');
 
-    const getUnitListKPOPDTO = await GetUnitListKPOPDTO.getInstance(
-      userId,
-      +contentId
+    const content: { classification: string } = await Content.findOne(
+      +contentId,
+      'classification'
     );
-    Promise.all(getUnitListKPOPDTO).then(unitList => {
-      return res.status(200).json({ success: true, unitList });
-    });
+    if (content.classification === 'K-POP') {
+      const getUnitListKPOPDTO = await GetUnitListKPOPDTO.getInstance(
+        userId,
+        +contentId
+      );
+      Promise.all(getUnitListKPOPDTO).then(unitList => {
+        return res.status(200).json({ success: true, unitList });
+      });
+    } else {
+      const getUnitListOthersDTO = await GetUnitListOthersDTO.getInstance(
+        userId,
+        +contentId
+      );
+      Promise.all(getUnitListOthersDTO).then(unitList => {
+        return res.status(200).json({ success: true, unitList });
+      });
+    }
   } catch (error) {
     console.error(error);
     return res

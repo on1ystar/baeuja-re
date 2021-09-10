@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
+ @version feature/api/PEAC-38-learning-list-api
  */
 
 import axios from 'axios';
@@ -14,9 +14,8 @@ import { s3Client } from '../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 
-// const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
-const FORMAT = 'wav';
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
+const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
 // /sentences/:sentenceId/units/evaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -30,31 +29,31 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
+    console.time('evaluateUserVoice');
     const sentenceEvaluationCounts =
       await UserSentenceEvaluation.getSentenceEvaluationCounts(
         userId,
         +sentenceId
       );
-    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
-    const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
-    // const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/words/가려지다.wav`;
+    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${
+      req.file?.originalname.split('.')[1]
+    }`;
     await s3Client.send(
       new PutObjectCommand({
-        Bucket: conf.bucket.data,
+        Bucket: conf.s3.bucketData,
         Key,
         Body: req.file?.buffer
         // ACL: 'public-read'
       })
     );
-    console.info('Success S3 upload--------------');
+    console.info('✅ Success S3 upload--------------');
 
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
     const postEvaluationDTO = await PostEvaluationDTO.getInstance(
       userId,
-      userVoiceUri,
+      `${S3_URL}/${conf.s3.bucketData}/${Key}`, // userVoiceUri for requesting to AI server
       +sentenceId
     );
-
     // responsed to ai server
     let {
       // eslint-disable-next-line prefer-const
@@ -77,8 +76,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
         }
       })
     ).data;
-    if (!success)
-      throw new Error('Error : fail to ai server rest communication');
+    if (!success) throw new Error('fail to ai server rest communication');
 
     // 발음 평가 결과 DB 저장
     const userSentenceEvaluation = new UserSentenceEvaluation(
@@ -86,7 +84,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       +sentenceId,
       evaluatedSentence.score,
       evaluatedSentence.sttResult,
-      userVoiceUri
+      `${S3_URL}/${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     );
     // await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
     evaluatedSentence = {
@@ -94,6 +92,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       ...(await userSentenceEvaluation.create())
     };
 
+    console.timeEnd('evaluateUserVoice');
     return res
       .status(200)
       .json({ success: true, evaluatedSentence, pitchData });
@@ -106,7 +105,9 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
   }
 };
 
-export const recordUserVoiceCounts = async (req: Request, res: Response) => {
+// /sentences/:sentenceId/perfect-voice
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
 
@@ -129,7 +130,10 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
       .json({ success: false, errorMessage: error.message });
   }
 };
-export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
+
+// /sentences/:sentenceId/user-voice
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const recordUserVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
 

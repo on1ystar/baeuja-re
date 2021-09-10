@@ -16,5 +16,5 @@ export const getNowKO = (): string => {
   const minutes: string = ('0' + krCurr.getMinutes()).slice(-2);
   const seconds: string = ('0' + krCurr.getSeconds()).slice(-2);
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return `'${year}-${month}-${day} ${hours}:${minutes}:${seconds}'`;
 };

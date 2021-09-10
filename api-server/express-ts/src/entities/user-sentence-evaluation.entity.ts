@@ -27,16 +27,19 @@ export default class UserSentenceEvaluation {
         parseInt(
           (
             await pool.query(
-              'SELECT count(*) FROM user_sentence_evaluation WHERE user_id = $1 AND sentence_id = $2',
-              [userId, sentenceId]
+              `SELECT count(*) 
+              FROM user_sentence_evaluation 
+              WHERE user_id = ${userId} AND sentence_id = ${sentenceId}`
             )
           ).rows[0].count
         ) + 1;
-      console.log(sentenceEvaluationCounts);
+      console.info(
+        `✅ userId: ${userId} sentenceId: ${sentenceId} sentenceEvaluationCounts: ${sentenceEvaluationCounts}`
+      );
       return sentenceEvaluationCounts;
     } catch (error) {
       console.error(
-        'Error: UserSentenceEvaluation getSentenceEvaluationCounts function '
+        '❌ Error: user-sentence-evaluation.entity.ts getSentenceEvaluationCounts function '
       );
       throw error;
     }
@@ -50,17 +53,12 @@ export default class UserSentenceEvaluation {
           this.sentenceId
         );
       await pool.query(
-        'INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)\
-    VALUES($1,$2,$3,$4,$5,$6, DEFAULT, $7)',
-        [
-          this.sentenceEvaluationCounts,
-          this.userId,
-          this.sentenceId,
-          this.score,
-          this.sttResult,
-          this.userVoiceUri,
-          getNowKO()
-        ]
+        `INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)
+        VALUES(${this.sentenceEvaluationCounts},${this.userId},${
+          this.sentenceId
+        },${this.score},${this.sttResult},${
+          this.userVoiceUri
+        }, DEFAULT, ${getNowKO()})`
       );
       return {
         sentenceEvaluationCounts: this.sentenceEvaluationCounts,
@@ -69,7 +67,9 @@ export default class UserSentenceEvaluation {
         userVoiceUri: this.userVoiceUri
       };
     } catch (error) {
-      console.error('Error: UserSentenceEvaluation insert function ');
+      console.error(
+        '❌ Error: user-sentence-evaluation.entity.ts insert function '
+      );
       throw error;
     }
   };

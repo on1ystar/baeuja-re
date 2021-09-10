@@ -8,7 +8,11 @@ const conf: {
     secretKey: string | undefined;
     region: string | undefined;
   };
-  bucket: { data: string | undefined };
+  s3: {
+    region: string | undefined;
+    bucketData: string | undefined;
+    bucketDataCdn: string | undefined;
+  };
   db: {
     host: string | undefined;
     user: string | undefined;
@@ -23,8 +27,10 @@ const conf: {
     secretKey: process.env.PEACH_API_SECRET_ACCESS_KEY,
     region: process.env.PEACH_API_REGION
   },
-  bucket: {
-    data: process.env.BUCKET_DATA
+  s3: {
+    region: process.env.S3_REGION,
+    bucketData: process.env.S3_BUCKET_DATA,
+    bucketDataCdn: process.env.S3_BUCKET_DATA_CDN
   },
   db: {
     host: process.env.DB_HOST,
