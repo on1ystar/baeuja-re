@@ -49,8 +49,8 @@ export default class GetUnitDTO {
   // GetUnitDTO 객체 반환
   static async getInstance(
     userId: number,
-    unitIndex: number,
-    contentId: number
+    contentId: number,
+    unitIndex: number
   ): Promise<GetUnitDTO> {
     try {
       const unit: UnitType = await Unit.findOne(

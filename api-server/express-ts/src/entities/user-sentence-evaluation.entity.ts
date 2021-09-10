@@ -9,8 +9,8 @@ export default class UserSentenceEvaluation {
   constructor(
     readonly userId: number,
     readonly sentenceId: number,
-    readonly score: number,
     readonly sttResult: string,
+    readonly score: number,
     readonly userVoiceUri: string,
     readonly isPublic?: boolean,
     readonly createdAt?: string,
@@ -53,10 +53,10 @@ export default class UserSentenceEvaluation {
           this.sentenceId
         );
       await pool.query(
-        `INSERT INTO user_sentence_evaluation(sentence_evaluation_counts, user_id, sentence_id, score, stt_result, user_voice_uri, is_public, created_at)
-        VALUES(${this.sentenceEvaluationCounts},${this.userId},${
-          this.sentenceId
-        },${this.score},${this.sttResult},${
+        `INSERT INTO user_sentence_evaluation
+        VALUES(${this.userId},${this.sentenceId},${
+          this.sentenceEvaluationCounts
+        }, ${this.sttResult}, ${this.score}, ${
           this.userVoiceUri
         }, DEFAULT, ${getNowKO()})`
       );

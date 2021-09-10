@@ -82,8 +82,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     const userSentenceEvaluation = new UserSentenceEvaluation(
       userId,
       +sentenceId,
-      evaluatedSentence.score,
       evaluatedSentence.sttResult,
+      evaluatedSentence.score,
       `${S3_URL}/${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     );
     // await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
