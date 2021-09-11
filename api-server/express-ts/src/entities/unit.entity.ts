@@ -1,8 +1,8 @@
 /**
-  @version feature/api/PEAC-38-learning-list-api
+  @version hotfix/api/PEAC-38-progressRate
 */
 
-import { pool } from '../db';
+import { PoolClient } from 'pg';
 import { getSelectColumns } from '../utils/Query';
 
 export class Unit {
@@ -17,33 +17,10 @@ export class Unit {
     readonly modifiedAt?: string
   ) {}
 
-  // 콘탠츠에 해당하는 유닛 리스트
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static findByContent = async (contentId: number, ..._columns: string[]) => {
-    try {
-      // SELECT할 컬럼이 최소 1개 이상 있어야 함
-      if (_columns.length === 0)
-        throw new Error('At least 1 column in _column is required');
-
-      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
-      const SELECT_COLUMNS = getSelectColumns(_columns);
-
-      const queryResult = await pool.query(
-        `SELECT ${SELECT_COLUMNS} FROM unit \
-        WHERE content_id = ${contentId}`
-      );
-      if (!queryResult.rowCount) throw new Error('contentId does not exist');
-
-      return queryResult.rows;
-    } catch (error) {
-      console.error('❌ Error: unit.entity.ts findByContent function ');
-      throw error;
-    }
-  };
-
   // id에 해당하는 유닛 1개
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static findOne = async (
+    client: PoolClient,
     unitIndex: number,
     contentId: number,
     ..._columns: string[]
@@ -56,7 +33,7 @@ export class Unit {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM unit \
         WHERE content_id = ${contentId} AND unit_index = ${unitIndex}`
       );
@@ -70,9 +47,38 @@ export class Unit {
     }
   };
 
+  // 콘탠츠에 해당하는 유닛 리스트
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static findByContent = async (
+    client: PoolClient,
+    contentId: number,
+    ..._columns: string[]
+  ) => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult = await client.query(
+        `SELECT ${SELECT_COLUMNS} FROM unit \
+        WHERE content_id = ${contentId}`
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+
+      return queryResult.rows;
+    } catch (error) {
+      console.error('❌ Error: unit.entity.ts findByContent function ');
+      throw error;
+    }
+  };
+
   // 사용자의 학습 기록을 포함한 특정 콘텐츠의 유닛 리스트
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static leftJoinUserUnitHistory = async (
+    client: PoolClient,
     userId: number,
     contentId: number,
     ..._columns: string[]
@@ -85,7 +91,7 @@ export class Unit {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM unit 
         LEFT JOIN 
         (SELECT * FROM user_unit_history 
@@ -107,6 +113,7 @@ export class Unit {
   // 유닛에 포한된 단어 리스트
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static leftJoinSentenceAndWord = async (
+    client: PoolClient,
     contentId: number,
     unitIndex: number,
     ..._columns: string[]
@@ -119,7 +126,7 @@ export class Unit {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM unit \
         LEFT JOIN sentence \
         ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index  \

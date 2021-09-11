@@ -3,6 +3,8 @@
  * @version feature/api/PEAC-38-learning-list-api
  */
 
+import { PoolClient } from 'pg';
+import { pool } from '../../../db';
 import { Sentence } from '../../../entities/sentence.entity';
 import { Unit } from '../../../entities/unit.entity';
 
@@ -26,8 +28,10 @@ export default class GetUnitsOthersDTO {
   ) {}
 
   static getInstances = async (userId: number, contentId: number) => {
+    const client: PoolClient = await pool.connect();
     try {
       const units = await Unit.leftJoinUserUnitHistory(
+        client,
         userId,
         contentId,
         'Unit.unitIndex',
@@ -37,6 +41,7 @@ export default class GetUnitsOthersDTO {
       const mappedUnitList = units.map(async unit => {
         const sentence: SentenceType = (
           await Sentence.fullJoinUserSentenceHistory(
+            client,
             userId,
             contentId,
             unit.unitIndex,
@@ -61,6 +66,8 @@ export default class GetUnitsOthersDTO {
     } catch (error) {
       console.error('❌ Error: get-units-others.dto.ts getInstance function');
       throw error;
+    } finally {
+      client.release();
     }
   };
 }

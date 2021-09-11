@@ -13,6 +13,8 @@ import { MulterError } from 'multer';
 import { s3Client } from '../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
+import { PoolClient } from 'pg';
+import { pool } from '../../db';
 
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
@@ -22,16 +24,20 @@ const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 export const evaluateUserVoice = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
+  const client: PoolClient = await pool.connect();
 
   try {
     // request params 유효성 검사
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
+
+    await client.query('BEGIN');
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
     console.time('evaluateUserVoice');
     const sentenceEvaluationCounts =
       await UserSentenceEvaluation.getSentenceEvaluationCounts(
+        client,
         userId,
         +sentenceId
       );
@@ -86,22 +92,24 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       evaluatedSentence.score,
       `${S3_URL}/${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     );
-    // await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
     evaluatedSentence = {
       ...evaluatedSentence,
-      ...(await userSentenceEvaluation.create())
+      ...(await userSentenceEvaluation.create(client))
     };
-
     console.timeEnd('evaluateUserVoice');
+
     return res
       .status(200)
       .json({ success: true, evaluatedSentence, pitchData });
   } catch (error) {
-    if (error instanceof MulterError) console.log('MulterError ');
+    await client.query('ROLLBACK');
+    if (error instanceof MulterError) console.log('❌ MulterError ');
     console.error(error);
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -110,24 +118,31 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
+  const client: PoolClient = await pool.connect();
 
   try {
     // request params 유효성 검사
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
+
+    await client.query('BEGIN');
+
     const perfectVoiceCounts = await new UserSentenceHistory(
       userId,
       +sentenceId
-    ).updateUserVoiceCounts();
+    ).updateUserVoiceCounts(client);
 
     return res.status(200).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
     });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error(error);
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -136,24 +151,30 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 export const recordUserVoiceCounts = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { sentenceId } = req.params;
+  const client: PoolClient = await pool.connect();
 
   try {
     // request params 유효성 검사
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
 
+    await client.query('BEGIN');
+
     const userVoiceCounts = await new UserSentenceHistory(
       userId,
       +sentenceId
-    ).updateUserVoiceCounts();
+    ).updateUserVoiceCounts(client);
 
     return res.status(200).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
     });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error(error);
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };

@@ -1,6 +1,6 @@
-/*
-  postgreSQL DB 접속 및 사용을 위한 connection pool 생성
-  https://node-postgres.com/api/pool
+/**
+  @description postgreSQL DB 접속 및 사용을 위한 connection pool 생성
+  @version hotfix/api/PEAC-38-progressRate
 */
 import pg from 'pg';
 import conf from '../config';

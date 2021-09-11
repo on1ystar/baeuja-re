@@ -3,7 +3,9 @@
   @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
 */
 
+import { PoolClient } from 'pg';
 import conf from '../../../config';
+import { pool } from '../../../db';
 import { Sentence } from '../../../entities/sentence.entity';
 
 interface SentenceType {
@@ -26,10 +28,11 @@ export default class PostEvaluationDTO {
     userVoiceUri: string,
     sentenceId: number
   ): Promise<PostEvaluationDTO> {
+    const client: PoolClient = await pool.connect();
     try {
       const sentence: SentenceType = {
         sentenceId,
-        ...(await Sentence.findOne(sentenceId, 'koreanText')),
+        ...(await Sentence.findOne(client, sentenceId, 'koreanText')),
         perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
       };
       return new PostEvaluationDTO(userId, userVoiceUri, sentence);
