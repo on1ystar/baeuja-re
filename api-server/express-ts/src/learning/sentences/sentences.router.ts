@@ -18,7 +18,10 @@ sentencesRouter.post(
   upload.single('userVoice'),
   evaluateUserVoice
 );
-sentencesRouter.post('/:sentenceId/user-voice', recordUserVoiceCounts);
-sentencesRouter.post('/:sentenceId/perfect-voice', recordPerfectVoiceCounts);
+sentencesRouter.post('/:sentenceId(\\d+)/user-voice', recordUserVoiceCounts);
+sentencesRouter.post(
+  '/:sentenceId(\\d+)/perfect-voice',
+  recordPerfectVoiceCounts
+);
 
 export default sentencesRouter;

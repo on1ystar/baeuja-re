@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version hotfix/api/perfect-voice-counts
+ @version feature/api/PEAC-38-learning-list-api
  */
 
 import axios from 'axios';
@@ -14,9 +14,8 @@ import { s3Client } from '../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 
-// const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
-const FORMAT = 'wav';
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
+const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
 // /sentences/:sentenceId/units/evaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -26,7 +25,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
@@ -34,28 +33,26 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     const sentenceEvaluationCounts =
       await UserSentenceEvaluation.getSentenceEvaluationCounts(
         userId,
-        parseInt(sentenceId)
+        +sentenceId
       );
     const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${
       req.file?.originalname.split('.')[1]
     }`;
-    const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/${Key}`;
-    // const userVoiceUri = `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/words/가려지다.wav`;
     await s3Client.send(
       new PutObjectCommand({
-        Bucket: conf.bucket.data,
+        Bucket: conf.s3.bucketData,
         Key,
         Body: req.file?.buffer
         // ACL: 'public-read'
       })
     );
-    console.info('Success S3 upload--------------');
+    console.info('✅ Success S3 upload--------------');
 
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
     const postEvaluationDTO = await PostEvaluationDTO.getInstance(
       userId,
-      userVoiceUri,
-      parseInt(sentenceId)
+      `${S3_URL}/${conf.s3.bucketData}/${Key}`, // userVoiceUri for requesting to AI server
+      +sentenceId
     );
     // responsed to ai server
     let {
@@ -79,16 +76,15 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
         }
       })
     ).data;
-    if (!success)
-      throw new Error('Error : fail to ai server rest communication');
+    if (!success) throw new Error('fail to ai server rest communication');
 
     // 발음 평가 결과 DB 저장
     const userSentenceEvaluation = new UserSentenceEvaluation(
       userId,
-      parseInt(sentenceId),
-      evaluatedSentence.score,
+      +sentenceId,
       evaluatedSentence.sttResult,
-      userVoiceUri
+      evaluatedSentence.score,
+      `${S3_URL}/${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     );
     // await userSentenceEvaluation.insert(); // 테스트 후 지워야 함
     evaluatedSentence = {
@@ -117,16 +113,15 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
-
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
     const perfectVoiceCounts = await new UserSentenceHistory(
       userId,
-      parseInt(sentenceId)
-    ).updatePerfectVoiceCounts();
+      +sentenceId
+    ).updateUserVoiceCounts();
 
     return res.status(200).json({
       success: true,
-      sentenceHistory: { userId, sentenceId, perfectVoiceCounts }
+      sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
     });
   } catch (error) {
     console.error(error);
@@ -144,15 +139,16 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
 
   try {
     // request params 유효성 검사
-    if (isNaN(parseInt(sentenceId))) throw new Error("invalid params's syntax");
+    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
+
     const userVoiceCounts = await new UserSentenceHistory(
       userId,
-      parseInt(sentenceId)
+      +sentenceId
     ).updateUserVoiceCounts();
 
     return res.status(200).json({
       success: true,
-      sentenceHistory: { userId, sentenceId, userVoiceCounts }
+      sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
     });
   } catch (error) {
     console.error(error);

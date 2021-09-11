@@ -71,7 +71,7 @@ UnitsInKPOP:
           latestLearningAt:
             type: string
             description: 최근 학습 시간(안했으면 null)
-          representativeWords:
+          words:
             type: array
             items:
               type: object
@@ -97,7 +97,10 @@ UnitsInOthers:
             type: number
           thumbnailUri:
             type: string
-          representativeSentence:
+          latestLearningAt:
+            type: string
+            description: 최근 학습 시간(안했으면 null)
+          sentence:
             type: object
             properties:
               sentenceId:
@@ -114,9 +117,7 @@ UnitsInOthers:
                 type: boolean
               learningRate:
                 type: number
-              latestLearningAt:
-                type: string
-                description: 최근 학습 시간(안했으면 null)
+
 Unit:
   type: object
   properties:

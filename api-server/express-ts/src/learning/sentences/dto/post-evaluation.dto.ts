@@ -3,14 +3,16 @@
   @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
 */
 
-import { DatabaseError, QueryResult } from 'pg';
-import { pool } from '../../../db';
+import conf from '../../../config';
+import { Sentence } from '../../../entities/sentence.entity';
 
 interface SentenceType {
   readonly sentenceId: number;
   readonly koreanText: string;
   readonly perfectVoiceUri: string;
 }
+
+const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
 export default class PostEvaluationDTO {
   constructor(
@@ -27,28 +29,13 @@ export default class PostEvaluationDTO {
     try {
       const sentence: SentenceType = {
         sentenceId,
-        ...(await this.getSentence(sentenceId)),
-        perfectVoiceUri: `https://s3.ap-northeast-2.amazonaws.com/data.k-peach.io/perfect-voice/sentences/${sentenceId}.wav`
+        ...(await Sentence.findOne(sentenceId, 'koreanText')),
+        perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
       };
       return new PostEvaluationDTO(userId, userVoiceUri, sentence);
     } catch (error) {
+      console.error('❌ Error: post-evaluation.dto.ts getInstance function');
       throw error;
     }
   }
-
-  static getSentence = async (sentenceId: number) => {
-    try {
-      const queryResult: QueryResult<any> = await pool.query(
-        'SELECT  korean_text as "koreanText" FROM sentence WHERE sentence_id = $1',
-        [sentenceId]
-      );
-      if (!queryResult.rowCount) {
-        throw new Error('sentenceId does not exist');
-      }
-      return queryResult.rows[0];
-    } catch (error) {
-      console.error('Error: PostEvaluationDTO getSentence function ');
-      throw error;
-    }
-  };
 }
