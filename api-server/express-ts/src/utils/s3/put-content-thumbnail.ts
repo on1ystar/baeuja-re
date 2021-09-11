@@ -9,7 +9,7 @@ export const putContentThumbnail = async () => {
     try {
       const data = await s3Client.send(
         new PutObjectCommand({
-          Bucket: conf.bucket.data,
+          Bucket: conf.s3.bucketData,
           Key: `thumbnail/contents/${String(row.content_id)}/units/`
         })
       );
