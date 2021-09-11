@@ -13,17 +13,20 @@ import { UserUnitHistory } from '../../entities/user-unit-history.entity.';
 import GetUnitsKPOPDTO from './dto/get-units-K-POP.dto';
 import GetUnitsOthersDTO from './dto/get-units-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
+import { PoolClient } from 'pg';
+import { pool } from '../../db';
 
 // learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getContents = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7));
-
+  const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
     if (isNaN(userId)) throw new Error('invalid syntax of access token');
 
     const contents = await Content.leftJoinUserContentHistory(
+      client,
       userId,
       'Content.contentId',
       'Content.classification',
@@ -38,6 +41,8 @@ export const getContents = async (req: Request, res: Response) => {
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -46,13 +51,14 @@ export const getContents = async (req: Request, res: Response) => {
 export const getContentDetail = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7));
   const { contentId } = req.params;
-
+  const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
     if (isNaN(+contentId) || isNaN(userId))
       throw new Error('invalid syntax of params or access token');
 
     const content = await Content.findOne(
+      client,
       +contentId,
       'contentId',
       'title',
@@ -67,6 +73,8 @@ export const getContentDetail = async (req: Request, res: Response) => {
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -75,20 +83,28 @@ export const getContentDetail = async (req: Request, res: Response) => {
 export const getUnits = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7));
   const { contentId } = req.params;
-
+  const client: PoolClient = await pool.connect();
   try {
+    await client.query('BEGIN');
     // request params 유효성 검사
     if (isNaN(+contentId) || isNaN(userId))
       throw new Error('invalid syntax of params or access token');
 
-    const isExist = await UserContentHistory.isExist(userId, +contentId);
+    // ----- 학습 기록 저장 -----
+    const isExist = await UserContentHistory.isExist(
+      client,
+      userId,
+      +contentId
+    );
     const userContentHistory = new UserContentHistory(userId, +contentId);
     // 콘텐츠 학습 기록이 없는 경우, 콘텐츠 학습 기록 생성
-    if (!isExist) await userContentHistory.create();
+    if (!isExist) await userContentHistory.create(client);
     // 콘텐츠 학습 기록이 존재하는 경우, 콘텐츠 학습 횟수 1 증가
-    else userContentHistory.updateCounts();
+    else userContentHistory.updateCounts(client);
+    // ----- 학습 기록 저장 -----
 
     const content: { classification: string } = await Content.findOne(
+      client,
       +contentId,
       'classification'
     );
@@ -111,10 +127,13 @@ export const getUnits = async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error(error);
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };
 
@@ -123,8 +142,10 @@ export const getUnits = async (req: Request, res: Response) => {
 export const getUnit = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
   const { unitIndex, contentId } = req.params;
+  const client: PoolClient = await pool.connect();
 
   try {
+    await client.query('BEGIN');
     // request params 유효성 검사
     if (isNaN(+unitIndex) || isNaN(+contentId) || isNaN(userId))
       throw new Error('invalid syntax of params or access token');
@@ -136,7 +157,9 @@ export const getUnit = async (req: Request, res: Response) => {
       +unitIndex
     );
 
+    // ----- 학습 기록 저장 -----
     const isExist: boolean = await UserUnitHistory.isExist(
+      client,
       userId,
       +contentId,
       +unitIndex
@@ -144,21 +167,36 @@ export const getUnit = async (req: Request, res: Response) => {
     const userUnitHistory = new UserUnitHistory(userId, +contentId, +unitIndex);
     // 존재하지 않으면 유닛 및 포함된 문장 학습 기록 생성
     if (!isExist) {
-      await userUnitHistory.create(); // 유닛 학습 기록 생성
-
+      await userUnitHistory.create(client); // 유닛 학습 기록 생성
+      await new UserContentHistory(userId, +contentId).updateProgressRate(
+        client
+      );
+      // 문장 학습 기록 생성
       const sentenceIdList = (
-        await Sentence.findByUnit(+contentId, +unitIndex, 'sentenceId')
+        await Sentence.findByUnit(client, +contentId, +unitIndex, 'sentenceId')
       ).map(row => row.sentenceId);
-      await UserSentenceHistory.createList(userId, sentenceIdList); // 문장 학습 기록 생성
+      await UserSentenceHistory.createList(client, userId, sentenceIdList);
     }
-    // 존재하면 학습 횟수 1 증가
-    else await userUnitHistory.updateCounts();
+    // 존재하면 학습 횟수 1 증가, 문장 최근 학습 기록 갱신
+    else {
+      await userUnitHistory.updateCounts(client);
+      await UserSentenceHistory.updateLatestLearningAtByUnit(
+        client,
+        userId,
+        +contentId,
+        +unitIndex
+      );
+    }
+    // ----- 학습 기록 저장 -----
 
     return res.status(200).json(getUnitDTO);
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error(error);
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };

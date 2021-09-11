@@ -1,7 +1,7 @@
 /**
   @version feature/api/PEAC-38-learning-list-api
 */
-import { pool } from '../db';
+import { PoolClient } from 'pg';
 import { getSelectColumns } from '../utils/Query';
 
 export class Sentence {
@@ -22,7 +22,11 @@ export class Sentence {
 
   // id에 해당하는 문장 1개
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static findOne = async (sentenceId: number, ..._columns: string[]) => {
+  static findOne = async (
+    client: PoolClient,
+    sentenceId: number,
+    ..._columns: string[]
+  ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
       if (_columns.length === 0)
@@ -31,7 +35,7 @@ export class Sentence {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM sentence \
         WHERE sentence_id = ${sentenceId}`
       );
@@ -48,6 +52,7 @@ export class Sentence {
   // 유닛에 해당하는 문장 리스트
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static findByUnit = async (
+    client: PoolClient,
     contentId: number,
     unitIndex: number,
     ..._columns: string[]
@@ -60,7 +65,7 @@ export class Sentence {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM sentence \
         WHERE content_id = ${contentId} AND unit_index = ${unitIndex}`
       );
@@ -77,6 +82,7 @@ export class Sentence {
   // 사용자의 학습 기록을 포함한 특정 유닛의 문장 리스트
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static fullJoinUserSentenceHistory = async (
+    client: PoolClient,
     userId: number,
     contentId: number,
     unitIndex: number,
@@ -90,7 +96,7 @@ export class Sentence {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS}, COALESCE(user_sentence_history.is_bookmark, false) as "isBookmark"
         FROM sentence 
         FULL JOIN 
@@ -114,6 +120,7 @@ export class Sentence {
   // 유닛에 포한된 문장 별 단어 리스트
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static joinWord = async (
+    client: PoolClient,
     contentId: number,
     unitIndex: number,
     ..._columns: string[]
@@ -126,7 +133,7 @@ export class Sentence {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS}
         FROM sentence 
         JOIN word
