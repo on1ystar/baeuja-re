@@ -19,6 +19,7 @@ export class Content {
     readonly modifiedAt?: string
   ) {}
 
+  // 콘텐츠 1개에 대한 row 반환
   static findOne = async (contentId: number, ..._columns: string[]) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -41,9 +42,9 @@ export class Content {
     }
   };
 
-  static joinUserContentHistory = async (
+  // user_content_history 테이블과 left join (progress_rate 컬럼을 위해)
+  static leftJoinUserContentHistory = async (
     userId: number,
-    contentId: number,
     ..._columns: string[]
   ) => {
     try {
@@ -55,16 +56,14 @@ export class Content {
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
       const queryResult = await pool.query(
-        `SELECT ${SELECT_COLUMNS}
+        `SELECT ${SELECT_COLUMNS}, COALESCE(user_content_history.progress_rate, 0) as "progressRate"
         FROM content 
-        FULL JOIN 
+        LEFT JOIN 
           (SELECT * FROM user_content_history 
           WHERE user_id = ${userId}) as user_content_history 
-        ON content.content_id = user_content_history.content_id 
-        WHERE content.content_id = ${contentId}`
+        ON content.content_id = user_content_history.content_id`
       );
-      if (!queryResult.rowCount)
-        throw new Error('contentId or unitIndex does not exist');
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
 
       return queryResult.rows;
     } catch (error) {

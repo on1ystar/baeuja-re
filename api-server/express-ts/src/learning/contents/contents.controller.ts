@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /** 
- @description 학습 페이지를 위한 컨트롤러
+ @description learning 페이지를 위한 컨트롤러
  @version feature/api/PEAC-38-learning-list-api
  */
 
@@ -10,13 +10,69 @@ import { Sentence } from '../../entities/sentence.entity';
 import { UserContentHistory } from '../../entities/user-content-history.entity';
 import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
 import { UserUnitHistory } from '../../entities/user-unit-history.entity.';
-import GetUnitListKPOPDTO from './dto/get-unit-list-K-POP.dto';
-import GetUnitListOthersDTO from './dto/get-unit-list-others.dto';
+import GetUnitsKPOPDTO from './dto/get-units-K-POP.dto';
+import GetUnitsOthersDTO from './dto/get-units-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
+
+// learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const getContents = async (req: Request, res: Response) => {
+  const userId = Number(req.headers.authorization?.substring(7));
+
+  try {
+    // reqeust params 유효성 검사
+    if (isNaN(userId)) throw new Error('invalid syntax of access token');
+
+    const contents = await Content.leftJoinUserContentHistory(
+      userId,
+      'Content.contentId',
+      'Content.classification',
+      'Content.title',
+      'Content.artist',
+      'Content.director',
+      'Content.thumbnailUri'
+    );
+    return res.status(200).json({ success: true, contents });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  }
+};
+
+// learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const getContentDetail = async (req: Request, res: Response) => {
+  const userId = Number(req.headers.authorization?.substring(7));
+  const { contentId } = req.params;
+
+  try {
+    // reqeust params 유효성 검사
+    if (isNaN(+contentId) || isNaN(userId))
+      throw new Error('invalid syntax of params or access token');
+
+    const content = await Content.findOne(
+      +contentId,
+      'contentId',
+      'title',
+      'artist',
+      'director',
+      'description',
+      'thumbnailUri'
+    );
+    return res.status(200).json({ success: true, content });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  }
+};
 
 // 콘텐츠 선택 -> 유닛 리스트 화면을 구성하기 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const getUnitList = async (req: Request, res: Response) => {
+export const getUnits = async (req: Request, res: Response) => {
   const userId = Number(req.headers.authorization?.substring(7));
   const { contentId } = req.params;
 
@@ -38,20 +94,20 @@ export const getUnitList = async (req: Request, res: Response) => {
     );
     // 콘텐츠가 K-POP인 경우
     if (content.classification === 'K-POP') {
-      const getUnitListKPOPDTO = await GetUnitListKPOPDTO.getInstance(
+      const getUnitsKPOPDTOs = await GetUnitsKPOPDTO.getInstances(
         userId,
         +contentId
       );
-      Promise.all(getUnitListKPOPDTO).then(unitList => {
-        return res.status(200).json({ success: true, unitList });
+      Promise.all(getUnitsKPOPDTOs).then(units => {
+        return res.status(200).json({ success: true, units });
       });
     } else {
-      const getUnitListOthersDTO = await GetUnitListOthersDTO.getInstance(
+      const getUnitsOthersDTOs = await GetUnitsOthersDTO.getInstances(
         userId,
         +contentId
       );
-      Promise.all(getUnitListOthersDTO).then(unitList => {
-        return res.status(200).json({ success: true, unitList });
+      Promise.all(getUnitsOthersDTOs).then(units => {
+        return res.status(200).json({ success: true, units });
       });
     }
   } catch (error) {

@@ -11,7 +11,7 @@ interface WordType {
   readonly originalKoreanText: string;
 }
 
-export default class GetUnitListKPOPDTO {
+export default class GetUnitsKPOPDTO {
   constructor(
     readonly contentId: number,
     readonly unitIndex: number,
@@ -22,16 +22,16 @@ export default class GetUnitListKPOPDTO {
     readonly words: WordType[]
   ) {}
 
-  static getInstance = async (userId: number, contentId: number) => {
+  static getInstances = async (userId: number, contentId: number) => {
     try {
-      const unitList = await Unit.leftJoinUserUnitHistory(
+      const units = await Unit.leftJoinUserUnitHistory(
         userId,
         contentId,
         'Unit.unitIndex',
         'Unit.thumbnailUri',
         'UserUnitHistory.latestLearningAt'
       );
-      const mappedUnitList = unitList.map(async unit => {
+      const mappedUnitList = units.map(async unit => {
         const sentencesCounts = (
           await Sentence.findByUnit(contentId, unit.unitIndex, 'sentenceId')
         ).length;
@@ -42,7 +42,7 @@ export default class GetUnitListKPOPDTO {
           'Word.originalKoreanText'
         );
         const wordsCounts = words.length;
-        return new GetUnitListKPOPDTO(
+        return new GetUnitsKPOPDTO(
           contentId,
           unit.unitIndex,
           unit.thumbnailUri,
@@ -54,9 +54,7 @@ export default class GetUnitListKPOPDTO {
       });
       return mappedUnitList;
     } catch (error) {
-      console.error(
-        '❌ Error: get-unit-list-K-POP.dto.ts getInstance function'
-      );
+      console.error('❌ Error: get-units-K-POP.dto.ts getInstance function');
       throw error;
     }
   };

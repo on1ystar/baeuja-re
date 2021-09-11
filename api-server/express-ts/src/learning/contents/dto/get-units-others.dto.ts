@@ -16,7 +16,7 @@ interface SentenceType {
   readonly isBookmark: true;
 }
 
-export default class GetUnitListOthersDTO {
+export default class GetUnitsOthersDTO {
   constructor(
     readonly contentId: number,
     readonly unitIndex: number,
@@ -25,16 +25,16 @@ export default class GetUnitListOthersDTO {
     readonly sentence: SentenceType // 대표 문장
   ) {}
 
-  static getInstance = async (userId: number, contentId: number) => {
+  static getInstances = async (userId: number, contentId: number) => {
     try {
-      const unitList = await Unit.leftJoinUserUnitHistory(
+      const units = await Unit.leftJoinUserUnitHistory(
         userId,
         contentId,
         'Unit.unitIndex',
         'Unit.thumbnailUri',
         'UserUnitHistory.latestLearningAt'
       );
-      const mappedUnitList = unitList.map(async unit => {
+      const mappedUnitList = units.map(async unit => {
         const sentence: SentenceType = (
           await Sentence.fullJoinUserSentenceHistory(
             userId,
@@ -49,7 +49,7 @@ export default class GetUnitListOthersDTO {
           )
         )[0];
 
-        return new GetUnitListOthersDTO(
+        return new GetUnitsOthersDTO(
           contentId,
           unit.unitIndex,
           unit.thumbnailUri,
@@ -59,9 +59,7 @@ export default class GetUnitListOthersDTO {
       });
       return mappedUnitList;
     } catch (error) {
-      console.error(
-        '❌ Error: get-unit-list-others.dto.ts getInstance function'
-      );
+      console.error('❌ Error: get-units-others.dto.ts getInstance function');
       throw error;
     }
   };
