@@ -1,10 +1,11 @@
 /**
   @description user_sentence_history entity with repository
-  @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
+  @version hotfix/api/PEAC-38-progressRate
 */
+import { PoolClient } from 'pg';
 import format from 'pg-format';
-import { pool } from '../db';
 import { getNowKO } from '../utils/Date';
+import { Sentence } from './sentence.entity';
 
 const DEFAULT_LEARNING_RATE = 0;
 
@@ -23,7 +24,12 @@ export class UserSentenceHistory {
   ) {}
 
   // 사용자 문장 학습 기록 생성
-  static createList = async (userId: number, sentencesId: number[]) => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static createList = async (
+    client: PoolClient,
+    userId: number,
+    sentencesId: number[]
+  ) => {
     try {
       const ARRAY_INSERT_SQL = format(
         `INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) 
@@ -36,7 +42,7 @@ export class UserSentenceHistory {
         ])
       );
 
-      await pool.query(ARRAY_INSERT_SQL);
+      await client.query(ARRAY_INSERT_SQL);
       console.info("✅ inserted user_sentence_history table's rows");
     } catch (error) {
       console.error(
@@ -46,11 +52,48 @@ export class UserSentenceHistory {
     }
   };
 
+  // 유닛에 포함된 문장들의 최근 학습 시간 갱신
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static updateLatestLearningAtByUnit = async (
+    client: PoolClient,
+    userId: number,
+    contentId: number,
+    unitIndex: number
+  ) => {
+    try {
+      const sentenceIdList = await Sentence.findByUnit(
+        client,
+        contentId,
+        unitIndex,
+        'sentenceId'
+      );
+
+      await client.query(
+        `UPDATE user_sentence_history 
+          SET latest_learning_at = ${getNowKO()} 
+          WHERE user_id = ${userId} AND ${
+          sentenceIdList[0].sentenceId
+        } <= sentence_id AND sentence_id <= ${
+          sentenceIdList[sentenceIdList.length - 1].sentenceId
+        }`
+      );
+      console.info(
+        "✅ updated user_sentence_history table's latest_learning_at"
+      );
+    } catch (error) {
+      console.error(
+        '❌ Error: user-sentence-history.entity.ts updateLatestLearningAtByUnit function '
+      );
+      throw error;
+    }
+  };
+
   // 성우 음성 재생 횟수 1 증가
-  updatePerfectVoiceCounts = async () => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  updatePerfectVoiceCounts = async (client: PoolClient) => {
     try {
       const perfectVoiceCounts = (
-        await pool.query(
+        await client.query(
           `UPDATE user_sentence_history 
           SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = ${getNowKO()} 
           WHERE user_id = ${this.userId} AND sentence_id = ${this.sentenceId} 
@@ -70,10 +113,11 @@ export class UserSentenceHistory {
   };
 
   // 사용자 음성 재생 횟수 1 증가
-  updateUserVoiceCounts = async () => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  updateUserVoiceCounts = async (client: PoolClient) => {
     try {
       const userVoiceCounts = (
-        await pool.query(
+        await client.query(
           `UPDATE user_sentence_history 
           SET user_voice_counts = user_voice_counts + 1, latest_learning_at = ${getNowKO()} 
           WHERE user_id = ${this.userId} AND sentence_id = ${

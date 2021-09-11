@@ -2,7 +2,7 @@
   @description user_sentence_evaluation entity with repository
   @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
 */
-import { pool } from '../db';
+import { PoolClient } from 'pg';
 import { getNowKO } from '../utils/Date';
 
 export default class UserSentenceEvaluation {
@@ -19,6 +19,7 @@ export default class UserSentenceEvaluation {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static getSentenceEvaluationCounts = async (
+    client: PoolClient,
     userId: number,
     sentenceId: number
   ) => {
@@ -26,7 +27,7 @@ export default class UserSentenceEvaluation {
       const sentenceEvaluationCounts =
         parseInt(
           (
-            await pool.query(
+            await client.query(
               `SELECT count(*) 
               FROM user_sentence_evaluation 
               WHERE user_id = ${userId} AND sentence_id = ${sentenceId}`
@@ -45,14 +46,15 @@ export default class UserSentenceEvaluation {
     }
   };
 
-  create = async () => {
+  create = async (client: PoolClient) => {
     try {
       this.sentenceEvaluationCounts =
         await UserSentenceEvaluation.getSentenceEvaluationCounts(
+          client,
           this.userId,
           this.sentenceId
         );
-      await pool.query(
+      await client.query(
         `INSERT INTO user_sentence_evaluation
         VALUES(${this.userId},${this.sentenceId},${
           this.sentenceEvaluationCounts

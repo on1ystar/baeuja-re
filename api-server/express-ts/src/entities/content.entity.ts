@@ -2,7 +2,7 @@
   @version feature/api/PEAC-38-learning-list-api
 */
 
-import { pool } from '../db';
+import { PoolClient } from 'pg';
 import { getSelectColumns } from '../utils/Query';
 
 export class Content {
@@ -20,7 +20,12 @@ export class Content {
   ) {}
 
   // 콘텐츠 1개에 대한 row 반환
-  static findOne = async (contentId: number, ..._columns: string[]) => {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static findOne = async (
+    client: PoolClient,
+    contentId: number,
+    ..._columns: string[]
+  ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
       if (_columns.length === 0)
@@ -29,7 +34,7 @@ export class Content {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM content \
         WHERE content_id = ${contentId}`
       );
@@ -43,7 +48,9 @@ export class Content {
   };
 
   // user_content_history 테이블과 left join (progress_rate 컬럼을 위해)
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static leftJoinUserContentHistory = async (
+    client: PoolClient,
     userId: number,
     ..._columns: string[]
   ) => {
@@ -55,7 +62,7 @@ export class Content {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      const queryResult = await pool.query(
+      const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS}, COALESCE(user_content_history.progress_rate, 0) as "progressRate"
         FROM content 
         LEFT JOIN 

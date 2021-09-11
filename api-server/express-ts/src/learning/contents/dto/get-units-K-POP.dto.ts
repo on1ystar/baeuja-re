@@ -3,6 +3,8 @@
  * @version feature/api/PEAC-38-learning-list-api
  */
 
+import { PoolClient } from 'pg';
+import { pool } from '../../../db';
 import { Sentence } from '../../../entities/sentence.entity';
 import { Unit } from '../../../entities/unit.entity';
 
@@ -23,8 +25,10 @@ export default class GetUnitsKPOPDTO {
   ) {}
 
   static getInstances = async (userId: number, contentId: number) => {
+    const client: PoolClient = await pool.connect();
     try {
       const units = await Unit.leftJoinUserUnitHistory(
+        client,
         userId,
         contentId,
         'Unit.unitIndex',
@@ -33,9 +37,15 @@ export default class GetUnitsKPOPDTO {
       );
       const mappedUnitList = units.map(async unit => {
         const sentencesCounts = (
-          await Sentence.findByUnit(contentId, unit.unitIndex, 'sentenceId')
+          await Sentence.findByUnit(
+            client,
+            contentId,
+            unit.unitIndex,
+            'sentenceId'
+          )
         ).length;
         const words: WordType[] = await Unit.leftJoinSentenceAndWord(
+          client,
           contentId,
           unit.unitIndex,
           'Word.wordId',
@@ -56,6 +66,8 @@ export default class GetUnitsKPOPDTO {
     } catch (error) {
       console.error('❌ Error: get-units-K-POP.dto.ts getInstance function');
       throw error;
+    } finally {
+      client.release();
     }
   };
 }

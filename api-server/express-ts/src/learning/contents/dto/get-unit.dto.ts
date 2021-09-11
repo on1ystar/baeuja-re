@@ -2,6 +2,8 @@
   @description 메인(문장) 학습 화면 구성을 위한 DTO
   @version feature/api/PEAC-38-learning-list-api
  */
+import { PoolClient } from 'pg';
+import { pool } from '../../../db';
 import { Sentence } from '../../../entities/sentence.entity';
 import { Unit } from '../../../entities/unit.entity';
 
@@ -52,8 +54,10 @@ export default class GetUnitDTO {
     contentId: number,
     unitIndex: number
   ): Promise<GetUnitDTO> {
+    const client: PoolClient = await pool.connect();
     try {
       const unit: UnitType = await Unit.findOne(
+        client,
         unitIndex,
         contentId,
         'unitIndex',
@@ -64,6 +68,7 @@ export default class GetUnitDTO {
       );
       const sentences: SentenceType[] =
         await Sentence.fullJoinUserSentenceHistory(
+          client,
           userId,
           contentId,
           unitIndex,
@@ -75,6 +80,7 @@ export default class GetUnitDTO {
           'Sentence.endTime'
         );
       const words: WordType[] = await Sentence.joinWord(
+        client,
         contentId,
         unitIndex,
         'Word.wordId',
@@ -94,6 +100,8 @@ export default class GetUnitDTO {
     } catch (error) {
       console.error('❌ Error: get-unit.dto.ts getInstance function');
       throw error;
+    } finally {
+      client.release();
     }
   }
 }
