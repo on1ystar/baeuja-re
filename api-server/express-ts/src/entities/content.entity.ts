@@ -68,7 +68,8 @@ export class Content {
         LEFT JOIN 
           (SELECT * FROM user_content_history 
           WHERE user_id = ${userId}) as user_content_history 
-        ON content.content_id = user_content_history.content_id`
+        ON content.content_id = user_content_history.content_id
+        ORDER BY content.content_id ASC`
       );
       if (!queryResult.rowCount) throw new Error('contentId does not exist');
 
