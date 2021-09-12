@@ -114,6 +114,9 @@ export const getUnits = async (req: Request, res: Response) => {
         userId,
         +contentId
       );
+
+      await client.query('COMMIT');
+
       Promise.all(getUnitsKPOPDTOs).then(units => {
         return res.status(200).json({ success: true, units });
       });
@@ -122,6 +125,9 @@ export const getUnits = async (req: Request, res: Response) => {
         userId,
         +contentId
       );
+
+      await client.query('COMMIT');
+
       Promise.all(getUnitsOthersDTOs).then(units => {
         return res.status(200).json({ success: true, units });
       });
@@ -188,6 +194,8 @@ export const getUnit = async (req: Request, res: Response) => {
       );
     }
     // ----- 학습 기록 저장 -----
+
+    await client.query('COMMIT');
 
     return res.status(200).json(getUnitDTO);
   } catch (error) {

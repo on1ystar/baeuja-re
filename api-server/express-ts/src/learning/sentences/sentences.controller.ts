@@ -88,15 +88,18 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     const userSentenceEvaluation = new UserSentenceEvaluation(
       userId,
       +sentenceId,
+      sentenceEvaluationCounts,
       evaluatedSentence.sttResult,
       evaluatedSentence.score,
-      `${S3_URL}/${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
+      `${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     );
     evaluatedSentence = {
       ...evaluatedSentence,
       ...(await userSentenceEvaluation.create(client))
     };
     console.timeEnd('evaluateUserVoice');
+
+    await client.query('COMMIT');
 
     return res
       .status(200)
@@ -131,6 +134,8 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
       +sentenceId
     ).updateUserVoiceCounts(client);
 
+    await client.query('COMMIT');
+
     return res.status(200).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
@@ -163,6 +168,8 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
       userId,
       +sentenceId
     ).updateUserVoiceCounts(client);
+
+    await client.query('COMMIT');
 
     return res.status(200).json({
       success: true,

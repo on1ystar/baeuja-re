@@ -9,12 +9,12 @@ export default class UserSentenceEvaluation {
   constructor(
     readonly userId: number,
     readonly sentenceId: number,
+    readonly sentenceEvaluationCounts: number,
     readonly sttResult: string,
     readonly score: number,
     readonly userVoiceUri: string,
     readonly isPublic?: boolean,
-    readonly createdAt?: string,
-    public sentenceEvaluationCounts?: number
+    readonly createdAt?: string
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -48,19 +48,13 @@ export default class UserSentenceEvaluation {
 
   create = async (client: PoolClient) => {
     try {
-      this.sentenceEvaluationCounts =
-        await UserSentenceEvaluation.getSentenceEvaluationCounts(
-          client,
-          this.userId,
-          this.sentenceId
-        );
       await client.query(
         `INSERT INTO user_sentence_evaluation
         VALUES(${this.userId},${this.sentenceId},${
           this.sentenceEvaluationCounts
-        }, ${this.sttResult}, ${this.score}, ${
+        }, '${this.sttResult}', ${this.score}, '${
           this.userVoiceUri
-        }, DEFAULT, ${getNowKO()})`
+        }', DEFAULT, ${getNowKO()})`
       );
       return {
         sentenceEvaluationCounts: this.sentenceEvaluationCounts,
