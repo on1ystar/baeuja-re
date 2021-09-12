@@ -66,12 +66,13 @@ export class UserContentHistory {
         userUnitHistoryRows.filter(row => row.unitIndex !== null).length /
         userUnitHistoryRows.length
       ).toFixed(2);
+      console.log('progressRate: ', progressRate);
       await client.query(
         `UPDATE user_content_history 
         SET progress_rate = ${
           progressRate * 100
         }, latest_learning_at = ${getNowKO()}
-        WHERE user_id = ${this.userId} AND content_id = ${this.contentId} `
+        WHERE user_id = ${this.userId} AND content_id = ${this.contentId}`
       );
       console.info("✅ updated user_content_history table's progress_rate");
     } catch (error) {

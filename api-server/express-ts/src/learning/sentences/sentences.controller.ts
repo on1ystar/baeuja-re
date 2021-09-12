@@ -41,9 +41,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
         userId,
         +sentenceId
       );
-    const Key = `user-voice/${userId}/${sentenceId}/${sentenceEvaluationCounts}.${
-      req.file?.originalname.split('.')[1]
-    }`;
+    const FORMAT: string = req.file?.originalname.split('.')[1] || 'wav';
+    const Key = `user-voice/${userId}/sentences/${sentenceId}/${sentenceEvaluationCounts}.${FORMAT}`;
     await s3Client.send(
       new PutObjectCommand({
         Bucket: conf.s3.bucketData,
@@ -132,7 +131,7 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
     const perfectVoiceCounts = await new UserSentenceHistory(
       userId,
       +sentenceId
-    ).updateUserVoiceCounts(client);
+    ).updatePerfectVoiceCounts(client);
 
     await client.query('COMMIT');
 
