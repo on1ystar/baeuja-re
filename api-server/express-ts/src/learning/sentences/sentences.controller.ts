@@ -105,8 +105,10 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       .json({ success: true, evaluatedSentence, pitchData });
   } catch (error) {
     await client.query('ROLLBACK');
+
     if (error instanceof MulterError) console.log('❌ MulterError ');
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
@@ -141,7 +143,9 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
     });
   } catch (error) {
     await client.query('ROLLBACK');
+
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
@@ -177,6 +181,7 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });

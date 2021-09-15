@@ -20,7 +20,12 @@ const conf: {
     name: string | undefined;
     port: string | undefined;
   };
+  googleApi: {
+    clientId: string | undefined;
+    secret: string | undefined;
+  };
   peachAi: { ip: string | undefined };
+  url: { local: string; domain: string };
 } = {
   peachApi: {
     accessKey: process.env.PEACH_API_ACCESS_KEY_ID,
@@ -39,6 +44,10 @@ const conf: {
     name: process.env.DB_NAME,
     port: process.env.DB_PORT
   },
+  googleApi: {
+    clientId: process.env.GOOGLE_API_CLIENT_ID,
+    secret: process.env.GOOGLE_API_CLIENT_SECRET
+  },
   //   jwt: {
   //     secretKey: Buffer.from(process.env.JWT_SECRET_KEY),
   //     options: {
@@ -48,6 +57,10 @@ const conf: {
   //   },
   peachAi: {
     ip: process.env.PEACH_AI_IP
+  },
+  url: {
+    local: 'http://localhost:4001',
+    domain: 'https://api.k-peach.io'
   }
 };
 
