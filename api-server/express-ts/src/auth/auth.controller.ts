@@ -1,55 +1,69 @@
 /**
-    @description 사용자 인증을 위한 컨트롤러
+    @description 로그인 화면 -> google login 클릭 -> googleRequestUrl로 code 요청 -> googleCallback으로 code 응답 -> code를 포함해 토큰 요청 -> 토큰 반환
     @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
 */
 
 import { Request, Response } from 'express';
-import conf from '../config';
-import { google } from 'googleapis';
+import { Auth } from 'googleapis';
+import { pool } from '../db';
+import { GoogleOAuth2 } from '../utils/GoogleOAuth2';
+import { User } from '../entities/user.entity';
+import { PoolClient } from 'pg';
 
-const CALLBACK_URL = '/auth/google/callback';
-
-const oauth2Client = new google.auth.OAuth2(
-  conf.googleApi.clientId,
-  conf.googleApi.secret,
-  process.env.RUN === 'dev'
-    ? `${conf.url.local}${CALLBACK_URL}`
-    : `${conf.url.domain}${CALLBACK_URL}`
-);
-
-const googleRequestUrl = oauth2Client.generateAuthUrl({
-  // 'online' (default) or 'offline' (gets refresh_token)
-  access_type: 'offline',
-  scope: [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile'
-  ]
-});
+const googleOAuth2 = new GoogleOAuth2();
+const oauth2Client = googleOAuth2.getOAuth2Client();
 
 // /auth/google
 export const googleRequest = (req: Request, res: Response) => {
+  const googleRequestUrl: string = oauth2Client.generateAuthUrl({
+    // 'online' (default) or 'offline' (gets refresh_token)
+    access_type: 'online',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile'
+    ]
+  });
   res.redirect(googleRequestUrl);
 };
 
 // /auth/google/callback
+// get access token, refresh token, id token
 export const googleCallback = async (req: Request, res: Response) => {
   const code = req.query.code as string;
+  const poolClient: PoolClient = await pool.connect();
+
   try {
-    const { tokens } = await oauth2Client.getToken(code);
-    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+    // 새로운 access_token, refresh_token 발급
+    const { tokens }: { tokens: Auth.Credentials } =
+      await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
-    console.log(tokens);
-    console.log(await oauth2.userinfo.v2.me.get());
+    // email, name, locale
+    const userinfo = await googleOAuth2.getUserinfo();
+
+    let userId: number;
+    // DB users 테이블에 유저 정보가 있는 경우
+    if (await User.isExist(poolClient, userinfo.email as string)) {
+      userId = await User.findOneByEmail(
+        poolClient,
+        userinfo.email as string,
+        'userId'
+      );
+    } else {
+      // user 생성
+      const user = new User(
+        userinfo.email as string,
+        userinfo.name as string,
+        userinfo.locale as string
+      );
+      userId = (await user.create(poolClient)).userId as unknown as number;
+    }
+    console.info(`user_id: ${userId}, email: ${userinfo.email}`);
+    res.status(200).json({ success: true, userId });
   } catch (error) {
-    console.log(error);
+    console.error('❌ Error: auth.controller.ts googleCallback function');
+    console.error(error);
+    return res.status(500).json({ sucess: false, errorMessage: error.message });
+  } finally {
+    poolClient.release();
   }
-  // refresh_token 저장
-  // oauth2Client.on('tokens', (tokens) => {
-  //   if (tokens.refresh_token) {
-  //     // store the refresh_token in my database!
-  //     console.log(tokens.refresh_token);
-  //   }
-  //   console.log(tokens.access_token);
-  // });
-  res.send('googleCallback');
 };

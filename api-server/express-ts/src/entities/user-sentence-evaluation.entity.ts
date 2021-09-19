@@ -64,7 +64,7 @@ export default class UserSentenceEvaluation {
       };
     } catch (error) {
       console.error(
-        '❌ Error: user-sentence-evaluation.entity.ts insert function '
+        '❌ Error: user-sentence-evaluation.entity.ts create function '
       );
       throw error;
     }
