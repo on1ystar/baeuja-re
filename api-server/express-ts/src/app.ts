@@ -18,6 +18,7 @@ import cors from 'cors';
 import learningApp from './learning';
 import appRouter from './app.router';
 import authApp from './auth';
+import { checkUserId } from './utils/Auth';
 
 const app: Application = express();
 const logger = morgan('dev');
@@ -31,8 +32,8 @@ usersApp.use(cors()); // cors 모듈
 
 app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
-app.use('/users', usersApp); // injecting users app
-app.use('/learning', learningApp); // injecting learning app
+app.use('/users', checkUserId, usersApp); // injecting users app
+app.use('/learning', checkUserId, learningApp); // injecting learning app
 app.use('/auth', authApp); // injection auth app
 
 export default app;

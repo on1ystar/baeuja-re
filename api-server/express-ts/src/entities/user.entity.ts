@@ -29,11 +29,15 @@ export class User {
   // 유저 생성
   create = async (client: PoolClient) => {
     try {
-      const createdUserId: QueryResult<any> = await client.query(
-        `INSERT INTO users 
-        VALUES(DEFAULT, ${this.email}, ${this.nickname}, ${this.locale}, DEFAULT, ${getNowKO}, ${getNowKO},${getNowKO})
+      const createdUserId: QueryResult<any> = (
+        await client.query(
+          `INSERT INTO users 
+        VALUES(DEFAULT, '${this.email}', '${this.nickname}', '${
+            this.locale
+          }', DEFAULT, ${getNowKO()}, ${getNowKO()},${getNowKO()})
         RETURNING user_id`
-      );
+        )
+      ).rows[0].user_id;
       console.info(`✅ created user `);
 
       return { userId: createdUserId, email: this.email };
@@ -60,6 +64,23 @@ export class User {
     }
   };
 
+  // 유저 존재 여부 확인
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static isExistById = async (client: PoolClient, userId: number) => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT COUNT(*) FROM users
+        WHERE user_id = ${userId}`
+      );
+
+      if (+queryResult.rows[0].count === 0) return false;
+      return true;
+    } catch (error) {
+      console.error('❌ Error: user.entity.ts isExistById function ');
+      throw error;
+    }
+  };
+
   // 유저 조회
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static findOneByEmail = async (
@@ -76,8 +97,8 @@ export class User {
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
       const queryResult = await client.query(
-        `SELECT ${SELECT_COLUMNS} FROM users \
-       WHERE email = ${email}`
+        `SELECT ${SELECT_COLUMNS} FROM users
+       WHERE email = '${email}'`
       );
       if (!queryResult.rowCount) throw new Error('email does not exist');
 
