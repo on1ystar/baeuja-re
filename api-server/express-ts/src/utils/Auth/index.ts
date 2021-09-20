@@ -8,25 +8,31 @@ export const checkUserId = async (
   res: Response,
   next: NextFunction
 ) => {
-  // request body에 userId가 없을 경우
-  if (req.body.userId === undefined) {
+  const [authType, aythScheme] = req.headers.authorization?.split(
+    ' '
+  ) as string[];
+  // Authorization header에 Basic 키워드가 없거나 잘못 입력된 경우
+  if (authType !== 'Basic') {
     res.status(400).json({
       success: false,
-      errorMessage: 'A userId is undefined in request.body'
+      errorMessage: 'Authorization header type is not Basic'
     });
   }
   const poolClient: PoolClient = await pool.connect();
-
+  const userId = Buffer.from(aythScheme, 'base64')
+    .toString('utf8')
+    .split(':')[1];
   try {
-    if (!(await User.isExistById(poolClient, parseInt(req.body.userId)))) {
-      res.status(400).json({
+    if (!(await User.isExistById(poolClient, parseInt(userId)))) {
+      res.status(401).json({
         success: false,
-        errorMessage: 'The userId does not exist in table'
+        errorMessage: 'The scheme does not exist in table'
       });
     }
+    res.locals.userId = userId;
     next();
   } catch (error) {
-    throw error;
+    next(error);
   } finally {
     poolClient.release();
   }

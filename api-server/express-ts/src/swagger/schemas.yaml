@@ -316,33 +316,6 @@ Word:
                   type: string
                 translatedText:
                   type: string
-# -------------------------- users -------------------------- #
-User:
-  type: object
-  properties:
-    success:
-      type: boolean
-      example: true
-    users:
-      type: array
-      items:
-        type: object
-        properties:
-          userId:
-            type: number
-            description: primary key
-          email:
-            type: string
-            description: 이메일
-          nickname:
-            type: string
-            description: 닉네임
-          country:
-            type: string
-            description: 사용자 국가
-          usageTime:
-            type: string
-            description: 앱 사용 시간
 # -------------------------- history -------------------------- #
 UserSentenceHistory:
   type: object
@@ -375,6 +348,16 @@ UserSentenceHistory:
         latestLearningAt:
           type: string
           description: 최근 학습 시각
+# -------------------------- auth -------------------------- #
+Auth:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    userId:
+      type: number
+      description: user id
 # -------------------------- error -------------------------- #
 Error:
   type: object
