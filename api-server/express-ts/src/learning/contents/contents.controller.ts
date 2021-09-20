@@ -19,12 +19,9 @@ import { pool } from '../../db';
 // learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getContents = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7));
+  const userId: number = res.locals.userId;
   const client: PoolClient = await pool.connect();
   try {
-    // reqeust params 유효성 검사
-    if (isNaN(userId)) throw new Error('invalid syntax of access token');
-
     const contents = await Content.leftJoinUserContentHistory(
       client,
       userId,
@@ -49,13 +46,11 @@ export const getContents = async (req: Request, res: Response) => {
 // learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getContentDetail = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7));
   const { contentId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
-    if (isNaN(+contentId) || isNaN(userId))
-      throw new Error('invalid syntax of params or access token');
+    if (isNaN(+contentId)) throw new Error('invalid syntax of params');
 
     const content = await Content.findOne(
       client,
@@ -81,14 +76,14 @@ export const getContentDetail = async (req: Request, res: Response) => {
 // 콘텐츠 선택 -> 유닛 리스트 화면을 구성하기 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUnits = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7));
+  const userId: number = res.locals.userId;
+
   const { contentId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
     await client.query('BEGIN');
     // request params 유효성 검사
-    if (isNaN(+contentId) || isNaN(userId))
-      throw new Error('invalid syntax of params or access token');
+    if (isNaN(+contentId)) throw new Error('invalid syntax of params');
 
     // ----- 학습 기록 저장 -----
     const isExist = await UserContentHistory.isExist(
@@ -146,15 +141,15 @@ export const getUnits = async (req: Request, res: Response) => {
 // 유닛 선택 -> 유닛 학습 화면을 구성하기 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUnit = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const userId: number = res.locals.userId;
   const { unitIndex, contentId } = req.params;
   const client: PoolClient = await pool.connect();
 
   try {
     await client.query('BEGIN');
     // request params 유효성 검사
-    if (isNaN(+unitIndex) || isNaN(+contentId) || isNaN(userId))
-      throw new Error('invalid syntax of params or access token');
+    if (isNaN(+unitIndex) || isNaN(+contentId))
+      throw new Error('invalid syntax of params');
 
     // front 요청에 응답할 GetUnitDTO 인스턴스 생성
     const getUnitDTO = await GetUnitDTO.getInstance(

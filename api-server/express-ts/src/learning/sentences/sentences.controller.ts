@@ -22,7 +22,7 @@ const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 // /sentences/:sentenceId/units/evaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const evaluateUserVoice = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const userId: number = res.locals.userId;
   const { sentenceId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -105,8 +105,10 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       .json({ success: true, evaluatedSentence, pitchData });
   } catch (error) {
     await client.query('ROLLBACK');
+
     if (error instanceof MulterError) console.log('❌ MulterError ');
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
@@ -118,7 +120,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 // /sentences/:sentenceId/perfect-voice
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const userId: number = res.locals.userId;
   const { sentenceId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -141,7 +143,9 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
     });
   } catch (error) {
     await client.query('ROLLBACK');
+
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });
@@ -153,7 +157,7 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 // /sentences/:sentenceId/user-voice
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const recordUserVoiceCounts = async (req: Request, res: Response) => {
-  const userId = Number(req.headers.authorization?.substring(7)); // 나중에 auth app에서 처리
+  const userId: number = res.locals.userId;
   const { sentenceId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -177,6 +181,7 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error(error);
+
     return res
       .status(400)
       .json({ success: false, errorMessage: error.message });

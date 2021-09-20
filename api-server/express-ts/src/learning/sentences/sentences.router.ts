@@ -17,11 +17,11 @@ sentencesRouter.post(
   '/:sentenceId/evaluation',
   upload.single('userVoice'),
   evaluateUserVoice
-);
-sentencesRouter.post('/:sentenceId(\\d+)/user-voice', recordUserVoiceCounts);
+); // 발화평가 요청
+sentencesRouter.post('/:sentenceId(\\d+)/user-voice', recordUserVoiceCounts); // 사용자 음성 재생 기록
 sentencesRouter.post(
   '/:sentenceId(\\d+)/perfect-voice',
   recordPerfectVoiceCounts
-);
+); // 성우 음성 재생 기록
 
 export default sentencesRouter;

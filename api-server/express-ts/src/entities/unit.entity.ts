@@ -21,8 +21,8 @@ export class Unit {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static findOne = async (
     client: PoolClient,
-    unitIndex: number,
     contentId: number,
+    unitIndex: number,
     ..._columns: string[]
   ) => {
     try {

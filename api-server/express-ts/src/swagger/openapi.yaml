@@ -9,8 +9,8 @@ servers:
   - url: https://api.k-peach.io/
   - url: http://localhost:4001/
 tags:
-  - name: users
-    description: user APIs
+  - name: auth
+    description: auth APIs
   - name: learning/contents
     description: learning content and unit APIs
   - name: learning/sentences

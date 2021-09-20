@@ -29,8 +29,8 @@ interface SentenceType {
 }
 
 interface UnitType {
-  readonly unitIndex: number;
   readonly contentId: number;
+  readonly unitIndex: number;
   readonly youtubeUrl: string;
   readonly startTime: string;
   readonly endTime: string;
@@ -58,8 +58,8 @@ export default class GetUnitDTO {
     try {
       const unit: UnitType = await Unit.findOne(
         client,
-        unitIndex,
         contentId,
+        unitIndex,
         'unitIndex',
         'contentId',
         'youtubeUrl',

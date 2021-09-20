@@ -17,3 +17,7 @@ bearerAuth: # arbitrary name for the security scheme
   scheme: bearer
   bearerFormat: JWT
   description: '코드에서는 __HTTP Authorization header__를 다음과 같이 추가해야 함 <br> `Authorization: Bearer <token>`'
+basicAuth: # arbitrary name for the security scheme
+  type: http
+  scheme: basic
+  description: '코드에서는 __HTTP Authorization header__를 다음과 같이 추가해야 함 <br> `Authorization: Basic <token>`'
