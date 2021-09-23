@@ -1,16 +1,23 @@
-get:
+delete:
   tags:
     - users
-  summary: get users list
+  summary: delete user
   security:
     - basicAuth: []
+  parameters:
+    - name: userId
+      in: path
+      description: 삭제할 userId
+      required: true
+      schema:
+        type: number
   responses:
     200-304:
       description: 요청 성공
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Users'
+            $ref: '../../openapi.yaml#/components/schemas/User'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:

@@ -1,16 +1,23 @@
-get:
+post:
   tags:
-    - users
-  summary: get users list
+    - learning/sentences
+  summary: 사용자 음성 재생 학습 기록 저장 요청
   security:
     - basicAuth: []
+  parameters:
+    - name: sentenceId
+      in: path
+      description: 터치한 sentence Id
+      required: true
+      schema:
+        type: number
   responses:
     200-304:
       description: 요청 성공
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Users'
+            $ref: '../../openapi.yaml#/components/schemas/SentenceUserVoiceHistory'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -18,13 +25,7 @@ get:
           schema:
             $ref: '../../openapi.yaml#/components/schemas/Error'
     401-UnauthorizedError:
-      description: Authorization header가 유효하지 않음
-      content:
-        application/json:
-          schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
-    404-NotFound:
-      description: 서버는 요청받은 리소스를 찾을 수 없음
+      description: Access token이 없거나 유효하지 않음
       content:
         application/json:
           schema:

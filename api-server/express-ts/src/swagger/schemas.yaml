@@ -358,6 +358,46 @@ Auth:
     userId:
       type: number
       description: user id
+    isMember:
+      type: boolean
+      description: 이미 가입한 유저인 지
+# -------------------------- user -------------------------- #
+User:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    userId:
+      type: number
+      description: user id
+    email:
+      type: string
+      description: 사용자 이메일
+    nickname:
+      type: string
+      description: 사용자 닉네임
+Users:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    users:
+      type: array
+      description: users list
+      items:
+        type: object
+        properties:
+          userId:
+            type: number
+            description: user id
+          email:
+            type: string
+            description: 사용자 이메일
+          nickname:
+            type: string
+            description: 사용자 닉네임
 # -------------------------- error -------------------------- #
 Error:
   type: object

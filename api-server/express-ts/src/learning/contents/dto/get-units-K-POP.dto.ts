@@ -31,25 +31,23 @@ export default class GetUnitsKPOPDTO {
         client,
         userId,
         contentId,
-        'Unit.unitIndex',
-        'Unit.thumbnailUri',
-        'UserUnitHistory.latestLearningAt'
+        [
+          'Unit.unitIndex',
+          'Unit.thumbnailUri',
+          'UserUnitHistory.latestLearningAt'
+        ]
       );
       const mappedUnitList = units.map(async unit => {
         const sentencesCounts = (
-          await Sentence.findByUnit(
-            client,
-            contentId,
-            unit.unitIndex,
+          await Sentence.findByUnit(client, contentId, unit.unitIndex, [
             'sentenceId'
-          )
+          ])
         ).length;
         const words: WordType[] = await Unit.leftJoinSentenceAndWord(
           client,
           contentId,
           unit.unitIndex,
-          'Word.wordId',
-          'Word.originalKoreanText'
+          ['Word.wordId', 'Word.originalKoreanText']
         );
         const wordsCounts = words.length;
         return new GetUnitsKPOPDTO(

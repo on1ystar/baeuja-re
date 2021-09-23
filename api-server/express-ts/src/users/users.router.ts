@@ -3,11 +3,11 @@
 */
 
 import express, { Router } from 'express';
-import { createUser } from './users.controller';
+import { deleteUser, getUsers } from './users.controller';
 
 const usersRouter: Router = express.Router();
 
-usersRouter.get('/', (req, res) => res.send('For Users App'));
-usersRouter.post('/', createUser);
+usersRouter.get('/', getUsers); // get users list
+usersRouter.delete('/:userId(\\d+)', deleteUser); // delete a user
 
 export default usersRouter;

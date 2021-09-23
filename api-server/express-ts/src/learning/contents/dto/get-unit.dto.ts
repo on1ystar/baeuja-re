@@ -56,39 +56,40 @@ export default class GetUnitDTO {
   ): Promise<GetUnitDTO> {
     const client: PoolClient = await pool.connect();
     try {
-      const unit: UnitType = await Unit.findOne(
-        client,
-        contentId,
-        unitIndex,
+      const unit: UnitType = await Unit.findOne(client, contentId, unitIndex, [
         'unitIndex',
         'contentId',
         'youtubeUrl',
         'startTime',
         'endTime'
-      );
+      ]);
       const sentences: SentenceType[] =
         await Sentence.fullJoinUserSentenceHistory(
           client,
           userId,
           contentId,
           unitIndex,
-          'Sentence.sentenceId',
-          'Sentence.koreanText',
-          'Sentence.translatedText',
-          'Sentence.perfectVoiceUri',
-          'Sentence.startTime',
-          'Sentence.endTime'
+          [
+            'Sentence.sentenceId',
+            'Sentence.koreanText',
+            'Sentence.translatedText',
+            'Sentence.perfectVoiceUri',
+            'Sentence.startTime',
+            'Sentence.endTime'
+          ]
         );
       const words: WordType[] = await Sentence.joinWord(
         client,
         contentId,
         unitIndex,
-        'Word.wordId',
-        'Word.sentenceId',
-        'Word.prevKoreanText',
-        'Word.prevTranslatedText',
-        'Word.originalKoreanText',
-        'Word.originalTranslatedText'
+        [
+          'Word.wordId',
+          'Word.sentenceId',
+          'Word.prevKoreanText',
+          'Word.prevTranslatedText',
+          'Word.originalKoreanText',
+          'Word.originalTranslatedText'
+        ]
       );
       const mappedSentences = sentences.map((sentence: SentenceType) => {
         return {

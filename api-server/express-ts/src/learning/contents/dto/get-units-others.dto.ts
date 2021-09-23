@@ -34,9 +34,11 @@ export default class GetUnitsOthersDTO {
         client,
         userId,
         contentId,
-        'Unit.unitIndex',
-        'Unit.thumbnailUri',
-        'UserUnitHistory.latestLearningAt'
+        [
+          'Unit.unitIndex',
+          'Unit.thumbnailUri',
+          'UserUnitHistory.latestLearningAt'
+        ]
       );
       const mappedUnitList = units.map(async unit => {
         const sentence: SentenceType = (
@@ -45,12 +47,14 @@ export default class GetUnitsOthersDTO {
             userId,
             contentId,
             unit.unitIndex,
-            'Sentence.sentenceId',
-            'Sentence.koreanText',
-            'Sentence.translatedText',
-            'Sentence.isConversation',
-            'Sentence.isFamousLine',
-            'UserSentenceHistory.learningRate'
+            [
+              'Sentence.sentenceId',
+              'Sentence.koreanText',
+              'Sentence.translatedText',
+              'Sentence.isConversation',
+              'Sentence.isFamousLine',
+              'UserSentenceHistory.learningRate'
+            ]
           )
         )[0];
 

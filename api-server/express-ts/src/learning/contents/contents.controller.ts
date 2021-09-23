@@ -22,16 +22,14 @@ export const getContents = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;
   const client: PoolClient = await pool.connect();
   try {
-    const contents = await Content.leftJoinUserContentHistory(
-      client,
-      userId,
+    const contents = await Content.leftJoinUserContentHistory(client, userId, [
       'Content.contentId',
       'Content.classification',
       'Content.title',
       'Content.artist',
       'Content.director',
       'Content.thumbnailUri'
-    );
+    ]);
     return res.status(200).json({ success: true, contents });
   } catch (error) {
     console.log(error);
@@ -52,16 +50,14 @@ export const getContentDetail = async (req: Request, res: Response) => {
     // reqeust params 유효성 검사
     if (isNaN(+contentId)) throw new Error('invalid syntax of params');
 
-    const content = await Content.findOne(
-      client,
-      +contentId,
+    const content = await Content.findOne(client, +contentId, [
       'contentId',
       'title',
       'artist',
       'director',
       'description',
       'thumbnailUri'
-    );
+    ]);
     return res.status(200).json({ success: true, content });
   } catch (error) {
     console.log(error);
@@ -101,7 +97,7 @@ export const getUnits = async (req: Request, res: Response) => {
     const content: { classification: string } = await Content.findOne(
       client,
       +contentId,
-      'classification'
+      ['classification']
     );
     // 콘텐츠가 K-POP인 경우
     if (content.classification === 'K-POP') {
@@ -174,7 +170,9 @@ export const getUnit = async (req: Request, res: Response) => {
       );
       // 문장 학습 기록 생성
       const sentenceIdList = (
-        await Sentence.findByUnit(client, +contentId, +unitIndex, 'sentenceId')
+        await Sentence.findByUnit(client, +contentId, +unitIndex, [
+          'sentenceId'
+        ])
       ).map(row => row.sentenceId);
       await UserSentenceHistory.createList(client, userId, sentenceIdList);
     }

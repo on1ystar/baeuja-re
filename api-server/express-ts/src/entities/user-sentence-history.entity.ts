@@ -65,7 +65,7 @@ export class UserSentenceHistory {
         client,
         contentId,
         unitIndex,
-        'sentenceId'
+        ['sentenceId']
       );
 
       await client.query(

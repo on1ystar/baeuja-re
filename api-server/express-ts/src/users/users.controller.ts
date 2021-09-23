@@ -1,28 +1,44 @@
-import { Request, Response } from 'express';
-import { getNowKO } from '../utils/Date';
-import { pool } from '../db';
-import { CreateUserDTO } from './dto/create.user.dto';
+/** 
+ @description user 컨트롤러
+ @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
+ */
 
-// POST /dev/user
-export const createUser = async (req: Request, res: Response): Promise<any> => {
-  const user: CreateUserDTO = req.body as CreateUserDTO;
+import { Request, Response } from 'express';
+import { PoolClient } from 'pg';
+import { pool } from '../db';
+import { User } from '../entities/user.entity';
+
+// GET /users
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const getUsers = async (req: Request, res: Response) => {
+  const client: PoolClient = await pool.connect();
   try {
-    const result = await pool.query(
-      'INSERT INTO users("email", "nickname", "country", "device_os",  "created_at", "latest_login", "modified_at") VALUES($1,$2,$3,$4,$5,$6,$7)',
-      [
-        user.email,
-        user.nickname,
-        user.country,
-        user.deviceOs,
-        getNowKO(),
-        getNowKO(),
-        getNowKO()
-      ]
-    );
-    console.log('Success ', result.command);
-    res.status(201).json({ success: true });
+    const users = await User.find(client, ['userId', 'email', 'nickname']);
+    return res.status(200).json({ success: true, users });
   } catch (error) {
-    console.error(error.message, error.stack);
-    res.status(400).json({ success: false });
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
+  }
+};
+
+// DELETE /users/{userId}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const deleteUser = async (req: Request, res: Response) => {
+  const userId: number = res.locals.userId;
+  const client: PoolClient = await pool.connect();
+  try {
+    const deletedUser = await User.delete(client, userId);
+    return res.status(200).json({ success: true, deletedUser });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
   }
 };

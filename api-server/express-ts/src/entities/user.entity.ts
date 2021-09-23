@@ -47,6 +47,25 @@ export class User {
     }
   };
 
+  // 유저 삭제
+  static delete = async (client: PoolClient, userId: number) => {
+    try {
+      const deletedUser: QueryResult<any> = (
+        await client.query(
+          `DELETE FROM users
+          WHERE user_id = ${userId}
+          RETURNING user_id, email, nickname`
+        )
+      ).rows[0];
+      console.info(`✅ deleted user `);
+
+      return deletedUser;
+    } catch (error) {
+      console.error('❌ Error: user.entity.ts delete function ');
+      throw error;
+    }
+  };
+
   // 유저 존재 여부 확인
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static isExist = async (client: PoolClient, email: string) => {
@@ -81,12 +100,36 @@ export class User {
     }
   };
 
+  // 유저 전체 조회
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static find = async (client: PoolClient, _columns: string[]) => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult = await client.query(
+        `SELECT ${SELECT_COLUMNS} FROM users`
+      );
+      if (!queryResult.rowCount)
+        throw new Error("User table's row does not exist");
+
+      return queryResult.rows;
+    } catch (error) {
+      console.error('❌ Error: user.entity.ts find function ');
+      throw error;
+    }
+  };
+
   // 유저 조회
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static findOneByEmail = async (
     client: PoolClient,
     email: string,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
