@@ -6,8 +6,8 @@
 # Apache 2.0
 #
 #
-. ./cmd.sh
-. ./path.sh
+. $SCRIPT_DIR/cmd.sh
+. $SCRIPT_DIR/path.sh
 
 decoder=$KALDI_ROOT/src/online2bin/online2-wav-nnet3-latgen-faster
 
@@ -17,10 +17,9 @@ decoder=$KALDI_ROOT/src/online2bin/online2-wav-nnet3-latgen-faster
 #	echo "    ex: $0 test_sample/219_004_2890.flac test/models/korean/zeroth test_output"
 #	exit 1
 #fi
-dir=/home/ubuntu/aiServer/1412s-peach/ai-server/model/dir
+dir=$MODEL_DIR/dir
+srcdir=$MODEL_DIR
 filename=$1
-#filename=$dir/$1
-srcdir=/home/ubuntu/aiServer/1412s-peach/ai-server/model
 
 if [ ! -d $dir ]; then
     mkdir -p $dir

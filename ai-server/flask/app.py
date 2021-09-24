@@ -88,6 +88,7 @@ def evaluationUserSpeech():
 
 		# make shell command
 		user_convert_command = getCommand(user_voice_path, user_id, "sentence-convert")
+		print('user_convert_command is ', user_convert_command)
 		decode_command = getCommand(user_voice_path, user_id, "decode")
 		print('decode_command is ', decode_command)
 

@@ -1,7 +1,7 @@
 model/
 sounds/
 log/
-flask/configs
+*config*
 *test*
 *nohup*
 *.txt
