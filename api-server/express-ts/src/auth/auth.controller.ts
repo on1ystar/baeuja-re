@@ -9,6 +9,8 @@ import { pool } from '../db';
 import { GoogleOAuth2 } from '../utils/GoogleOAuth2';
 import { User } from '../entities/user.entity';
 import { PoolClient } from 'pg';
+import jwt from 'jsonwebtoken';
+import conf from '../config';
 
 const googleOAuth2 = new GoogleOAuth2();
 const oauth2Client = googleOAuth2.getOAuth2Client();
@@ -36,6 +38,7 @@ export const googleCallback = async (req: Request, res: Response) => {
     // 새로운 access_token, refresh_token 발급
     const { tokens }: { tokens: Auth.Credentials } =
       await oauth2Client.getToken(code);
+    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     // email, name, locale
     const userinfo = await googleOAuth2.getUserinfo();
@@ -63,7 +66,15 @@ export const googleCallback = async (req: Request, res: Response) => {
     console.info(
       `Access to Google OAuth2 \t user_id: ${userId}, email: ${userinfo.email}, isMember: ${isMember}`
     );
-    res.status(200).json({ success: true, userId, isMember });
+
+    // jwt token 생성
+    const token = jwt.sign(
+      { userId },
+      conf.jwtToken.secretKey as string,
+      conf.jwtToken.option
+    );
+
+    res.status(200).json({ success: true, token, isMember });
   } catch (error) {
     console.error('❌ Error: auth.controller.ts googleCallback function');
     console.error(error);

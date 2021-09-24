@@ -3,7 +3,7 @@ get:
     - users
   summary: get user's detail
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: userId
       in: path

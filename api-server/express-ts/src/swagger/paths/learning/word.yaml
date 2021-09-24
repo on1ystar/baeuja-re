@@ -3,7 +3,7 @@ get:
     - learning/words
   summary: 터치한 단어 요청 (단어 학습 화면)
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: wordId
       in: path

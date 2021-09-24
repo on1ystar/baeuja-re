@@ -3,7 +3,7 @@ get:
     - learning/contents
   summary: content 리스트 요청
   security:
-    - basicAuth: []
+    - bearerAuth: []
   responses:
     200-304:
       description: 요청 성공
