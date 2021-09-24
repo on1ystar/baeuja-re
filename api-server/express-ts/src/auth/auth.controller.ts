@@ -43,7 +43,7 @@ export const googleCallback = async (req: Request, res: Response) => {
     let userId: number;
     let isMember = false;
     // DB users 테이블에 유저 정보가 있는 경우
-    if (await User.isExist(poolClient, userinfo.email as string)) {
+    if (await User.isExistByEmail(poolClient, userinfo.email as string)) {
       userId = (
         await User.findOneByEmail(poolClient, userinfo.email as string, [
           'userId'
@@ -52,7 +52,8 @@ export const googleCallback = async (req: Request, res: Response) => {
       isMember = true;
     } else {
       // user 생성
-      const user = new User(
+      const user: User = new User(
+        undefined,
         userinfo.email as string,
         userinfo.name as string,
         userinfo.locale as string

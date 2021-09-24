@@ -41,7 +41,7 @@ paths:
   /users:
     $ref: './paths/users/users.yaml'
   /users/{userId}:
-    $ref: './paths/users/delete.yaml'
+    $ref: './paths/users/user.yaml'
 components:
   parameters:
     $ref: './parameters.yaml'

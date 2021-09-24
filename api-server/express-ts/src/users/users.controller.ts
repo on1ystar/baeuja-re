@@ -25,13 +25,77 @@ export const getUsers = async (req: Request, res: Response) => {
   }
 };
 
+// GET /users/{userId}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const getUserDetail = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const client: PoolClient = await pool.connect();
+  try {
+    // reqeust params 유효성 검사
+    if (isNaN(+userId)) throw new Error('invalid syntax of params');
+
+    const user = await User.findOne(client, +userId, [
+      'userId',
+      'email',
+      'nickname',
+      'locale',
+      'createdAt',
+      'latestLogin',
+      'modifiedAt',
+      'deviceOs',
+      'usageTime'
+    ]);
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
+  }
+};
+
+// PATCH /users/{userId}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const patchtUserNickname = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { nickname } = req.body;
+  const client: PoolClient = await pool.connect();
+  try {
+    // reqeust params 유효성 검사
+    if (isNaN(+userId)) throw new Error('invalid syntax of params');
+
+    if (!(await User.isExistById(client, +userId)))
+      throw new Error('userId does not exist. ');
+
+    const user: User = new User(+userId);
+    const updatedUser = await user.updateUserNickname(client, nickname);
+    return res.status(200).json({ success: true, updatedUser });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: error.message });
+  } finally {
+    client.release();
+  }
+};
+
 // DELETE /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const deleteUser = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
+  const { userId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
-    const deletedUser = await User.delete(client, userId);
+    // reqeust params 유효성 검사
+    if (isNaN(+userId)) throw new Error('invalid syntax of params');
+
+    if (!(await User.isExistById(client, +userId)))
+      throw new Error('userId does not exist. ');
+
+    const user: User = new User(+userId);
+    const deletedUser = user.delete(client);
     return res.status(200).json({ success: true, deletedUser });
   } catch (error) {
     console.log(error);
