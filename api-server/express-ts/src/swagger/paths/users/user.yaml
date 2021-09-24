@@ -41,7 +41,7 @@ patch:
     - users
   summary: delete user
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: userId
       in: path
@@ -89,7 +89,7 @@ delete:
     - users
   summary: delete user
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: userId
       in: path
