@@ -23,20 +23,19 @@ logFile=$2.log
 # extracted korean result fime name
 resultFile=$2.txt
 # model directory
+
 ### need to change, how to read config file in sh_script
 modelDir=/home/ubuntu/aiServer/1412s-peach/ai-server/model
 scriptDir=/home/ubuntu/aiServer/1412s-peach/ai-server/scripts
 tmpDir=/home/ubuntu/aiServer/1412s-peach/ai-server/tmp
 
 inputFileExtension=${inputFile##*.}
-EXTENSION_WAV=wav
+EXTENSION_FLAC=flac
 
 # wav file
-if [ "${EXTENSION_WAV}" == "${inputFileExtension}" ]; then
-	# wav to flac, 16bit, 16kHz
-	ffmpeg -y -i $inputFile -af aformat=s16:16000 $tmpDir/$flacFile > /dev/null 2>&1
+ffmpeg -y -i $inputFile -af aformat=s16:16000 $tmpDir/$flacFile > /dev/null 2>&1
 
+if [ "${EXTENSION_FLAC}" == "${inputFileExtension}" ]; then
 	${scriptDir}/decode.sh $tmpDir/$flacFile >& $tmpDir/$logFile
 fi
 
-# remove file

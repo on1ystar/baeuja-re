@@ -20,6 +20,9 @@ def getNormalized(data: list) -> list:
 	normalized_data = list()
 	max_value = max(data)
 	min_value = min(data)
+	print('max_value is ', max_value)
+	print('min_value is ', min_value)
+	print('max - min is ', max_value - min_value)
 	# min - max normalization
 	for i in range(0, len(data)):
 		normalized_data.append((data[i] - min_value) / (max_value - min_value))
@@ -33,6 +36,7 @@ def getPitch(wav_file: str, sample_rate=16000) -> list:
 	:return: list
 	"""
 	# wav file load
+	print('wav file is ', wav_file)
 	signal, _ = librosa.load(wav_file, sr=sample_rate)
 
 	# remove silence
@@ -45,7 +49,7 @@ def getPitch(wav_file: str, sample_rate=16000) -> list:
 	removed_nan_f0 = [x for x in f0 if np.isnan(x) == False]
 
 	# get normalized pitch
-	normalized_pitch = getNormalied(removed_nan_f0)
+	normalized_pitch = getNormalized(removed_nan_f0)
 
 	# get duration of wav file
 	duration = librosa.get_duration(signal_trimed, sr=sample_rate)

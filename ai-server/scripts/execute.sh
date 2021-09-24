@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# get script path
+SHELL_DIR="$( cd "$( dirname "$0" )" && pwd -P )"
+. $SHELL_DIR/config.sh
+
+DECODE="decode"
+WORD_CONVERT="word-convert"
+SENTENCE_CONVERT="sentence-convert"
+
+INPUT_FILE=$1
+FILE_ID=$2
+EXECUTE_OPTION=$3
+
+EXTENSION_FLAC=".flac"
+EXTENSION_LOG=".log"
+
+FLAC_FILE="$USER_SENTENCE_DIR/$FILE_ID$EXTENSION_FLAC"
+LOG_FILE="$LOG_DIR/$FILE_ID$EXTENSION_LOG"
+
+# word convert
+if [ "$WORD_CONVERT" == "$EXECUTE_OPTION" ]; then
+	FLAC_FILE="$USER_WORD_DIR/$FILE_ID$EXTENSION_FLAC"
+	$SCRIPT_DIR/convert.sh $INPUT_FILE $FLAC_FILE 
+fi
+
+# sentence convert
+if [ "$SENTENCE_CONVERT" == "$EXECUTE_OPTION" ]; then
+	FLAC_FILE="$USER_SENTENCE_DIR/$FILE_ID$EXTENSION_FLAC"
+	$SCRIPT_DIR/convert.sh $INPUT_FILE $FLAC_FILE 
+fi 
+
+# stt
+if [ "$DECODE" == "$EXECUTE_OPTION" ]; then
+	$SCRIPT_DIR/decode.sh $FLAC_FILE >& $LOG_FILE
+fi

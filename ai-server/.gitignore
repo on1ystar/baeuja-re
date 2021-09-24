@@ -1,8 +1,10 @@
-configs/
-model
+model/
+sounds/
+log/
 flask/configs
-tmp
 *test*
+*nohup*
+*.txt
 *.flac
 *.wav
 *.m4a

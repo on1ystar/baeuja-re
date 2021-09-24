@@ -10,6 +10,7 @@ import sys
 import io
 import hgtk
 import datetime
+from hanspell import spell_checker
 
 def getKoreanText(log_file: str) -> str:
 	"""
@@ -27,18 +28,21 @@ def getKoreanText(log_file: str) -> str:
 
 	# read all line
 	fileLines = reader.readlines() 
-	result = ""
+	origin_result = ""
 
 	for line in fileLines:
 		# if only one korean in line
 		if regex_filter.findall(line): 
 			# get line
-			result+=str(line)
+			origin_result+=str(line)
 
-	# extract korean and space
-	result = regex_korean.sub('', result)
-	
-	return result
+	# remove space
+	non_space_result = regex_korean.sub('', origin_result)
+
+	# add space with grammer
+	grammer_result = spell_checker.check(non_space_result).checked
+
+	return grammer_result
 
 def levenshtein(s1: str, s2: str) -> int:
     """

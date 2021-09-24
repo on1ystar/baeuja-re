@@ -1,13 +1,30 @@
 #!/bin/bash
-modelDir=/home/ubuntu/aiServer/1412s-peach/ai-server/model
-scriptDir=/home/ubuntu/aiServer/1412s-peach/ai-server/scripts
-decoder=$modelDir/kaldi/online2-wav-nnet3-latgen-faster
-. ${scriptDir}/cmd.sh
-. ${scriptDir}/path.sh
-#KALDI_ROOT=/home/ubuntu/aiServer/flask/model/kaldi
-srcdir=${modelDir}/srcdir
-dir=${modelDir}/dir
+# for kaldi nnet3 decoding process check
+# 
+# Copyright  2017  Atlas Guide (Author : Lucas Jo)
+# 
+# Apache 2.0
+#
+#
+. ./cmd.sh
+. ./path.sh
+
+decoder=$KALDI_ROOT/src/online2bin/online2-wav-nnet3-latgen-faster
+
+
+#if [ "$#" -ne 3 ]; then
+#	echo "Usage $0 <filename> <model-dir> <output-dir>"
+#	echo "    ex: $0 test_sample/219_004_2890.flac test/models/korean/zeroth test_output"
+#	exit 1
+#fi
+dir=/home/ubuntu/aiServer/1412s-peach/ai-server/model/dir
 filename=$1
+#filename=$dir/$1
+srcdir=/home/ubuntu/aiServer/1412s-peach/ai-server/model
+
+if [ ! -d $dir ]; then
+    mkdir -p $dir
+fi
 
 do_endpointing=false
 frames_per_chunk=20
@@ -29,6 +46,7 @@ wav_rspecifier="ark,s,cs:wav-copy scp,p:wav.scp ark:- |"
 
 echo "000 000" > spk2utt
 spk2utt_rspecifier="ark:spk2utt"
+
 frame_subsampling_opt=
 if [ -f $srcdir/frame_subsampling_factor ]; then
   # e.g. for 'chain' systems
@@ -41,7 +59,7 @@ if [ "$post_decode_acwt" == 1.0 ]; then
 else
   lat_wspecifier="ark:|lattice-scale --acoustic-scale=$post_decode_acwt ark:- ark:- | gzip -c >$dir/lat.1.gz"
 fi
-
+online=false
 echo "#### Decoding ####"
 $decoder $silence_weighting_opts --do-endpointing=$do_endpointing \
 	--frames-per-chunk=$frames_per_chunk \
@@ -58,7 +76,7 @@ $decoder $silence_weighting_opts --do-endpointing=$do_endpointing \
 	
 LMWT=11.0
 wip=0.0
-rescore=false # 언어 모델을 적용하여 결과를 재구성
+rescore=false
 if $rescore ; then
 	echo "##### LM rescore ####"
 	

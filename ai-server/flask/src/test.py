@@ -2,15 +2,14 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process pitch score
-# Modified: 2021.08.28
-# Version: 0.1
+# Modified: 2021.09.01
+# Version: 0.3
 
 import numpy as np
 import librosa, librosa.display
 import sys
 import dtw
 import datetime
-import matplotlib.pyplot as plt
 
 def getNormalized(data: list) -> list:
 	"""
@@ -20,25 +19,45 @@ def getNormalized(data: list) -> list:
 	"""
 	normalized_data = list()
 	max_value = max(data)
+	print('max_value is ', max_value)
 	min_value = min(data)
+	print('min_value is ', min_value)
+	# min - max normalization
 	for i in range(0, len(data)):
 		normalized_data.append((data[i] - min_value) / (max_value - min_value))
 	return normalized_data
 
-def getPitch(wav_file: str) -> list:
+def getPitch(wav_file: str, sample_rate=16000) -> list:
 	"""
 	:get pitch from wav file
-	:param wavFile: str
+	:param wavFile: str, wave file path
+	:param sr : sample_rate, int
 	:return: list
 	"""
-	sr=16000
-	signal, sample_rate = librosa.load(wav_file, sr=sr)
-	print('len signal is ', len(signal))
+	# wav file load
+	signal, _ = librosa.load(wav_file, sr=sample_rate)
+
+	# remove silence
 	signal_trimed, _ = librosa.effects.trim(signal, top_db=20)
 
+	# get pitch (f0)
 	f0, _, _ = librosa.pyin(signal_trimed, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C5'))
+
+	# remove NaN from pitch(f0)
 	removed_nan_f0 = [x for x in f0 if np.isnan(x) == False]
-	return getNormalized(removed_nan_f0), getTimes(len(signal_trimed), len(removed_nan_f0))
+
+	# get normalized pitch
+	normalized_pitch = getNormalized(removed_nan_f0)
+	print('normalized_pitch len is ', len(normalized_pitch))
+	
+	# get time list from pitch
+	time_of_pitch = getTimes(len(signal_trimed), len(removed_nan_f0))
+	
+	# get duration of wav file
+	duration = librosa.get_duration(signal_trimed, sr=sample_rate)
+	print('duration is ', duration)
+
+	return normalized_pitch, time_of_pitch, duration
 
 
 def getTimes(pitch_len: int, removed_nan_pitch_len: int, sample_rate=16000) -> list:
@@ -48,33 +67,51 @@ def getTimes(pitch_len: int, removed_nan_pitch_len: int, sample_rate=16000) -> l
 	:param removed_nan_pitch_len: len(removed_nan_pitch)
 	:param sample_rate: sample_rate of wav file, default is 16000
 	"""
+	
+	# the number of sample per second
 	unit = pitch_len / sample_rate
-	print('unit is ', unit)
-	a = unit / removed_nan_pitch_len
-	print('a is ', a)
-	a = round(a, 2)
+
+	# the gap of per index
+	gap = unit / removed_nan_pitch_len
+	gap = round(gap, 2)
+
+	# makes time list for every index
 	times = list()
 	times.append(0)
 	for i in range(1, removed_nan_pitch_len):
-		times.append(times[i-1] + a)
+		times.append(times[i-1] + gap)
 		times[i] = round(times[i], 2)
 	return times
 
-# need to update
-# need to set standard of score 
-def getDTWScore(perfect_pitch: list, user_pitch: list) -> int:
+def getDTWScore(perfect_pitch: list, user_pitch: list, duration: float) -> int:
 	"""
 	:compare voice, get score user voice
 	:param perfect_pitch: list, extracted pitch from voice actor
 	:param user_pitch: list, extracted pitch from user
+	:param duration: perfect_voice duration
 	:return: dtw score
 	"""
-	dtw_distance = dtw.dtw(perfect_pitch, user_pitch, keep_internals=True).distance
-	return 10
 
+	# get dtw distance between perfect_pitch and user_pitch
+	dtw_distance = dtw.dtw(perfect_pitch, user_pitch, keep_internals=True).distance
+	
+	# only sr=16000, if sr=44100, need to other setting
+	# return score depending on the duration
+	if dtw_distance < duration * 2:
+		return 5
+	elif dtw_distance < duration * 3:
+		return 4
+	elif dtw_distance < duration * 5:
+		return 3
+	elif dtw_distance < duration * 10:
+		return 2
+	else:
+		return 1
 
 if __name__ == "__main__":
 	w1 = sys.argv[1]
 	w2 = sys.argv[2]
-	p1, t1 = getPitch(w1)
-	p2, t2 = getPitch(w2)
+	p1, t1, d = getPitch(w1)
+	p2, t2, _ = getPitch(w2)
+	d1 = getDTWScore(p1, p2, d)
+	print('di is ', d1)
