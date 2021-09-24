@@ -26,6 +26,14 @@ const conf: {
   };
   peachAi: { ip: string | undefined };
   url: { local: string; domain: string };
+  jwtToken: {
+    secretKey: string | undefined;
+    option: {
+      expiresIn: string | undefined;
+      issuer: string | undefined;
+      subject: string | undefined;
+    };
+  };
 } = {
   peachApi: {
     accessKey: process.env.PEACH_API_ACCESS_KEY_ID,
@@ -61,6 +69,14 @@ const conf: {
   url: {
     local: 'http://localhost:4001',
     domain: 'https://api.k-peach.io'
+  },
+  jwtToken: {
+    secretKey: process.env.JWT_SECRET_KEY,
+    option: {
+      expiresIn: process.env.JWT_EXPIRESIN,
+      issuer: process.env.JWT_ISSUER,
+      subject: process.env.JWT_SUBJECT
+    }
   }
 };
 

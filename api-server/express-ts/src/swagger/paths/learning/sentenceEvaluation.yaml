@@ -3,7 +3,7 @@ post:
     - learning/sentences
   summary: 문장 녹음 및 발음 평가 요청
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: sentenceId
       in: path

@@ -3,7 +3,7 @@ get:
     - learning/contents
   summary: content 터치 시 learning unit 리스트 요청
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: contentId
       in: path

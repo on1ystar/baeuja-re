@@ -3,7 +3,7 @@ post:
     - learning/sentences
   summary: 성우 음성 재생 학습 기록 저장 요청
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: sentenceId
       in: path

@@ -3,7 +3,7 @@ get:
     - learning/contents
   summary: 특정 content 추가 정보(더 보기) 요청
   security:
-    - basicAuth: []
+    - bearerAuth: []
   parameters:
     - name: contentId
       in: path
