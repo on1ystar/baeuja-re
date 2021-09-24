@@ -358,6 +358,85 @@ Auth:
     userId:
       type: number
       description: user id
+    isMember:
+      type: boolean
+      description: 이미 가입한 유저인 지
+# -------------------------- user -------------------------- #
+User:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    user:
+      type: object
+      properties:
+        userId:
+          type: number
+          description: user id
+        email:
+          type: string
+          description: 사용자 이메일
+        nickname:
+          type: string
+          description: 사용자 닉네임
+UserDetail:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    user:
+      type: object
+      properties:
+        userId:
+          type: number
+          description: user id
+        email:
+          type: string
+          description: 사용자 이메일
+        nickname:
+          type: string
+          description: 사용자 닉네임
+        locale:
+          type: string
+          description: 사용자 국가
+        createdAt:
+          type: string
+          description: 생성 시기
+        latestLogin:
+          type: string
+          description: 최근 로그인 시간
+        modifiedAt:
+          type: string
+          description: 변경 시간
+        deviceOs:
+          type: string
+          description: 디바이스 운영체제
+        usageTime:
+          type: string
+          description: 총 앱 사용 시간
+Users:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    users:
+      type: array
+      description: users list
+      items:
+        type: object
+        properties:
+          userId:
+            type: number
+            description: user id
+          email:
+            type: string
+            description: 사용자 이메일
+          nickname:
+            type: string
+            description: 사용자 닉네임
 # -------------------------- error -------------------------- #
 Error:
   type: object

@@ -1,16 +1,29 @@
 get:
   tags:
-    - users
-  summary: get users list
+    - learning/contents
+  summary: content 터치 시 learning unit 리스트 요청
   security:
     - basicAuth: []
+  parameters:
+    - name: contentId
+      in: path
+      description: 터치한 contentId
+      required: true
+      schema:
+        type: number
   responses:
-    200-304:
-      description: 요청 성공
+    200-304-K-POP:
+      description: 요청 성공 (K-POPcontent 터치 시)
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Users'
+            $ref: '../../openapi.yaml#/components/schemas/UnitsInKPOP'
+    200-304-Others:
+      description: 요청 성공 (K-DRAMA or K-MOVIE content 터치 시)
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/UnitsInOthers'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -18,7 +31,7 @@ get:
           schema:
             $ref: '../../openapi.yaml#/components/schemas/Error'
     401-UnauthorizedError:
-      description: Authorization header가 유효하지 않음
+      description: Access token이 없거나 유효하지 않음
       content:
         application/json:
           schema:

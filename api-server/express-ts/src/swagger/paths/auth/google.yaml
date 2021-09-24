@@ -1,16 +1,14 @@
 get:
   tags:
-    - users
-  summary: get users list
-  security:
-    - basicAuth: []
+    - auth
+  summary: google login
   responses:
     200-304:
       description: 요청 성공
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Users'
+            $ref: '../../openapi.yaml#/components/schemas/Auth'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -18,7 +16,7 @@ get:
           schema:
             $ref: '../../openapi.yaml#/components/schemas/Error'
     401-UnauthorizedError:
-      description: Authorization header가 유효하지 않음
+      description: Access token이 없거나 유효하지 않음
       content:
         application/json:
           schema:

@@ -32,7 +32,7 @@ export default class PostEvaluationDTO {
     try {
       const sentence: SentenceType = {
         sentenceId,
-        ...(await Sentence.findOne(client, sentenceId, 'koreanText')),
+        ...(await Sentence.findOne(client, sentenceId, ['koreanText'])),
         perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
       };
       return new PostEvaluationDTO(userId, userVoiceUri, sentence);

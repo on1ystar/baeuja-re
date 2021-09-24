@@ -25,7 +25,7 @@ export class Sentence {
   static findOne = async (
     client: PoolClient,
     sentenceId: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -55,7 +55,7 @@ export class Sentence {
     client: PoolClient,
     contentId: number,
     unitIndex: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -86,7 +86,7 @@ export class Sentence {
     userId: number,
     contentId: number,
     unitIndex: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -123,7 +123,7 @@ export class Sentence {
     client: PoolClient,
     contentId: number,
     unitIndex: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함

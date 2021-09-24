@@ -24,7 +24,7 @@ export class Content {
   static findOne = async (
     client: PoolClient,
     contentId: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -52,7 +52,7 @@ export class Content {
   static leftJoinUserContentHistory = async (
     client: PoolClient,
     userId: number,
-    ..._columns: string[]
+    _columns: string[]
   ) => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함

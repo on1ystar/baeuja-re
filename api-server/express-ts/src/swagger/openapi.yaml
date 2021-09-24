@@ -17,8 +17,31 @@ tags:
     description: learning sentence APIs
   - name: learning/words
     description: learning word APIs
+  - name: users
+    description: users APIs
 paths:
-  $ref: './paths/index.yaml'
+  /auth/google:
+    $ref: './paths/auth/google.yaml'
+  /learning/contents:
+    $ref: './paths/learning/contents.yaml'
+  /learning/contents/{contentId}:
+    $ref: './paths/learning/content.yaml'
+  /learning/contents/{contentId}/units:
+    $ref: './paths/learning/units.yaml'
+  /learning/contents/{contentId}/units/{unitIndex}:
+    $ref: './paths/learning/unit.yaml'
+  /learning/sentences/{sentenceId}/perfect-voice:
+    $ref: './paths/learning/sentencePerfectVoice.yaml'
+  /learning/sentences/{sentenceId}/user-voice:
+    $ref: './paths/learning/sentenceUserVoice.yaml'
+  /learning/sentences/{sentenceId}/evaluation:
+    $ref: './paths/learning/sentenceEvaluation.yaml'
+  /learning/words/{wordId}:
+    $ref: './paths/learning/word.yaml'
+  /users:
+    $ref: './paths/users/users.yaml'
+  /users/{userId}:
+    $ref: './paths/users/user.yaml'
 components:
   parameters:
     $ref: './parameters.yaml'

@@ -41,26 +41,29 @@ export const googleCallback = async (req: Request, res: Response) => {
     const userinfo = await googleOAuth2.getUserinfo();
 
     let userId: number;
+    let isMember = false;
     // DB users 테이블에 유저 정보가 있는 경우
-    if (await User.isExist(poolClient, userinfo.email as string)) {
+    if (await User.isExistByEmail(poolClient, userinfo.email as string)) {
       userId = (
-        await User.findOneByEmail(
-          poolClient,
-          userinfo.email as string,
+        await User.findOneByEmail(poolClient, userinfo.email as string, [
           'userId'
-        )
+        ])
       ).userId;
+      isMember = true;
     } else {
       // user 생성
-      const user = new User(
+      const user: User = new User(
+        undefined,
         userinfo.email as string,
         userinfo.name as string,
         userinfo.locale as string
       );
       userId = (await user.create(poolClient)).userId as unknown as number;
     }
-    console.info(`user_id: ${userId}, email: ${userinfo.email}`);
-    res.status(200).json({ success: true, userId });
+    console.info(
+      `Access to Google OAuth2 \t user_id: ${userId}, email: ${userinfo.email}, isMember: ${isMember}`
+    );
+    res.status(200).json({ success: true, userId, isMember });
   } catch (error) {
     console.error('❌ Error: auth.controller.ts googleCallback function');
     console.error(error);

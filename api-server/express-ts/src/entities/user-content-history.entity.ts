@@ -59,7 +59,7 @@ export class UserContentHistory {
         client,
         this.userId,
         this.contentId,
-        'UserUnitHistory.unitIndex'
+        ['UserUnitHistory.unitIndex']
       );
       // 학습 기록이 있는 유닛 개수 / 전체 유닛 개수 => 소수점 2자리까지 반올림
       const progressRate: number = +(
