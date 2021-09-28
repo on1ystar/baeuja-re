@@ -39,7 +39,6 @@ export const googleCallback = async (req: Request, res: Response) => {
     // 새로운 access_token, refresh_token 발급
     const { tokens }: { tokens: Auth.Credentials } =
       await oauth2Client.getToken(code);
-    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     // email, name, locale
     const userinfo = await googleOAuth2.getUserinfo();
@@ -54,6 +53,7 @@ export const googleCallback = async (req: Request, res: Response) => {
         ])
       ).userId;
       isMember = true;
+      await new User(userId).updateLatestLogin(poolClient);
     } else {
       // user 생성
       const user: User = new User(

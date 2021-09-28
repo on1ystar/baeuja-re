@@ -15,9 +15,7 @@ export class User {
     readonly roleId?: number,
     readonly createdAt?: string,
     readonly latestLogin?: string,
-    readonly modifiedAt?: string,
-    readonly deviceOs?: string,
-    readonly usageTime?: string
+    readonly modifiedAt?: string
   ) {}
 
   // 유저 생성
@@ -48,6 +46,7 @@ export class User {
     }
   };
 
+  // 닉네임 변경
   updateUserNickname = async (client: PoolClient, nickname: string) => {
     try {
       const updatedUser: QueryResult<any> = (
@@ -62,6 +61,25 @@ export class User {
       return updatedUser;
     } catch (error) {
       console.error('❌ Error: user.entity.ts updateUserNickname function ');
+      throw error;
+    }
+  };
+
+  // 최근 로그인 시간 갱신
+  updateLatestLogin = async (client: PoolClient) => {
+    try {
+      const updatedUser: QueryResult<any> = (
+        await client.query(
+          `UPDATE users
+          SET latest_login = ${getNowKO()}
+          WHERE user_id = ${this.userId}
+          RETURNING user_id, email, nickname`
+        )
+      ).rows[0];
+      console.info(`✅  updated latest login at -> ${getNowKO()}`);
+      return updatedUser;
+    } catch (error) {
+      console.error('❌ Error: user.entity.ts updateLatestLogin function ');
       throw error;
     }
   };

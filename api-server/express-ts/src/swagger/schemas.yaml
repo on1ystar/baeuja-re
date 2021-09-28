@@ -410,12 +410,9 @@ UserDetail:
         modifiedAt:
           type: string
           description: 변경 시간
-        deviceOs:
-          type: string
-          description: 디바이스 운영체제
-        usageTime:
-          type: string
-          description: 총 앱 사용 시간
+        role_id:
+          type: number
+          description: '1: admin | 2: member | 3: guest'
 Users:
   type: object
   properties:
