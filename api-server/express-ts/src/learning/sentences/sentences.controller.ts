@@ -108,10 +108,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
     if (error instanceof MulterError) console.log('❌ MulterError ');
     console.error(error);
-
-    return res
-      .status(400)
-      .json({ success: false, errorMessage: error.message });
+    const errorMessage = (error as Error).message;
+    return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
   }
@@ -145,10 +143,8 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
     await client.query('ROLLBACK');
 
     console.error(error);
-
-    return res
-      .status(400)
-      .json({ success: false, errorMessage: error.message });
+    const errorMessage = (error as Error).message;
+    return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
   }
@@ -180,11 +176,9 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
     });
   } catch (error) {
     await client.query('ROLLBACK');
+    const errorMessage = (error as Error).message;
     console.error(error);
-
-    return res
-      .status(400)
-      .json({ success: false, errorMessage: error.message });
+    return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
   }

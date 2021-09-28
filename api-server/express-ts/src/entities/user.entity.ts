@@ -1,8 +1,8 @@
 /**
   @description user entity with repository
-  @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
+  @version PEAC-131-guest-login
 */
-import { PoolClient, Query, QueryResult } from 'pg';
+import { PoolClient, QueryResult } from 'pg';
 import { getNowKO } from '../utils/Date';
 import { getSelectColumns } from '../utils/Query';
 
@@ -12,7 +12,7 @@ export class User {
     readonly email?: string,
     readonly nickname?: string,
     readonly locale?: string,
-    readonly isAdmin?: boolean,
+    readonly roleId?: number,
     readonly createdAt?: string,
     readonly latestLogin?: string,
     readonly modifiedAt?: string,
@@ -25,16 +25,17 @@ export class User {
     if (
       this.email === undefined ||
       this.nickname === undefined ||
-      this.locale === undefined
+      this.locale === undefined ||
+      this.roleId === undefined
     )
-      throw new Error('email or nickname or locale is undefined');
+      throw new Error('email or nickname or locale or roleId is undefined');
     try {
       const createdUserId: QueryResult<any> = (
         await client.query(
           `INSERT INTO users 
         VALUES(DEFAULT, '${this.email}', '${this.nickname}', '${
             this.locale
-          }', DEFAULT, ${getNowKO()}, ${getNowKO()},${getNowKO()})
+          }', ${getNowKO()}, ${getNowKO()}, ${getNowKO()}, ${this.roleId})
         RETURNING user_id`
         )
       ).rows[0].user_id;

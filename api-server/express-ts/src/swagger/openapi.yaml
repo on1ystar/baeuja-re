@@ -22,6 +22,8 @@ tags:
 paths:
   /auth/google:
     $ref: './paths/auth/google.yaml'
+  /auth/guest:
+    $ref: './paths/auth/guest.yaml'
   /learning/contents:
     $ref: './paths/learning/contents.yaml'
   /learning/contents/{contentId}:

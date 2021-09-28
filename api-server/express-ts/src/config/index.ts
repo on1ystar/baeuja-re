@@ -33,6 +33,10 @@ const conf: {
       issuer: string | undefined;
       subject: string | undefined;
     };
+    optionGuest: {
+      issuer: string | undefined;
+      subject: string | undefined;
+    };
   };
 } = {
   peachApi: {
@@ -74,6 +78,10 @@ const conf: {
     secretKey: process.env.JWT_SECRET_KEY,
     option: {
       expiresIn: process.env.JWT_EXPIRESIN,
+      issuer: process.env.JWT_ISSUER,
+      subject: process.env.JWT_SUBJECT
+    },
+    optionGuest: {
       issuer: process.env.JWT_ISSUER,
       subject: process.env.JWT_SUBJECT
     }
