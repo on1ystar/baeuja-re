@@ -4,44 +4,31 @@
 */
 
 import { Request, Response } from 'express';
-import { Auth } from 'googleapis';
 import { pool } from '../db';
-import { GoogleOAuth2 } from '../utils/GoogleOAuth2';
 import { User } from '../entities/user.entity';
 import { PoolClient } from 'pg';
 import jwt from 'jsonwebtoken';
 import conf from '../config';
 import { Role } from '../entities/role.entity';
 
-const googleOAuth2 = new GoogleOAuth2();
-const oauth2Client = googleOAuth2.getOAuth2Client();
-
-// GET /auth/google
-export const googleRequest = (req: Request, res: Response) => {
-  const googleRequestUrl: string = oauth2Client.generateAuthUrl({
-    // 'online' (default) or 'offline' (gets refresh_token)
-    access_type: 'online',
-    scope: [
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/userinfo.profile'
-    ]
-  });
-  res.redirect(googleRequestUrl);
-};
-
-// REDIRECT /auth/google/callback
-// get access token, refresh token, id token
-export const googleCallback = async (req: Request, res: Response) => {
-  const code = req.query.code as string;
+// POST /auth/google
+// google login
+export const loginGoogle = async (req: Request, res: Response) => {
+  // email, name, locale
+  const { userinfo } = req.body;
   const poolClient: PoolClient = await pool.connect();
 
   try {
-    // 새로운 access_token, refresh_token 발급
-    const { tokens }: { tokens: Auth.Credentials } =
-      await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
-    // email, name, locale
-    const userinfo = await googleOAuth2.getUserinfo();
+    if (
+      userinfo.email === undefined ||
+      userinfo.name === undefined ||
+      userinfo.locale === undefined
+    ) {
+      return res.status(400).json({
+        success: false,
+        errorMessage: 'Invalid the userinfo value in Request Body'
+      });
+    }
 
     let userId: number;
     let isMember = false;
@@ -78,7 +65,7 @@ export const googleCallback = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, token, isMember });
   } catch (error) {
-    console.error('❌ Error: auth.controller.ts googleCallback function');
+    console.error('❌ Error: auth.controller.ts loginGoogle function');
     console.error(error);
     const errorMessage = (error as Error).message;
     return res.status(500).json({ sucess: false, errorMessage });

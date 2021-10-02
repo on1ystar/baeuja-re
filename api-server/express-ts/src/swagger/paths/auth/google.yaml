@@ -1,7 +1,21 @@
-get:
+post:
   tags:
     - auth
   summary: google login
+  requestBody:
+    description: 유저 정보
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            locale:
+              type: string
   responses:
     200-304:
       description: 요청 성공
