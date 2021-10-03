@@ -85,7 +85,7 @@ const DrawingUnit = ({ unit }) => {
         style={styles.thumbNailContainer}
         onPress={() =>
           navigation.navigate('Stack', {
-            screen: 'Learning',
+            screen: 'LearningUnit',
             params: {
               contentId,
               unitIndex,

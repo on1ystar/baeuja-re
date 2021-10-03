@@ -89,7 +89,7 @@ const DrawingContent = ({ content }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'Units',
+                screen: 'LearningUnits',
                 params: {
                   contentId,
                 },

@@ -24,7 +24,6 @@ import AudioRecorderPlayer, {
   AudioSet,
   AudioSourceAndroidType,
 } from 'react-native-audio-recorder-player'; // React Native Audio Recorder Player (사용자 음성 녹음 및 재생)
-import { Chart, Line, Area, HorizontalAxis, VerticalAxis } from 'react-native-responsive-linechart'; // React Native Responsive Linechart (피치 그래프 그리기)
 import DocumentPicker from 'react-native-document-picker'; // Document Picker (파일 업로드)
 import Icon from 'react-native-vector-icons/AntDesign'; // AntDesign
 import Icon2 from 'react-native-vector-icons/Feather'; // Feather
@@ -34,49 +33,61 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncSt
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
 
-class Learning extends Component {
-  audioRecorderPlayer = new AudioRecorderPlayer();
+const LearningUnit = ({
+  route: {
+    params: { contentId, unitIndex },
+  },
+}) => {
+  // state
+  const [unit, setUnit] = useState({});
+  const [sentences, setSentences] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [evaluatedSentence, setEvaluatedSentence] = useState({});
+  const [pitchData, setPitchData] = useState({});
 
-  state = {
-    unit: {},
-    sentences: [],
-    isLoading: true,
-  };
+  const audioRecorderPlayer = new AudioRecorderPlayer();
 
   // Unit 화면에서 Unit 데이터와, 서버 통신으로 Unit, Sentences 데이터 받아오기
-  loadUnit = async () => {
-    const { contentId, unitIndex } = this.props.route.params;
-    console.log(`contentId : ${contentId}, unitIndex: ${unitIndex}`);
-    try {
-      const {
-        data: { success, unit, sentences, errorMessage },
-      } = await axios.get(
-        `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
-        {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTYzMjQ4NDYwMiwiZXhwIjoxNjM1MDc2NjAyLCJpc3MiOiJodHRwczovL2FwaS5rLXBlYWNoLmlvIiwic3ViIjoiYmFldWphQXBpVG9rZW4ifQ.Y05gXnmyZRECt-sTHmWHIe7cnFNwU1QY5OphWPibuuY',
-          },
-        }
-      );
-      console.log(`unit: ${unit}\nsentences: ${sentences}`);
-      if (!success) throw new Error(errorMessage);
+  const loadUnit = async () => {
+    console.log(`load unit => contentId : ${contentId}, unitIndex: ${unitIndex}`);
 
-      this.setState({ unit, sentences, isLoading: false });
-    } catch (error) {
-      console.log(error);
-    }
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        if (error) throw error;
+        const {
+          data: { success, unit, sentences, tokenExpired, errorMessage },
+        } = await axios.get(
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (tokenExpired) {
+          // login으로 redirect
+        }
+        console.log(`unit: ${unit}\nsentences: ${sentences}`);
+
+        if (!success) throw new Error(errorMessage);
+
+        console.log('success getting learning unit');
+        setUnit(unit);
+        setSentences(sentences);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
 
-  componentDidMount() {
-    console.log('componentDidMount');
-    this.loadUnit();
-  }
-
   //유저 음성 녹음 함수
-  onStartRecord = async () => {
-    const result = await this.audioRecorderPlayer.startRecorder();
-    this.audioRecorderPlayer.addRecordBackListener((e) => {
+  const onStartRecord = async () => {
+    const result = await audioRecorderPlayer.startRecorder();
+    audioRecorderPlayer.addRecordBackListener((e) => {
       return;
     });
     console.log('FP-20');
@@ -85,9 +96,9 @@ class Learning extends Component {
   };
 
   //유저 음성 녹음 중지 및 결과 전송 함수
-  onStopRecord = async () => {
-    const result = await this.audioRecorderPlayer.stopRecorder();
-    this.audioRecorderPlayer.removeRecordBackListener();
+  const onStopRecord = async () => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
 
     console.log('FP-30');
     console.log('음성 녹음 중지');
@@ -144,233 +155,52 @@ class Learning extends Component {
   };
 
   //유저 음성 재생 함수
-  onStartPlay = async () => {
+  const onStartPlay = async () => {
     console.log('FP-40');
     console.log('음성 재생');
-    const msg = await this.audioRecorderPlayer.startPlayer();
+    const msg = await audioRecorderPlayer.startPlayer();
     console.log(msg);
-    this.audioRecorderPlayer.addPlayBackListener((e) => {
+    audioRecorderPlayer.addPlayBackListener((e) => {
       return;
     });
   };
 
-  //유저 음성 녹음 파일 업로드
-  // uploadVoice = async () => {
-  //   try {
-  //     const res = (
-  //       await DocumentPicker.pick({
-  //         type: [DocumentPicker.types.audio],
-  //       })
-  //     )[0];
+  useEffect(loadUnit, []);
 
-  //     console.log(res);
-
-  //     const formData = new FormData();
-
-  //     formData.append(
-  //       'userVoice', //업로드할 파일의 폼
-  //       {
-  //         uri: res.uri, //파일 경로
-  //         type: res.type, //파일 형식
-  //         name: res.name, //파일 이름
-  //       },
-  //     );
-
-  //     console.log('FORM-DATA');
-  //     console.log(formData);
-
-  //     axios
-  //       .post(
-  //         //axios를 사용해 post방식으로 파일 전송
-  //         'https://api.k-peach.io/learning/sentences/175/evaluation',
-  //         formData,
-  //         {
-  //           headers: {
-  //             accept: 'application/json',
-  //             Authorization: `Basic ${authCode}`,
-  //             'Content-Type': 'multipart/form-data',
-  //           },
-  //         },
-  //       )
-  //       .then(function (response) {
-  //         //response 응답 (AI에서 받아온 데이터)
-  //         const aiData = response;
-  //         console.log('Response :', aiData);
-  //       })
-  //       .catch(function (error) {
-  //         //error 발생 응답
-  //         console.log('Upload Error:', error);
-  //       });
-  //   } catch (err) {
-  //     //업로드 취소 error 표시
-  //     if (DocumentPicker.isCancel(err)) {
-  //     } else {
-  //       throw err;
-  //     }
-  //   }
-  // };
-
-  //화면 구성
-
-  render() {
-    //유닛 선택 화면에서 받아온 데이터들
-    const { unit, sentences, isLoading } = this.state;
-
-    const PERFECT_VOICE_PATH = 'https://cdn.k-peach.io/perfect-voice/sentences/175.wav';
-
-    // AsyncStorage.getItem('nickname', (err, result) => {
-    //   console.log(result);
-    // });
-
-    // let perfectVoice;
-
-    // // 성우 음성 재생
-    // let music = new Sound(PERFECT_VOICE_PATH, '', (error, sound) => {
-    //   if (error) {
-    //     console.log('성우 음성 재생 실패');
-    //     return;
-    //   }
-    // });
-
-    //발음 평가 성우 데이터 (AI데이터로 교체해야 함) 변수 이름은 aiData
-    const data1 = [
-      { x: 1, y: 0.54253 },
-      { x: 2, y: 0.35264 },
-      { x: 3, y: 0.75473 },
-      { x: 4, y: 0.25242 },
-    ];
-
-    // 발음 평가 사용자 데이터 (AI데이터로 교체해야 함) 변수 이름은 aiData
-    const data2 = [
-      { x: 1, y: 0.28456 },
-      { x: 2, y: 0.74843 },
-      { x: 3, y: 0.33234 },
-      { x: 4, y: 0.54222 },
-      { x: 5, y: 0.33222 },
-    ];
-
-    //Learning 화면 전체 그리기
-    return (
-      <ScrollView style={LearningStyles.container}>
-        {/* 유튜브 플레이어 */}
-        {isLoading ? <Text> </Text> : <YoutubeLyric unit={unit} sentences={sentences} />}
-
-        {/* 학습 도구 모음 부분 */}
-        <View style={LearningStyles.learningButtonContainer}>
-          {/* 성우 음성 듣기 버튼 */}
-          {/* <TouchableOpacity
-            style={LearningStyles.learningButton}
-            onPress={() => music.play(onEnd => {})}>
-            <Icon name="sound" size={30} color="#9388E8" />
-          </TouchableOpacity> */}
-
-          {/* 음성 녹음 버튼 */}
-          <TouchableOpacity style={LearningStyles.learningButton}>
-            <Icon2
-              style={{
-                marginTop: 2,
-              }}
-              name="mic"
-              size={27}
-              color="#9388E8"
-              onPress={() => this.onStartRecord()}
-            />
-          </TouchableOpacity>
-
-          {/* 음성 녹음 중지 버튼 */}
-          <TouchableOpacity style={LearningStyles.learningButton}>
-            <Icon2
-              name="stop-circle"
-              size={30}
-              color="#9388E8"
-              onPress={() => this.onStopRecord()}
-            />
-          </TouchableOpacity>
-
-          {/* 음성 재생 버튼 */}
-          <TouchableOpacity style={LearningStyles.learningButton}>
-            <Icon3 name="hearing" size={30} color="#9388E8" onPress={() => this.onStartPlay()} />
-          </TouchableOpacity>
-
-          {/* 음성 업로드 버튼 */}
-          {/* <TouchableOpacity style={LearningStyles.learningButton}>
-              <Icon3
-                name="upload-file"
-                size={30}
-                color="#000000"
-                onPress={async () => await this.uploadVoice()}
-              />
-            </TouchableOpacity> */}
-        </View>
-        {/* 발화 평가 차트 */}
-        <View style={LearningStyles.voiceEvaluationContainer}>
-          <View>
-            {/* aiData로 교체 */}
-            <Text>Your Score : 99</Text>
-          </View>
-          <Chart
-            style={{ height: 200, width: '100%', marginTop: 100 }}
-            padding={{ left: 40, bottom: 20, right: 20, top: 20 }}
-            xDomain={{ min: 1, max: 5 }}
-            yDomain={{ min: 0, max: 1 }}
-          >
-            <VerticalAxis
-              tickValues={[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]}
-              theme={{
-                axis: { stroke: { color: '#aaa', width: 2 } },
-                ticks: { stroke: { color: '#aaa', width: 2 } },
-                // labels: {formatter: (v: number) => v.toFixed(2)},
-              }}
-            />
-            <HorizontalAxis
-              tickCount={10}
-              theme={{
-                axis: { stroke: { color: '#aaa', width: 2 } },
-                ticks: { stroke: { color: '#aaa', width: 2 } },
-                labels: { label: { rotation: 50 }, formatter: (v) => v.toFixed(1) },
-              }}
-            />
-
-            {/* aiData로 교체 */}
-            <Line
-              data={data1}
-              smoothing="bezier"
-              tension={0.3}
-              theme={{
-                stroke: { color: 'green', width: 5 },
-                scatter: {
-                  default: { width: 10, height: 10, rx: 5, color: 'black' },
-                },
-              }}
-            />
-
-            {/* aiData로 교체 */}
-            <Line
-              data={data2}
-              smoothing="bezier"
-              tension={0.3}
-              theme={{
-                stroke: { color: 'red', width: 5 },
-                scatter: {
-                  default: { width: 10, height: 10, rx: 5, color: 'black' },
-                },
-              }}
-            />
-          </Chart>
-        </View>
-        {/* 화면 이동 탭 부분 */}
-        <View style={LearningStyles.navigationContainer}>
-          <Button title="홈 화면으로 가기" onPress={() => navigation.navigate('Home')} />
-          <Button
-            title="유닛 선택 화면으로 가기"
-            onPress={() => navigation.navigate('SelectUnit')}
+  // Learning 화면 전체 그리기
+  return (
+    <ScrollView style={LearningStyles.container}>
+      {/* 유튜브 플레이어 */}
+      {isLoading ? <Text> </Text> : <YoutubeLyric unit={unit} sentences={sentences} />}
+      {/* 학습 도구 모음 부분  */}
+      <View style={LearningStyles.learningButtonContainer}>
+        {/* 음성 녹음 버튼 */}
+        <TouchableOpacity style={LearningStyles.learningButton}>
+          <Icon2
+            style={{
+              marginTop: 2,
+            }}
+            name="mic"
+            size={27}
+            color="#9388E8"
+            onPress={() => onStartRecord()}
           />
-        </View>
-      </ScrollView>
-    );
-  }
-}
+        </TouchableOpacity>
 
+        {/* 음성 녹음 중지 버튼 */}
+        <TouchableOpacity style={LearningStyles.learningButton}>
+          <Icon2 name="stop-circle" size={30} color="#9388E8" onPress={() => onStopRecord()} />
+        </TouchableOpacity>
+
+        {/* 음성 재생 버튼 */}
+        <TouchableOpacity style={LearningStyles.learningButton}>
+          <Icon3 name="hearing" size={30} color="#9388E8" onPress={() => onStartPlay()} />
+        </TouchableOpacity>
+      </View>
+      {/* 발화 평가 차트 */}
+    </ScrollView>
+  );
+};
 // 유튜브 영상 가져오고, 초에 맞는 가사 그리기
 const YoutubeLyric = ({ unit, sentences }) => {
   console.log(unit, sentences);
@@ -706,4 +536,4 @@ const YoutubeSentenceStyles = StyleSheet.create({
   },
 });
 
-export default Learning;
+export default LearningUnit;
