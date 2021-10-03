@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process pitch score
-# Modified: 2021.09.01
-# Version: 0.3
+# Modified: 2021.10.03
+# Version: 0.4
 
 import numpy as np
 import librosa, librosa.display
@@ -17,16 +17,15 @@ def getNormalized(data: list) -> list:
 	:param data: list
 	:return : normalized data
 	"""
-	normalized_data = list()
-	max_value = max(data)
-	min_value = min(data)
-	print('max_value is ', max_value)
-	print('min_value is ', min_value)
-	print('max - min is ', max_value - min_value)
+	normalized_data_list = list()
+	max_value, min_value = max(data), min(data)
+
 	# min - max normalization
 	for i in range(0, len(data)):
-		normalized_data.append((data[i] - min_value) / (max_value - min_value))
-	return normalized_data
+		normalized_data = (data[i] - min_value) / (max_value - min_value)
+		normalized_data_list.append(normalized_data)
+
+	return normalized_data_list
 
 def getPitch(wav_file: str, sample_rate=16000) -> list:
 	"""
@@ -36,7 +35,6 @@ def getPitch(wav_file: str, sample_rate=16000) -> list:
 	:return: list
 	"""
 	# wav file load
-	print('wav file is ', wav_file)
 	signal, _ = librosa.load(wav_file, sr=sample_rate)
 
 	# remove silence
@@ -49,6 +47,7 @@ def getPitch(wav_file: str, sample_rate=16000) -> list:
 	removed_nan_f0 = [x for x in f0 if np.isnan(x) == False]
 
 	# get normalized pitch
+	# need to update when if len(removed_nan_f0) == 0
 	normalized_pitch = getNormalized(removed_nan_f0)
 
 	# get duration of wav file
@@ -79,10 +78,12 @@ def getTimes(pitch_len: int, removed_nan_pitch_len: int, sample_rate=16000) -> l
 	times = list()
 	times.append(0)
 	for i in range(1, removed_nan_pitch_len):
-		times.append(times[i-1] + gap)
+		time = times[i-1] + gap
+		times.append(time)
 		times[i] = round(times[i], 2)
 	return times
 
+### need to update dtw -> fastdtw
 def getDTWScore(perfect_pitch: list, user_pitch: list, duration: float) -> int:
 	"""
 	:compare voice, get score user voice

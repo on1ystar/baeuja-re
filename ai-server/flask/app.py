@@ -2,17 +2,18 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: baeuja ai server
-# Modified: 2021.09.11
-# Version: 0.31
+# Modified: 2021.10.03
+# Version: 0.4
 
 from flask import Flask
 from flask import request
 from flask import jsonify
-
 from requests import get
+
 from src import evaluation
 from src import korean
-from configs import conf
+from src import utils
+from src import path
 
 import subprocess
 import os
@@ -21,56 +22,22 @@ import datetime
 
 app = Flask(__name__)
 
-def downloadSoundFile(url: str, save_path: str) -> str:
-	"""
-	:download sound file from url
-	:param url: download sound file from url
-	:return downloaded file name
-	"""
-	file_name = url.split('/')[-1]
-
-	with open(save_path + file_name, "wb") as file:
-		# download from url
-		response = get(url)
-
-		# save to local
-		file.write(response.content) 
-	
-	return file_name
-
-def getCommand(file_path: str, file_id: str, option: str) -> str:
-	"""
-	:make command for subprocess
-	:param file_path: input sound file path 
-	:param file_id: user_id
-	:param option: "word-convert" or "sentence-convert" or "decode"
-	:return make command
-	"""
-	execute_script = conf.getExecuteScript()
-	return execute_script + ' ' + file_path + ' ' + file_id + ' ' + option
-
-def getFileName(file_path: str) -> str:
-	print('file_path is ', file_path)
-	splited = file_path.split('/')
-	return str(splited[-1]).split('.')[0]
-
 @app.route('/evaluation', methods = ['GET', 'POST'])
 def evaluationUserSpeech():
 	"""
-	:from wav file extract korean and evaluation
-	:with stt, dtw
+	:from wav file extract korean and evaluation with stt, pitch
 	:return: evaluatuon score, speech to text result, pitch(f0)
 	"""
 	if request.method == 'POST':
 
-		perfect_dir = conf.getPerfectSentenceDir()
-		user_dir = conf.getUserSentenceDir()
+		perfect_dir = path.getPerfectSentenceDir()
+		user_dir = path.getUserSentenceDir()
 
 		# read request json
 		user_id = str(request.json['userId'])
 		user_voice_uri = request.json['userVoiceUri']
 		perfect_voice_uri = request.json['sentence']['perfectVoiceUri']
-		perfect_id = getFileName(perfect_voice_uri)
+		perfect_id = utils.getFileName(perfect_voice_uri)
 		sentence_id = str(request.json['sentence']['sentenceId'])
 		korean_text = request.json['sentence']['koreanText']
 
@@ -83,14 +50,12 @@ def evaluationUserSpeech():
 		print('korean_text: ', korean_text)
 
 		# download user_voice and perfect_voice
-		user_voice_file_name = downloadSoundFile(user_voice_uri, user_dir)
+		user_voice_file_name = utils.downloadSoundFile(user_voice_uri, user_dir)
 		user_voice_path = user_dir + user_voice_file_name
 
 		# make shell command
-		user_convert_command = getCommand(user_voice_path, user_id, "sentence-convert")
-		print('user_convert_command is ', user_convert_command)
-		decode_command = getCommand(user_voice_path, user_id, "decode")
-		print('decode_command is ', decode_command)
+		user_convert_command = utils.getCommand(user_voice_path, user_id, "sentence-convert")
+		decode_command = utils.getCommand(user_voice_path, user_id, "decode")
 
 		# voice file to flac, 16bit 16khz with ffmpeg
 		try:
@@ -116,8 +81,8 @@ def evaluationUserSpeech():
 		# speech to text and get stt score
 		try:
 			decoder_worker.wait(timeout=10)
-			result_stt = korean.getKoreanText(conf.getLogDir() + user_id + ".log")
-			stt_score = korean.levenshtein(korean_text, result_stt) # levenshtein, how get i origin?
+			result_stt = korean.getKoreanText(path.getLogDir() + user_id + ".log")
+			stt_score = korean.levenshtein(korean_text, result_stt)
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
@@ -134,6 +99,7 @@ def evaluationUserSpeech():
 		perfect_times_dumps = json.dumps(perfect_times)
 		user_pitch_dumps = json.dumps(user_pitch)
 		user_times_dumps = json.dumps(user_times)
+		print('return success')
 
 		return jsonify({
 				"success":True,

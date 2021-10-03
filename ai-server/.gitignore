@@ -1,7 +1,9 @@
 model/
 sounds/
 log/
+tmp/
 *config*
+*path*
 *test*
 *nohup*
 *.txt

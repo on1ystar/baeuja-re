@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Author: Park Yeong Jun
+# Email: qkrdudwns98@naver.com
+# Description: baeuja ai server
+# Modified: 2021.10.03
+# Version: 0.4
+
 # get script path
 SHELL_DIR="$( cd "$( dirname "$0" )" && pwd -P )"
 . $SHELL_DIR/config.sh

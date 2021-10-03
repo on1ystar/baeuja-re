@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process STT score
-# Modified: 2021.09.01
-# Version: 0.3
+# Modified: 2021.10.03
+# Version: 0.4
 
 import re
 import sys
