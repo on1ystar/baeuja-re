@@ -5,16 +5,16 @@
  */
 
 import { Response, Request } from 'express';
-import { Content } from '../../entities/content.entity';
-import { Sentence } from '../../entities/sentence.entity';
-import { UserContentHistory } from '../../entities/user-content-history.entity';
-import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
-import { UserUnitHistory } from '../../entities/user-unit-history.entity.';
+import { Content } from '../../../entities/content.entity';
+import { Sentence } from '../../../entities/sentence.entity';
+import { UserContentHistory } from '../../../entities/user-content-history.entity';
+import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
+import { UserUnitHistory } from '../../../entities/user-unit-history.entity.';
 import GetUnitsKPOPDTO from './dto/get-units-K-POP.dto';
 import GetUnitsOthersDTO from './dto/get-units-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
 import { PoolClient } from 'pg';
-import { pool } from '../../db';
+import { pool } from '../../../db';
 
 // learning 첫 화면 -> 콘텐츠 리스트 화면 구성을 위한 데이터 응답
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

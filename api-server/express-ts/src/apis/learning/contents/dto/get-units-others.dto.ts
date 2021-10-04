@@ -4,9 +4,9 @@
  */
 
 import { PoolClient } from 'pg';
-import { pool } from '../../../db';
-import { Sentence } from '../../../entities/sentence.entity';
-import { Unit } from '../../../entities/unit.entity';
+import { pool } from '../../../../db';
+import { Sentence } from '../../../../entities/sentence.entity';
+import { Unit } from '../../../../entities/unit.entity';
 
 interface SentenceType {
   readonly sentenceId: number;

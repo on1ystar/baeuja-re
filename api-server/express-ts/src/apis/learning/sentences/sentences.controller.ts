@@ -6,15 +6,15 @@
 
 import axios from 'axios';
 import { Response, Request } from 'express';
-import conf from '../../config';
+import conf from '../../../config';
 import PostEvaluationDTO from './dto/post-evaluation.dto';
-import UserSentenceEvaluation from '../../entities/user-sentence-evaluation.entity';
+import UserSentenceEvaluation from '../../../entities/user-sentence-evaluation.entity';
 import { MulterError } from 'multer';
-import { s3Client } from '../../utils/s3';
+import { s3Client } from '../../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
+import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
 import { PoolClient } from 'pg';
-import { pool } from '../../db';
+import { pool } from '../../../db';
 
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;

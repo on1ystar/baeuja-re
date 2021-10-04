@@ -13,11 +13,11 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import usersApp from './users';
 import cors from 'cors';
-import learningApp from './learning';
+import usersApp from './apis/users';
+import learningApp from './apis/learning';
 import appRouter from './app.router';
-import authApp from './auth';
+import authApp from './apis/auth';
 import { checkUserId } from './utils/Auth';
 
 const app: Application = express();

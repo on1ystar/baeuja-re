@@ -5,13 +5,13 @@
 
 import { Request, Response } from 'express';
 import { Auth } from 'googleapis';
-import { pool } from '../db';
-import { GoogleOAuth2 } from '../utils/GoogleOAuth2';
-import { User } from '../entities/user.entity';
+import { pool } from '../../db';
+import { GoogleOAuth2 } from '../../utils/GoogleOAuth2';
+import { User } from '../../entities/user.entity';
 import { PoolClient } from 'pg';
 import jwt from 'jsonwebtoken';
-import conf from '../config';
-import { Role } from '../entities/role.entity';
+import conf from '../../config';
+import { Role } from '../../entities/role.entity';
 
 const googleOAuth2 = new GoogleOAuth2();
 const oauth2Client = googleOAuth2.getOAuth2Client();

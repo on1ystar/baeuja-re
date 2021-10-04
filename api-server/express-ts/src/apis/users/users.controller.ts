@@ -5,8 +5,8 @@
 
 import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
-import { pool } from '../db';
-import { User } from '../entities/user.entity';
+import { pool } from '../../db';
+import { User } from '../../entities/user.entity';
 
 // GET /users
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

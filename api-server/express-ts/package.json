@@ -10,8 +10,8 @@
     "dev:js": "npm run api-docs &&  tsc && cross-env RUN=build nodemon build/server.js",
     "pm2:start": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --watch '*.ts'",
     "pm2:reload": "sudo pm2 reload baeuja-api-server ",
-    "test": "nodemon --exec 'ts-node' src/test.ts",
-    "db:connect": "ts-node src/db/index.ts"
+    "test": "jest --forceExit --detectOpenHandles",
+    "test:local": "nodemon --exec 'ts-node' src/test.ts"
   },
   "author": "on1ystar",
   "devDependencies": {
@@ -22,6 +22,7 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^14.0.26",
     "@types/pg": "^8.6.1",
+    "@types/supertest": "^2.0.11",
     "@types/swagger-ui-express": "^4.1.3",
     "@types/yamljs": "^0.2.31",
     "@typescript-eslint/eslint-plugin": "^4.29.2",

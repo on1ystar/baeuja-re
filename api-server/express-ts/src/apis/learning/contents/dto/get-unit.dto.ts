@@ -3,9 +3,9 @@
   @version feature/api/PEAC-38-learning-list-api
  */
 import { PoolClient } from 'pg';
-import { pool } from '../../../db';
-import { Sentence } from '../../../entities/sentence.entity';
-import { Unit } from '../../../entities/unit.entity';
+import { pool } from '../../../../db';
+import { Sentence } from '../../../../entities/sentence.entity';
+import { Unit } from '../../../../entities/unit.entity';
 
 // ------------------ class properties를 위한 interface ------------------
 interface WordType {
