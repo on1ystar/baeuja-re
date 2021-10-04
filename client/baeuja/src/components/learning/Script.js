@@ -2,40 +2,44 @@ import React, { useState, useCallback, useRef, Component, useEffect } from 'reac
 import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
 
 const Script = ({ currentSentence }) => {
-  //   console.log(currentSentence.words);
+  let result = [];
+  const draw = () => {
+    let resultWords = [];
+    let sentence;
+    console.log('Current Sentence is :', currentSentence);
+    if (Object.keys(currentSentence).length !== 0) {
+      sentence = currentSentence.koreanText;
+      for (let i = 0; i < currentSentence.words.length; i++) {
+        resultWords.push(currentSentence.words[i]);
+      }
+      resultWords.forEach((word) => {
+        result.push(sentence.split(word.prevKoreanText)[0]);
+        result.push(
+          <Text
+            style={{
+              color: 'blue',
+              fontSize: 20,
+              textDecorationLine: 'underline',
+            }}
+            key={word.wordId}
+          >
+            {word.prevKoreanText}
+          </Text>
+        );
+        sentence = sentence.split(word.prevKoreanText)[1];
+      });
+
+      result.push(sentence);
+      console.log(`result : ${result}`);
+      return result;
+    }
+  };
+
   return (
     <View>
-      <View>
-        {/* {currentSentence.words.forEach((word) => {
-          const start = currentSentence.find(word.prevKoreanText);
-          end + word.prevKoreanText.lenth[{ start, end }];
-        })} */}
-        <Text>{currentSentence.koreanText}</Text>
-        <Text>{currentSentence.translatedText}</Text>
-        <View>
-          <Text></Text>
-        </View>
-      </View>
+      <Text>{draw()}</Text>
     </View>
   );
 };
 
 export default Script;
-
-/**
- * let sentence = '한 잔과 백두산이 마르고 닳도록';
-const words = ['동해', '두산', '한 잔'];
-const result = [];
-
-words.forEach((word) => {
-  result.push(sentence.split(word)[0]); // result = ['', <Text>동해</Text>, '물과 ']
-  result.push(`<text>${word}</text>`); // result = ['', <Text>동해</Text>, '물과 ', <Text>백두산</Text>]
-  sentence = sentence.split(word)[1]; // sentence = '이 마르고 닳도록'
-});
-result.push(sentence);
-
-const resultSentence = result.join('');
-
-console.log(resultSentence);
-
- */

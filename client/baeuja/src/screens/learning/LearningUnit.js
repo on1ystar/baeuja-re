@@ -55,13 +55,13 @@ const LearningUnit = ({
   const [pitchData, setPitchData] = useState({});
   const [currentSentence, setCurrentSentence] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const youtubeRef = useRef();
-  const isFoucsed = useIsFocused();
 
   const audioRecorderPlayer = new AudioRecorderPlayer();
 
   // Unit 화면에서 Unit 데이터와, 서버 통신으로 Unit, Sentences 데이터 받아오기
-  const loadUnit = async () => {
+  const loadUnit = useCallback(async () => {
     console.log(`load unit => contentId : ${contentId}, unitIndex: ${unitIndex}`);
 
     AsyncStorage.getItem('token', async (error, token) => {
@@ -95,47 +95,59 @@ const LearningUnit = ({
         console.log(error);
       }
     });
-  };
+  }, [contentId, unitIndex]);
 
-  const onStateChange = (state) => {
-    if (state === 'playing') {
-      setIsPlaying(() => true);
-      // 유튜브 영상 시간 가져오는 인터벌 실행
-      intervalId = setInterval(async () => {
-        if (youtubeRef.current === null) {
-          clearInterval(intervalId);
-        } else {
-          const curruentTime = Math.round(await youtubeRef.current.getCurrentTime());
-          const filteredSentences = sentences.filter((sentence) => {
-            const [sentenceMin, sentenceSec] = sentence.endTime.split(':');
-            const sentenceEndTimeToSec = parseInt(sentenceMin) * 60 + parseInt(sentenceSec);
-            return curruentTime <= sentenceEndTimeToSec;
-          });
-          setCurrentSentence(() => filteredSentences[0]);
-        }
-      }, 100);
-      // 학습 도구 버튼 비활성화
-    }
+  const onStateChange = useCallback(
+    (state) => {
+      if (state === 'playing') {
+        setIsPlaying(true);
+        // 학습 도구 버튼 비활성화
+      }
 
-    if (state === 'paused') {
-      setIsPlaying(false);
-      // 유튜브 영상 시간 가져오는 인터벌 멈춤
+      if (state === 'paused') {
+        setIsPlaying(false);
+        // 학습 도구 버튼 활성화
+      }
+
+      if (state === 'ended') {
+        setIsPlaying(false);
+        setIsEnded(true);
+      }
+      return;
+    },
+    [youtubeRef.current]
+  );
+
+  // -------------------------------------useEffect----------------------------------------
+  useEffect(loadUnit, []);
+
+  useEffect(() => {
+    // 유튜브 영상 시간 가져오는 인터벌 실행
+    intervalId = setInterval(async () => {
+      if (isPlaying) {
+        const curruentTime = Math.round(await youtubeRef.current.getCurrentTime());
+        const filteredSentences = sentences.filter((sentence) => {
+          const [sentenceMin, sentenceSec] = sentence.endTime.split(':');
+          const sentenceEndTimeToSec = parseInt(sentenceMin) * 60 + parseInt(sentenceSec);
+          return curruentTime <= sentenceEndTimeToSec;
+        });
+        setCurrentSentence(() => filteredSentences[0]);
+      } else if (!isPlaying) clearInterval(intervalId);
+    }, 100);
+    return () => {
       clearInterval(intervalId);
-      // 학습 도구 버튼 활성화
-    }
+    };
+  }, [isPlaying]);
 
-    if (state === 'ended') {
-      setIsPlaying(false);
+  useEffect(() => {
+    if (isEnded) {
       youtubeRef.current.seekTo(
         parseInt(unit.startTime.split(':')[0]) * 60 + parseInt(unit.startTime.split(':')[1])
       );
-      // 유튜브 영상 시간 가져오는 인터벌 멈춤
-      clearInterval(intervalId);
-      setCurrentSentence(sentences[0].koreanText);
+      setIsEnded(false);
+      setCurrentSentence(sentences[0]);
     }
-    return;
-  };
-  // https://github.com/hyochan/react-native-audio-recorder-player
+  }, [isEnded]);
 
   //유저 음성 녹음 함수
   const onStartRecord = async () => {
@@ -212,9 +224,7 @@ const LearningUnit = ({
     const msg = await audioRecorderPlayer.startPlayer();
   };
 
-  useEffect(loadUnit, []);
-  useEffect(() => {}, [currentSentence]);
-
+  // -------------------------------------return----------------------------------------
   // Learning 화면 전체 그리기
   return (
     <ScrollView style={LearningStyles.container}>
@@ -223,27 +233,36 @@ const LearningUnit = ({
         <Text> </Text>
       ) : (
         <View>
-          <YoutubePlayer
-            ref={youtubeRef}
-            play={isPlaying}
-            videoId={unit.youtubeUrl}
-            initialPlayerParams={{
-              start:
-                parseInt(unit.startTime.split(':')[0]) * 60 +
-                parseInt(unit.startTime.split(':')[1]),
-              end: parseInt(unit.endTime.split(':')[0]) * 60 + parseInt(unit.endTime.split(':')[1]),
-              controls: 0,
-              modestbranding: 1,
-              rel: 0,
-            }}
-            height={250}
-            onChangeState={onStateChange}
-          />
+          <View>
+            <YoutubePlayer
+              ref={youtubeRef}
+              play={isPlaying}
+              videoId={unit.youtubeUrl}
+              initialPlayerParams={{
+                start:
+                  parseInt(unit.startTime.split(':')[0]) * 60 +
+                  parseInt(unit.startTime.split(':')[1]),
+                end:
+                  parseInt(unit.endTime.split(':')[0]) * 60 + parseInt(unit.endTime.split(':')[1]),
+                controls: 0,
+                modestbranding: 1,
+                rel: 0,
+              }}
+              height={250}
+              onChangeState={onStateChange}
+            />
+          </View>
+          <View>
+            {/* 스크립트, 단어 그리기 */}
+            {Object.keys(currentSentence).length !== 0 && currentSentence !== undefined ? (
+              <Script currentSentence={currentSentence} />
+            ) : (
+              <Text></Text>
+            )}
+          </View>
         </View>
       )}
-      <View>
-        <Script currentSentence={currentSentence} />
-      </View>
+
       {/* 학습 도구 모음 부분  */}
       <View style={LearningStyles.learningButtonContainer}>
         {/* 음성 녹음 버튼 */}
