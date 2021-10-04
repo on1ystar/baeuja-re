@@ -97,7 +97,8 @@ export class Unit {
         (SELECT * FROM user_unit_history 
         WHERE user_id = ${userId}) as user_unit_history 
         ON unit.content_id = user_unit_history.content_id AND unit.unit_index = user_unit_history.unit_index  
-        WHERE unit.content_id = ${contentId}`
+        WHERE unit.content_id = ${contentId}
+        ORDER BY unit.unit_index ASC`
       );
       if (!queryResult.rowCount) throw new Error('contentId does not exist');
 

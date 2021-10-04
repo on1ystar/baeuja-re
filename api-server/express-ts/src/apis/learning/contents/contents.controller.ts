@@ -190,7 +190,7 @@ export const getUnit = async (req: Request, res: Response) => {
 
     await client.query('COMMIT');
 
-    return res.status(200).json(getUnitDTO);
+    return res.status(200).json({ success: true, ...getUnitDTO });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error(error);

@@ -355,9 +355,9 @@ Auth:
     success:
       type: boolean
       example: true
-    userId:
-      type: number
-      description: user id
+    token:
+      type: string
+      description: JWT TOKEN for auth
     isMember:
       type: boolean
       description: 이미 가입한 유저인 지

@@ -5,7 +5,7 @@ describe('e2e Testing Auth App', () => {
   beforeAll(async () => {});
   afterAll(async () => {});
 
-  describe('서버 상태 확인', () => {
+  describe('/auth/google', () => {
     it('기록 체크', () => {});
   });
 });
