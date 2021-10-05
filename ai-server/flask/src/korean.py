@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process STT score
-# Modified: 2021.10.03
-# Version: 0.4
+# Modified: 2021.10.05
+# Version: 0.4.1
 
 import re
 import sys
@@ -14,9 +14,9 @@ from hanspell import spell_checker
 
 def getKoreanText(log_file: str) -> str:
 	"""
-	:extract only korean text from log_file
-	:param: log file path
-	:return: korean str
+	:description:		extract only korean text from log_file
+	:param log_file:	str, log file path
+	:return:			str, grammer korean text
 	"""
 
 	# open log file
@@ -46,10 +46,10 @@ def getKoreanText(log_file: str) -> str:
 
 def levenshtein(s1: str, s2: str) -> int:
     """
-    :compare string with levenshtein
-    :param: s1, correct string
-    :param: s2, input string
-    :return: evaluation score
+    :description:		compare string with levenshtein
+    :param s1:			str, correct string
+    :param s2:			str, input string
+    :return:			int, evaluation score
     """
 
     # divide korean text to consonant and vowel
@@ -78,4 +78,4 @@ def levenshtein(s1: str, s2: str) -> int:
     # calculate real score
     score = (len(s1) - levenshtein_score) / len(s1)
 
-    return int(score * 95)
+    return int(score * 80)

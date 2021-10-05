@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: baeuja ai server
-# Modified: 2021.10.03
-# Version: 0.4
+# Modified: 2021.10.05
+# Version: 0.4.1
 
 from flask import Flask
 from flask import request
@@ -25,15 +25,16 @@ app = Flask(__name__)
 @app.route('/evaluation', methods = ['GET', 'POST'])
 def evaluationUserSpeech():
 	"""
-	:from wav file extract korean and evaluation with stt, pitch
-	:return: evaluatuon score, speech to text result, pitch(f0)
+	:description:	evaluation user's speech compare with voice_actor speech by using Pitch and STT
+	:return:		int, evaluation score
 	"""
 	if request.method == 'POST':
 
+		# get wave file path
 		perfect_dir = path.getPerfectSentenceDir()
 		user_dir = path.getUserSentenceDir()
 
-		# read request json
+		# get data from request.json
 		user_id = str(request.json['userId'])
 		user_voice_uri = request.json['userVoiceUri']
 		perfect_voice_uri = request.json['sentence']['perfectVoiceUri']
@@ -73,10 +74,11 @@ def evaluationUserSpeech():
 		perfect_pitch, perfect_times, perfect_duration = evaluation.getPitch(perfect_flac_path, sample_rate=16000) # normalized pitch
 
 		user_flac_path = user_dir + user_id + ".flac"
-		user_pitch, user_times, _ = evaluation.getPitch(user_flac_path, sample_rate=16000)
+		user_pitch, user_times, user_duration = evaluation.getPitch(user_flac_path, sample_rate=16000)
 
 		# get dtw score from pitch
-		dtw_score = evaluation.getDTWScore(perfect_pitch, user_pitch, perfect_duration)
+		dtw_score = 5
+		# evaluation.getDTWScore(perfect_pitch, user_pitch, perfect_times, user_times, perfect_duration, user_duration)
 		
 		# speech to text and get stt score
 		try:
@@ -94,6 +96,7 @@ def evaluationUserSpeech():
 
 		print('result_stt is ', result_stt)
 		print('result_score is ', result_score)
+
 		# make json dumps to return 
 		perfect_pitch_dumps = json.dumps(perfect_pitch)
 		perfect_times_dumps = json.dumps(perfect_times)
