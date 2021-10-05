@@ -9,21 +9,19 @@ servers:
   - url: https://api.k-peach.io/
   - url: http://localhost:4001/
 tags:
-  - name: auth
-    description: auth APIs
+  - name: users
+    description: users APIs
   - name: learning/contents
     description: learning content and unit APIs
   - name: learning/sentences
     description: learning sentence APIs
   - name: learning/words
     description: learning word APIs
-  - name: users
-    description: users APIs
 paths:
-  /auth/google:
-    $ref: './paths/auth/google.yaml'
-  /auth/guest:
-    $ref: './paths/auth/guest.yaml'
+  # /auth/google:
+  #   $ref: './paths/auth/google.yaml'
+  # /auth/guest:
+  #   $ref: './paths/auth/guest.yaml'
   /learning/contents:
     $ref: './paths/learning/contents.yaml'
   /learning/contents/{contentId}:

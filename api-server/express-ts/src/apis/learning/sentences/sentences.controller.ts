@@ -101,7 +101,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     await client.query('COMMIT');
 
     return res
-      .status(200)
+      .status(201)
       .json({ success: true, evaluatedSentence, pitchData });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -135,7 +135,7 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 
     await client.query('COMMIT');
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
     });
@@ -170,7 +170,7 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
 
     await client.query('COMMIT');
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
     });

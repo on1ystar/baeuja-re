@@ -17,7 +17,6 @@ import cors from 'cors';
 import usersApp from './apis/users';
 import learningApp from './apis/learning';
 import appRouter from './app.router';
-import authApp from './apis/auth';
 import { checkUserId } from './utils/Auth';
 
 const app: Application = express();
@@ -32,8 +31,7 @@ usersApp.use(cors()); // cors 모듈
 
 app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
-app.use('/users', checkUserId, usersApp); // injecting users app
+app.use('/users', usersApp); // injecting users app
 app.use('/learning', checkUserId, learningApp); // injecting learning app
-app.use('/auth', authApp); // injection auth app
 
 export default app;
