@@ -9,7 +9,7 @@ beforeAll(done => {
 afterAll(async () => {
   await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
 });
-describe('e2e Testing Auth App', () => {
+describe('e2e Testing users app', () => {
   const token = jwt.sign(
     { userId: 1 },
     conf.jwtToken.secretKey as string,

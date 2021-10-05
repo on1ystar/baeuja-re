@@ -23,22 +23,16 @@ export const checkUserId = async (
     token,
     conf.jwtToken.secretKey as string,
     conf.jwtToken.option,
-    async (error, decodedToken) => {
-      if (error?.name === 'TokenExpiredError') {
-        console.error(error);
+    async (decodedError, decodedToken) => {
+      if (decodedError) {
+        console.error(decodedError);
         return res.status(401).json({
           success: false,
-          tokenExpired: true,
-          errorMessage: error?.message
-        });
-      } else if (error) {
-        console.error(error);
-        return res.status(401).json({
-          success: false,
-          errorMessage: error?.message
+          tokenExpired:
+            decodedError?.name === 'TokenExpiredError' ? true : false,
+          errorMessage: decodedError?.message
         });
       }
-      console.log(decodedToken);
       const userId = decodedToken?.userId;
       try {
         if (!(await User.isExistById(poolClient, parseInt(userId)))) {

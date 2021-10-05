@@ -43,14 +43,13 @@ post:
           properties:
             userinfo:
               type: object
+              required: [locale]
               properties:
                 email:
                   type: string
-                  required: false
                   description: 구글 로그인일 경우 이메일 필요 | 게스트 로그인일 경우 필요 없음
                 locale:
                   type: string
-                  required: true
                   description: 유저 국가(위치) 코드 정보
   responses:
     200-304:
