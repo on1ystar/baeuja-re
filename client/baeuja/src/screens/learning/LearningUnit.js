@@ -34,6 +34,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navi
 
 // Component import
 import Script from '../../components/learning/Script';
+import Tools from '../../components/learning/Tools';
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
@@ -44,8 +45,6 @@ const LearningUnit = ({
     params: { contentId, unitIndex },
   },
 }) => {
-  const DEFAULT_RECOREDED_FILE_NAME = 'sound.m4a';
-
   // state
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);
@@ -149,81 +148,6 @@ const LearningUnit = ({
     }
   }, [isEnded]);
 
-  //유저 음성 녹음 함수
-  const onStartRecord = async () => {
-    const recoredUserVoice = await audioRecorderPlayer.startRecorder();
-    console.log('-------------음성 녹음 결과-------------');
-    console.log(`${recoredUserVoice}`);
-  };
-
-  //유저 음성 녹음 중지 및 결과 전송 함수
-  const onStopRecord = async () => {
-    const recoredUserVoice = await audioRecorderPlayer.stopRecorder();
-    console.log('-------------음성 녹음 중지-------------');
-    console.log(`${recoredUserVoice}`);
-
-    try {
-      const path = RNFS.CachesDirectoryPath + `/${DEFAULT_RECOREDED_FILE_NAME}`;
-      const formData = new FormData();
-
-      formData.append(
-        'userVoice', //업로드할 파일의 폼
-        {
-          uri: path, //파일 경로
-          type: 'audio/m4a', //파일 형식
-          name: DEFAULT_RECOREDED_FILE_NAME, //파일 이름
-        }
-      );
-      AsyncStorage.getItem('token', async (error, token) => {
-        try {
-          if (token === null) {
-            // login으로 redirect
-          }
-          // AsyncStorage error
-          if (error) throw error;
-
-          console.log(currentSentence.senteceId);
-          const {
-            data: { success, evaluatedSentence, pitchData, errorMessage },
-          } = await axios.post(
-            `https://api.k-peach.io/learning/sentences/${currentSentence.senteceId}/evaluation`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            }
-          );
-          if (tokenExpired) {
-            // login으로 redirect
-          }
-          console.log(`evaluatedSentence: ${evaluatedSentence}`);
-
-          if (!success) throw new Error(errorMessage);
-
-          console.log('success getting Evaluated Data');
-          setEvaluatedSentence(evaluatedSentence);
-          setPitchData(pitchData);
-          setIsEvaluationLoading(false);
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    } catch (err) {
-      //업로드 취소 error 표시
-      if (DocumentPicker.isCancel(err)) {
-      } else {
-        throw err;
-      }
-    }
-  };
-
-  //유저 음성 재생 함수
-  const onStartPlay = async () => {
-    console.log('음성 재생');
-    const msg = await audioRecorderPlayer.startPlayer();
-  };
-
   // -------------------------------------return----------------------------------------
   // Learning 화면 전체 그리기
   return (
@@ -260,34 +184,19 @@ const LearningUnit = ({
               <Text></Text>
             )}
           </View>
+          {/* 학습 도구 모음 부분  */}
+          <View style={LearningStyles.learningButtonContainer}>
+            {Object.keys(currentSentence).length !== 0 &&
+            currentSentence !== undefined &&
+            isPlaying === false ? (
+              <Tools currentSentence={currentSentence} />
+            ) : (
+              <Text></Text>
+            )}
+          </View>
         </View>
       )}
 
-      {/* 학습 도구 모음 부분  */}
-      <View style={LearningStyles.learningButtonContainer}>
-        {/* 음성 녹음 버튼 */}
-        <TouchableOpacity style={LearningStyles.learningButton}>
-          <Icon2
-            style={{
-              marginTop: 2,
-            }}
-            name="mic"
-            size={27}
-            color="#9388E8"
-            onPress={() => onStartRecord()}
-          />
-        </TouchableOpacity>
-
-        {/* 음성 녹음 중지 버튼 */}
-        <TouchableOpacity style={LearningStyles.learningButton}>
-          <Icon2 name="stop-circle" size={30} color="#9388E8" onPress={() => onStopRecord()} />
-        </TouchableOpacity>
-
-        {/* 음성 재생 버튼 */}
-        <TouchableOpacity style={LearningStyles.learningButton}>
-          <Icon3 name="hearing" size={30} color="#9388E8" onPress={() => onStartPlay()} />
-        </TouchableOpacity>
-      </View>
       {/* 발화 평가 차트 */}
     </ScrollView>
   );

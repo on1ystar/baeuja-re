@@ -13,8 +13,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		16991B2D3D7FD478079F5FB4 /* libPods-baeuja.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E7128D63363589BE53EEC7 /* libPods-baeuja.a */; };
 		27704DE810FA475F8D3DB9E8 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF5E079F0F324102B6705DA9 /* Foundation.ttf */; };
-		2FD6407112D4332F28ED2E71 /* libPods-baeuja-baeujaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90D91E93BE09EA122822AA0F /* libPods-baeuja-baeujaTests.a */; };
 		3BCAE11AB36845D9BDF05DC5 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9781D918EB0E4C2A9AACCB4B /* Zocial.ttf */; };
 		48467AA423294E199EFC22B1 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FD19E21A34944E9B238C822 /* Ionicons.ttf */; };
 		50734DD1E6AD4E968FA8A9B2 /* NanumSquareOTFR.otf in Resources */ = {isa = PBXBuildFile; fileRef = D91F1CC47E64478FA2BF0C9E /* NanumSquareOTFR.otf */; };
@@ -24,8 +24,8 @@
 		80202AD7D9734DED8DB35D1B /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2539D0967003407E9A0897C9 /* FontAwesome5_Solid.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		86C0557E439E4837A4564ED8 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69DD0B6CE07F456F9BFED1F0 /* AntDesign.ttf */; };
+		906F28331A442B159A8981FC /* libPods-baeuja-baeujaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E495299F583AFA75B3B8E4B9 /* libPods-baeuja-baeujaTests.a */; };
 		B845C1B84415461A9EFF8BE0 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2F313BA50464DBCA7712147 /* Octicons.ttf */; };
-		B9BBFAA2FA4E3486B2557780 /* libPods-baeuja.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C999274A4B740E5C237B485 /* libPods-baeuja.a */; };
 		BE3C60263F1A470F88706142 /* NanumSquareOTFB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 106871EE7933449499BC95D2 /* NanumSquareOTFB.otf */; };
 		CC1D9C954C2F48FEBBDB17CC /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B33935E8C2C840F9A93611EC /* MaterialIcons.ttf */; };
 		D4C509D3188D4FCCA198A710 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A66408ECDD94DBE869E3446 /* MaterialCommunityIcons.ttf */; };
@@ -48,9 +48,8 @@
 		00E356EE1AD99517003FC87E /* baeujaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = baeujaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* baeujaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = baeujaTests.m; sourceTree = "<group>"; };
-		07C4B32E544C594C5B219339 /* Pods-baeuja-baeujaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja-baeujaTests.debug.xcconfig"; path = "Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests.debug.xcconfig"; sourceTree = "<group>"; };
-		0B9356B51E4249D2CEB1EB61 /* Pods-baeuja.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja.release.xcconfig"; path = "Target Support Files/Pods-baeuja/Pods-baeuja.release.xcconfig"; sourceTree = "<group>"; };
 		106871EE7933449499BC95D2 /* NanumSquareOTFB.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareOTFB.otf; path = ../src/assets/fonts/NanumSquareOTFB.otf; sourceTree = "<group>"; };
+		12A24D89B3615BB9DD304DE1 /* Pods-baeuja-baeujaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja-baeujaTests.release.xcconfig"; path = "Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* baeuja.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = baeuja.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = baeuja/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = baeuja/AppDelegate.m; sourceTree = "<group>"; };
@@ -58,24 +57,25 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = baeuja/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = baeuja/main.m; sourceTree = "<group>"; };
 		15797ED8AD224CFE9B49452B /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		1703672A8E2756E93B298FF9 /* Pods-baeuja.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja.debug.xcconfig"; path = "Target Support Files/Pods-baeuja/Pods-baeuja.debug.xcconfig"; sourceTree = "<group>"; };
 		1A66408ECDD94DBE869E3446 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		2539D0967003407E9A0897C9 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
-		3C999274A4B740E5C237B485 /* libPods-baeuja.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-baeuja.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DB405AE2B5B42FD84CCF925 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		69C2CFF3F6AF0B6D338C5931 /* Pods-baeuja-baeujaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja-baeujaTests.release.xcconfig"; path = "Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests.release.xcconfig"; sourceTree = "<group>"; };
 		69DD0B6CE07F456F9BFED1F0 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		7B7F3E6C45041E34C9818ED2 /* Pods-baeuja.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja.release.xcconfig"; path = "Target Support Files/Pods-baeuja/Pods-baeuja.release.xcconfig"; sourceTree = "<group>"; };
 		7FD19E21A34944E9B238C822 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = baeuja/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		90D91E93BE09EA122822AA0F /* libPods-baeuja-baeujaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-baeuja-baeujaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9781D918EB0E4C2A9AACCB4B /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		9E3ABFAA0DD44ECBBD67B12F /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		A1A3C2CD6249404193897D7B /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		A4E7128D63363589BE53EEC7 /* libPods-baeuja.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-baeuja.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33935E8C2C840F9A93611EC /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		CC1A5C07F4C74650A63CF847 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		CF5E079F0F324102B6705DA9 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		D91F1CC47E64478FA2BF0C9E /* NanumSquareOTFR.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareOTFR.otf; path = ../src/assets/fonts/NanumSquareOTFR.otf; sourceTree = "<group>"; };
+		DACA17AE67DAF742EA270944 /* Pods-baeuja.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja.debug.xcconfig"; path = "Target Support Files/Pods-baeuja/Pods-baeuja.debug.xcconfig"; sourceTree = "<group>"; };
+		DF151113BF7B3EF842C0BE79 /* Pods-baeuja-baeujaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-baeuja-baeujaTests.debug.xcconfig"; path = "Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E260BE5D38284CEFA740FCA9 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		E495299F583AFA75B3B8E4B9 /* libPods-baeuja-baeujaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-baeuja-baeujaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F150D0FE5AA54BC3919D3D1C /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		F22CE8A5746C4A07AFEEFBAD /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -87,7 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2FD6407112D4332F28ED2E71 /* libPods-baeuja-baeujaTests.a in Frameworks */,
+				906F28331A442B159A8981FC /* libPods-baeuja-baeujaTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B9BBFAA2FA4E3486B2557780 /* libPods-baeuja.a in Frameworks */,
+				16991B2D3D7FD478079F5FB4 /* libPods-baeuja.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,8 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				3C999274A4B740E5C237B485 /* libPods-baeuja.a */,
-				90D91E93BE09EA122822AA0F /* libPods-baeuja-baeujaTests.a */,
+				A4E7128D63363589BE53EEC7 /* libPods-baeuja.a */,
+				E495299F583AFA75B3B8E4B9 /* libPods-baeuja-baeujaTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -145,10 +145,10 @@
 		325ED4C9AB0DA56CDA533D27 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1703672A8E2756E93B298FF9 /* Pods-baeuja.debug.xcconfig */,
-				0B9356B51E4249D2CEB1EB61 /* Pods-baeuja.release.xcconfig */,
-				07C4B32E544C594C5B219339 /* Pods-baeuja-baeujaTests.debug.xcconfig */,
-				69C2CFF3F6AF0B6D338C5931 /* Pods-baeuja-baeujaTests.release.xcconfig */,
+				DACA17AE67DAF742EA270944 /* Pods-baeuja.debug.xcconfig */,
+				7B7F3E6C45041E34C9818ED2 /* Pods-baeuja.release.xcconfig */,
+				DF151113BF7B3EF842C0BE79 /* Pods-baeuja-baeujaTests.debug.xcconfig */,
+				12A24D89B3615BB9DD304DE1 /* Pods-baeuja-baeujaTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -217,11 +217,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "baeujaTests" */;
 			buildPhases = (
-				40155B568F17AF2F2AB2161A /* [CP] Check Pods Manifest.lock */,
+				A3E35D6A93D83B3CF8727215 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				9543C353502AEFBC797951E4 /* [CP] Copy Pods Resources */,
+				9FEA9B4A97A69134E2BC4908 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -237,7 +237,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "baeuja" */;
 			buildPhases = (
-				0D432A63A1E3CFB6BE019A42 /* [CP] Check Pods Manifest.lock */,
+				D8386515DC7B0133C07766B9 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
@@ -341,29 +341,24 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		0D432A63A1E3CFB6BE019A42 /* [CP] Check Pods Manifest.lock */ = {
+		9FEA9B4A97A69134E2BC4908 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-baeuja-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		40155B568F17AF2F2AB2161A /* [CP] Check Pods Manifest.lock */ = {
+		A3E35D6A93D83B3CF8727215 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -385,21 +380,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9543C353502AEFBC797951E4 /* [CP] Copy Pods Resources */ = {
+		D8386515DC7B0133C07766B9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-baeuja-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-baeuja-baeujaTests/Pods-baeuja-baeujaTests-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -454,7 +454,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07C4B32E544C594C5B219339 /* Pods-baeuja-baeujaTests.debug.xcconfig */;
+			baseConfigurationReference = DF151113BF7B3EF842C0BE79 /* Pods-baeuja-baeujaTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -481,7 +481,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 69C2CFF3F6AF0B6D338C5931 /* Pods-baeuja-baeujaTests.release.xcconfig */;
+			baseConfigurationReference = 12A24D89B3615BB9DD304DE1 /* Pods-baeuja-baeujaTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -505,7 +505,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1703672A8E2756E93B298FF9 /* Pods-baeuja.debug.xcconfig */;
+			baseConfigurationReference = DACA17AE67DAF742EA270944 /* Pods-baeuja.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -531,7 +531,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0B9356B51E4249D2CEB1EB61 /* Pods-baeuja.release.xcconfig */;
+			baseConfigurationReference = 7B7F3E6C45041E34C9818ED2 /* Pods-baeuja.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
