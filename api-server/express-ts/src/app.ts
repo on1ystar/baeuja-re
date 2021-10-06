@@ -27,7 +27,7 @@ app.use(helmet()); // 보안 모듈
 app.use(logger); // 로그 관리 모듈
 app.use(express.json()); // request body parsing
 app.use(express.urlencoded({ extended: true })); // url query prameter parsing
-usersApp.use(cors()); // cors 모듈
+app.use(cors()); // cors 모듈
 
 app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup

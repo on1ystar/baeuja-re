@@ -31,6 +31,14 @@ export const getUsers = async (req: Request, res: Response) => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUserDetail = async (req: Request, res: Response) => {
   const { userId } = req.params;
+  console.log(userId, res.locals.userId);
+  if (+res.locals.userId !== +userId) {
+    return res.status(401).json({
+      success: false,
+      errorMessage:
+        "The user's id in token and the url param's id do not match "
+    });
+  }
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
@@ -44,7 +52,7 @@ export const getUserDetail = async (req: Request, res: Response) => {
       'createdAt',
       'latestLogin',
       'modifiedAt',
-      'role_id'
+      'roleId'
     ]);
     return res.status(200).json({ success: true, user });
   } catch (error) {
@@ -97,7 +105,7 @@ export const postUser = async (req: Request, res: Response) => {
           ? 'member' + String(Date.now()).slice(-8)
           : 'guest' + String(Date.now()).slice(-8), // nickname
         userinfo.locale, // locale
-        Role.getRoleId('guest') // roleId
+        userinfo.email ? Role.getRoleId('member') : Role.getRoleId('guest') // roleId
       );
       userId = Number((await user.create(poolClient)).userId);
     }
@@ -109,7 +117,7 @@ export const postUser = async (req: Request, res: Response) => {
       conf.jwtToken.secretKey as string,
       userinfo.email ? conf.jwtToken.option : conf.jwtToken.optionGuest // guest면 만료 기간이 없는 토큰 생성
     );
-    res.status(201).json({ success: true, token, isMember });
+    res.status(isMember ? 200 : 201).json({ success: true, token, isMember });
   } catch (error) {
     console.error(error);
     const errorMessage = (error as Error).message;
@@ -124,6 +132,13 @@ export const postUser = async (req: Request, res: Response) => {
 export const patchtUserNickname = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const { nickname } = req.body;
+  if (+res.locals.userId !== +userId) {
+    return res.status(401).json({
+      success: false,
+      errorMessage:
+        "The user's id in token and the url param's id do not match "
+    });
+  }
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
@@ -134,7 +149,14 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
 
     const user: User = new User(+userId);
     const updatedUser = await user.updateUserNickname(client, nickname);
-    return res.status(200).json({ success: true, updatedUser });
+    return res.status(200).json({
+      success: true,
+      user: {
+        userId: updatedUser.user_id,
+        email: updatedUser.email,
+        nickname
+      }
+    });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
@@ -148,6 +170,13 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const deleteUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
+  if (+res.locals.userId !== +userId) {
+    return res.status(401).json({
+      success: false,
+      errorMessage:
+        "The user's id in token and the url param's id do not match "
+    });
+  }
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
@@ -157,8 +186,15 @@ export const deleteUser = async (req: Request, res: Response) => {
       throw new Error('userId does not exist. ');
 
     const user: User = new User(+userId);
-    const deletedUser = user.delete(client);
-    return res.status(200).json({ success: true, deletedUser });
+    const deletedUser = await user.delete(client);
+    return res.status(200).json({
+      success: true,
+      user: {
+        userId: deletedUser.user_id,
+        email: deletedUser.email,
+        nickname: deletedUser.nickname
+      }
+    });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;

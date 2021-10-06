@@ -37,6 +37,11 @@ const conf: {
       issuer: string | undefined;
       subject: string | undefined;
     };
+    optionExpired: {
+      expiresIn: string | undefined;
+      issuer: string | undefined;
+      subject: string | undefined;
+    };
   };
 } = {
   peachApi: {
@@ -85,6 +90,11 @@ const conf: {
       subject: process.env.JWT_SUBJECT
     },
     optionGuest: {
+      issuer: process.env.JWT_ISSUER,
+      subject: process.env.JWT_SUBJECT
+    },
+    optionExpired: {
+      expiresIn: '0',
       issuer: process.env.JWT_ISSUER,
       subject: process.env.JWT_SUBJECT
     }

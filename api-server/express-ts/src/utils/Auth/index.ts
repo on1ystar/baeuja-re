@@ -10,10 +10,19 @@ export const checkUserId = async (
   res: Response,
   next: NextFunction
 ) => {
+  // Authorization header 존재 x
+  if (!req.headers.authorization) {
+    console.info('Not found Authorization token');
+    return res.status(401).json({
+      success: false,
+      errorMessage: 'Not found Authorization token'
+    });
+  }
   const [authType, token] = req.headers.authorization?.split(' ') as string[];
   // Authorization header에 Bearer 키워드가 없거나 잘못 입력된 경우
   if (authType !== 'Bearer') {
-    res.status(400).json({
+    console.info('Invalid bearer keyword');
+    return res.status(401).json({
       success: false,
       errorMessage: 'Authorization header type is not Bearer'
     });
