@@ -1,5 +1,21 @@
+import { element } from 'prop-types';
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+  responsiveScreenHeight,
+  responsiveScreenWidth,
+  responsiveScreenFontSize,
+  useResponsiveHeight,
+  useResponsiveWidth,
+  useResponsiveScreenHeight,
+} from 'react-native-responsive-dimensions'; // Responsive layout
+import { Card } from 'react-native-elements'; // React Native Elements
+
+// Component import
+import Words from './Words';
 
 const Script = ({ currentSentence }) => {
   // 한국어 문장 만들기
@@ -16,17 +32,17 @@ const Script = ({ currentSentence }) => {
     resultKoreanhWords.forEach((word) => {
       let idx;
       let temp = [];
+      let findFlag = false;
       koreanResult.forEach((element) => {
         if (typeof element === 'string') {
-          idx =
-            element.indexOf(word.prevKoreanText) === -1
-              ? undefined
-              : element.indexOf(word.prevKoreanText);
+          idx = element.indexOf(word.prevKoreanText);
+          if (idx === -1 || findFlag === true) idx = undefined;
+          else findFlag = true;
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: 'red' }}>
+            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
               {word.prevKoreanText}
             </Text>
           );
@@ -60,7 +76,7 @@ const Script = ({ currentSentence }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: 'red' }}>
+            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
               {word.prevTranslatedText}
             </Text>
           );
@@ -74,16 +90,42 @@ const Script = ({ currentSentence }) => {
     });
     return englishResult;
   };
+
   return (
     <View>
-      <View>
-        <Text>Korean : {drawKoreanSentence()}</Text>
-      </View>
-      <View>
-        <Text>English : {drawEnglishSentence()}</Text>
-      </View>
+      <Card containerStyle={{ borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+        <View>
+          <Text style={styles.koreanScript}>
+            🇰🇷 : <Text>{drawKoreanSentence()}</Text>
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.englishScript}>
+            🇺🇸 : <Text> {drawEnglishSentence()}</Text>
+          </Text>
+        </View>
+        <View>
+          <Words currentSentence={currentSentence} />
+        </View>
+      </Card>
     </View>
   );
 };
 
 export default Script;
+
+const styles = StyleSheet.create({
+  allContainer: {
+    flex: 1,
+  },
+  koreanScript: {
+    fontSize: responsiveFontSize(2.4),
+    color: '#555555',
+    marginBottom: 5,
+  },
+  englishScript: {
+    fontSize: responsiveFontSize(2.4),
+    color: '#555555',
+    marginBottom: 15,
+  },
+});

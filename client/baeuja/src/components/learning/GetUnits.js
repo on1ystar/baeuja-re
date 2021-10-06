@@ -16,6 +16,7 @@ import {
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 class GetUnits extends React.Component {
   state = {
@@ -104,10 +105,14 @@ const DrawingUnit = ({ unit }) => {
           <View style={styles.thumaNailHider}></View>
           <View style={styles.unitDescriptionContainer}>
             <Text style={styles.unitDescription}>Unit.{unit.unitIndex}</Text>
-            <Text style={styles.unitDescription}>
-              {unit.sentencesCounts} Sentences, {unit.wordsCounts} Words
-            </Text>
-            <Text style={styles.unitDescription}>
+            <View>
+              <Text style={styles.unitDescription}>
+                <Ionicons style={styles.schoolIcon} name="school"></Ionicons>
+                {'  '}
+                {unit.sentencesCounts} Sentences, {unit.wordsCounts} Words
+              </Text>
+            </View>
+            <Text style={styles.unitWords}>
               #{unit.words[0].originalKoreanText} #{unit.words[1].originalKoreanText}
             </Text>
           </View>
@@ -139,19 +144,31 @@ const styles = StyleSheet.create({
   },
   unitDescriptionContainer: {
     position: 'absolute',
-    top: 0,
+    top: 60,
     left: 0,
     bottom: 0,
     right: 0,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    marginLeft: 10,
+    marginLeft: 20,
   },
   unitDescription: {
     fontSize: responsiveFontSize(2.2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#FFFFFF',
+    fontWeight: '900',
+    marginTop: 3,
+  },
+  schoolIcon: {
+    fontSize: responsiveFontSize(2.2),
+  },
+  unitWords: {
+    marginTop: 6,
+    fontSize: responsiveFontSize(1.9),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#43baff',
     fontWeight: '900',
   },
 });

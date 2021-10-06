@@ -34,6 +34,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navi
 
 // Component import
 import Script from '../../components/learning/Script';
+import Words from '../../components/learning/Words';
 import Tools from '../../components/learning/Tools';
 
 // CSS import
@@ -56,8 +57,6 @@ const LearningUnit = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
   const youtubeRef = useRef();
-
-  const audioRecorderPlayer = new AudioRecorderPlayer();
 
   // Unit 화면에서 Unit 데이터와, 서버 통신으로 Unit, Sentences 데이터 받아오기
   const loadUnit = useCallback(async () => {
