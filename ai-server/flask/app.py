@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: baeuja ai server
-# Modified: 2021.10.05
-# Version: 0.4.1
+# Modified: 2021.10.06
+# Version: 0.4.2
 
 from flask import Flask
 from flask import request
@@ -18,7 +18,6 @@ from src import path
 import subprocess
 import os
 import json
-import datetime
 
 app = Flask(__name__)
 
@@ -42,13 +41,16 @@ def evaluationUserSpeech():
 		sentence_id = str(request.json['sentence']['sentenceId'])
 		korean_text = request.json['sentence']['koreanText']
 
-		# log
-		print('user_id: ', user_id)
-		print('user_voice_uri: ', user_voice_uri)
-		print('perfect_id: ', perfect_id)
-		print('perfect_voice_uri: ', perfect_voice_uri)
-		print('sentence_id: ', sentence_id)
-		print('korean_text: ', korean_text)
+		# log about request
+		log_data = {
+			'user_id': user_id,
+			'user_voide_uri': user_voice_uri,
+			'perfect_id': perfect_id,
+			'perfect_voice_uri': perfect_voice_uri,
+			'sentence_id': sentence_id,
+			'korean_text': korean_txt
+		}
+		utils.makeLog(log_data)
 
 		# download user_voice and perfect_voice
 		user_voice_file_name = utils.downloadSoundFile(user_voice_uri, user_dir)
@@ -73,12 +75,17 @@ def evaluationUserSpeech():
 		perfect_flac_path = perfect_dir + perfect_id + ".flac"
 		perfect_pitch, perfect_times, perfect_duration = evaluation.getPitch(perfect_flac_path, sample_rate=16000) # normalized pitch
 
+		if perfect_pitch is None:
+			return jsonify({
+					"success": False,
+					"error": "cannot found pitch"
+				})
+
 		user_flac_path = user_dir + user_id + ".flac"
 		user_pitch, user_times, user_duration = evaluation.getPitch(user_flac_path, sample_rate=16000)
 
 		# get dtw score from pitch
-		dtw_score = 5
-		# evaluation.getDTWScore(perfect_pitch, user_pitch, perfect_times, user_times, perfect_duration, user_duration)
+		pitch_score = evaluation.getPitchScore(perfect_pitch, user_pitch, perfect_times, user_times, perfect_duration, user_duration)
 		
 		# speech to text and get stt score
 		try:
@@ -88,21 +95,25 @@ def evaluationUserSpeech():
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
-					"success":False,
+					"success": False,
+					"error": "decode timeout"
 				})
 
 		# calculate real score
-		result_score = dtw_score + stt_score
-
-		print('result_stt is ', result_stt)
-		print('result_score is ', result_score)
+		result_score = pitch_score + stt_score
 
 		# make json dumps to return 
 		perfect_pitch_dumps = json.dumps(perfect_pitch)
 		perfect_times_dumps = json.dumps(perfect_times)
 		user_pitch_dumps = json.dumps(user_pitch)
 		user_times_dumps = json.dumps(user_times)
-		print('return success')
+
+		# log
+		log_data = {
+			'result_stt': result_stt,
+			'result_score': result_score
+		}
+		utils.makeLog(log_data)
 
 		return jsonify({
 				"success":True,

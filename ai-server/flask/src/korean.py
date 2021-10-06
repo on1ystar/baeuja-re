@@ -9,18 +9,17 @@ import re
 import sys
 import io
 import hgtk
-import datetime
 from hanspell import spell_checker
 
-def getKoreanText(log_file: str) -> str:
+def getKoreanText(decoded_file: str) -> str:
 	"""
-	:description:		extract only korean text from log_file
-	:param log_file:	str, log file path
-	:return:			str, grammer korean text
+	:description:			extract only korean text from decoded_file
+	:param decoded_file:	str, log file path
+	:return:				str, grammer korean text
 	"""
 
 	# open log file
-	reader = io.open(log_file, 'r', encoding='utf8')
+	reader = io.open(decoded_file, 'r', encoding='utf8')
 
 	# korean regex
 	regex_korean = re.compile('[^가-힣]+') 
@@ -44,29 +43,29 @@ def getKoreanText(log_file: str) -> str:
 
 	return grammer_result
 
-def levenshtein(s1: str, s2: str) -> int:
+def levenshtein(perfect_str: str, user_str: str) -> int:
     """
-    :description:		compare string with levenshtein
-    :param s1:			str, correct string
-    :param s2:			str, input string
-    :return:			int, evaluation score
+    :description:				compare string with levenshtein
+    :param perfect_str:			str, original string
+    :param user_str:			str, user's string extracted from speech to text
+    :return:					int, evaluation score
     """
 
     # divide korean text to consonant and vowel
-    s1 = hgtk.text.decompose(s1)
-    s2 = hgtk.text.decompose(s2)
+    perfect_str = hgtk.text.decompose(perfect_str)
+    user_str = hgtk.text.decompose(user_str)
 
-    if len(s1) < len(s2):
-        return levenshtein(s2, s1)
+    if len(perfect_str) < len(user_str):
+        return levenshtein(user_str, perfect_str)
 
-    if len(s2) == 0:
+    if len(user_str) == 0:
         return 0
 
-    # compare s1 and s2 by using levenshtein
-    previous_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
+    # compare perfect_str and user_str by using levenshtein
+    previous_row = range(len(user_str) + 1)
+    for i, c1 in enumerate(perfect_str):
         current_row = [i + 1]
-        for j, c2 in enumerate(s2):
+        for j, c2 in enumerate(user_str):
             insertions = previous_row[j + 1] + 1
             deletions = current_row[j] + 1
             substitutions = previous_row[j] + (c1 != c2)
@@ -76,6 +75,6 @@ def levenshtein(s1: str, s2: str) -> int:
     levenshtein_score = previous_row[-1]
 
     # calculate real score
-    score = (len(s1) - levenshtein_score) / len(s1)
+    score = (len(perfect_str) - levenshtein_score) / len(perfect_str)
 
     return int(score * 80)
