@@ -31,7 +31,6 @@ export const getUsers = async (req: Request, res: Response) => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUserDetail = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  console.log(userId, res.locals.userId);
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -82,7 +81,6 @@ export const postUser = async (req: Request, res: Response) => {
     let userId: number;
     let isMember = false;
 
-    console.log('That is test');
     if (
       // users 테이블에 유저 정보가 이미 있는 경우(이미 회원가입 된 유저)
       userinfo.email &&

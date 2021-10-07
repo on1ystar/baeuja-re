@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version feature/api/PEAC-38-learning-list-api
+ @version feature/api/testing-setup-with-jest
  */
 
 import axios from 'axios';
@@ -19,7 +19,7 @@ import { pool } from '../../../db';
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
-// /sentences/:sentenceId/units/evaluation
+// /sentences/:sentenceId/evaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const evaluateUserVoice = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;

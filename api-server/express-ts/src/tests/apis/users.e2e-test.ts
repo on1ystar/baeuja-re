@@ -2,7 +2,6 @@ import request from 'supertest';
 import app from '../../app';
 import jwt from 'jsonwebtoken';
 import conf from '../../config';
-import { pool } from '../../db';
 import TestSetup from '../e2eTestSetup';
 
 const testSetup = new TestSetup();
@@ -51,7 +50,6 @@ describe('e2e Testing users app', () => {
 
   describe('POST /users ', () => {
     it('should valid response a token with isMember(false) if login for the first time with Google email', async () => {
-      const poolClient = await pool.connect();
       const res = await request(app)
         .post('/users')
         .send({ userinfo: postUserinfo.google });
@@ -66,7 +64,6 @@ describe('e2e Testing users app', () => {
           expect(decodedToken?.userId).toBe(2);
         }
       );
-      poolClient.release();
     });
 
     it('should valid response a token with isMember(true) if login again with Google email', async () => {

@@ -173,7 +173,10 @@ export const getUnit = async (req: Request, res: Response) => {
         await Sentence.findByUnit(client, +contentId, +unitIndex, [
           'sentenceId'
         ])
-      ).map(row => row.sentenceId);
+      ).map(row => {
+        // !(await UserSentenceHistory.isExist(client, userId, row.sentenceId))
+        return row.sentenceId;
+      });
       await UserSentenceHistory.createList(client, userId, sentenceIdList);
     }
     // 존재하면 학습 횟수 1 증가, 문장 최근 학습 기록 갱신
