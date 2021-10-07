@@ -14,6 +14,7 @@ import {
 const LearningStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   youtubeContainer: {
     flex: 1,

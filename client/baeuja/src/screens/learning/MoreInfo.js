@@ -1,5 +1,5 @@
 // Library import
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
@@ -24,46 +24,47 @@ const MoreInfo = ({
   },
   navigation: { navigate },
 }) => {
-  const [thumbnailUri, setThumbNailUri] = useState();
-  const [title, setTitle] = useState();
-  const [artist, setArtist] = useState();
-  const [director, setDirector] = useState();
-  const [description, setDescription] = useState();
+  const [thumbnailUri, setThumbNailUri] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [artist, setArtist] = useState(null);
+  const [director, setDirector] = useState(null);
+  const [description, setDescription] = useState(null);
 
-  AsyncStorage.getItem('token', async (error, token) => {
-    try {
-      if (token === null) {
-        // login으로 redirect
+  useEffect(() => {
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        if (error) throw error;
+        const {
+          data: {
+            success,
+            content: { thumbnailUri, title, artist, director, description },
+          },
+        } = await axios(`https://api.k-peach.io/learning/contents/${contentId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        //   if (tokenExpired) {
+        //     // login으로 redirect
+        //   }
+
+        console.log('success getting More Information');
+
+        setThumbNailUri(thumbnailUri);
+        setTitle(title);
+        setArtist(artist);
+        setDescription(description);
+
+        if (!success) throw new Error(errorMessage);
+      } catch (error) {
+        console.log(error);
       }
-      if (error) throw error;
-      const {
-        data: {
-          success,
-          content: { thumbnailUri, title, artist, director, description },
-        },
-      } = await axios(`https://api.k-peach.io/learning/contents/${contentId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      //   if (tokenExpired) {
-      //     // login으로 redirect
-      //   }
-
-      if (!success) throw new Error(errorMessage);
-
-      setThumbNailUri(thumbnailUri);
-      setTitle(title);
-      setArtist(artist);
-      setDescription(description);
-
-      console.log('success getting description');
-      console.log('artist is: ', artist);
-    } catch (error) {
-      console.log(error);
-    }
-  });
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.allContainer}>
@@ -105,6 +106,8 @@ const MoreInfo = ({
     </ScrollView>
   );
 };
+
+export default MoreInfo;
 
 const styles = StyleSheet.create({
   allContainer: {
@@ -151,5 +154,3 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2.2),
   },
 });
-
-export default MoreInfo;

@@ -103,14 +103,14 @@ const DrawingContent = ({ content }) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('Stack', {
+          onPress={() => {
+            return navigation.navigate('Stack', {
               screen: 'MoreInfo',
               params: {
                 contentId,
               },
-            })
-          }
+            });
+          }}
           style={styles.infoIconContainer}
         >
           <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
@@ -119,8 +119,6 @@ const DrawingContent = ({ content }) => {
     </View>
   );
 };
-
-export default GetLearningContents;
 
 const styles = StyleSheet.create({
   allContainer: {
@@ -167,3 +165,5 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(3),
   },
 });
+
+export default GetLearningContents;

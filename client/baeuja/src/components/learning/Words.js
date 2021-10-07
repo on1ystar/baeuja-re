@@ -38,9 +38,7 @@ const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
   },
-  container: {
-    marginRight: 10,
-  },
+  container: { marginRight: 10 },
   wordContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -51,6 +49,5 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: '#CCCCCC',
     borderWidth: 1,
-    marginBottom: 5,
   },
 });

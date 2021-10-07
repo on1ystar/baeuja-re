@@ -1,6 +1,14 @@
 // Library import
 import React, { Component } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Text } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native'; // React Native Component
 import {
   responsiveHeight,
   responsiveWidth,
@@ -19,13 +27,29 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin'; // Google Signin
+import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
 
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
     console.log('Component rendered');
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        // token이 있을 경우 홈으로 이동
+        if (token) {
+          this.props.navigation.dispatch(
+            CommonActions.navigate('Tabs', {
+              screen: 'Home',
+            })
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 
+  // 구글 로그인 함수
   googleSignIn = async () => {
     GoogleSignin.configure({
       iosClientId: '983890334644-jgtfh2ue7vbuit6hem38bt96jq5ir52d.apps.googleusercontent.com',
@@ -49,6 +73,7 @@ class Login extends Component {
     }
   };
 
+  // 토큰 가져오는 함수
   getToken = async (authMethod, userinfo) => {
     let config = {};
     const locale = RNLocalize.getCountry();
@@ -90,28 +115,53 @@ class Login extends Component {
     }
   };
 
+  // 토큰 저장하는 함수
   saveToken = (token) => {
     AsyncStorage.setItem('token', token, () => {
       console.log('saved token: ', token);
     });
   };
 
-  // LoadLocalStorageData = () => {
-  //   AsyncStorage.getItem('nickname', (err, result) => {
-  //     console.log(result);
-  //   });
-  // };
-
   render() {
     return (
-      <View style={styles.textInputContainer}>
-        <Text>로그인 화면입니다.</Text>
-        <GoogleSigninButton
-          style={{ width: 192, height: 48 }}
-          size={GoogleSigninButton.Size.Wide}
-          onPress={this.googleSignIn}
-        />
-        <Button title="Guest" onPress={() => this.getToken('guest')} />
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View>
+            <Image
+              transitionDuration={1000}
+              source={require('../../assets/icons/noBlankLogo.png')}
+              style={{ width: 100, height: 100 }}
+            />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.textOne}>The Most fun way</Text>
+            <Text style={styles.textTwo}>to learn Korean</Text>
+            <Text style={styles.textThree}>BAEUJA</Text>
+            <Text style={styles.textFour}>Learning Korean with K-Contents</Text>
+          </View>
+          <View style={styles.loginBtnContainer}>
+            <View>
+              <TouchableOpacity onPress={() => this.googleSignIn()}>
+                <View style={styles.googleLoginBtn}>
+                  <ImageBackground
+                    transitionDuration={1000}
+                    source={require('../../assets/icons/google.png')}
+                    style={{ width: 40, height: 43 }}
+                  >
+                    <Text style={styles.googleLoginText}>Sign in with Google</Text>
+                  </ImageBackground>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity onPress={() => this.getToken('guest')}>
+                <View style={styles.guestLoginBtn}>
+                  <Text style={styles.guestLoginText}>Sign in with Guest</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </View>
     );
   }
@@ -122,8 +172,10 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  contentContainer: {
+    marginTop: 100,
   },
   textInputContainer: {
     justifyContent: 'center',
@@ -133,6 +185,73 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: responsiveScreenHeight(3),
     width: responsiveScreenWidth(70),
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
+  },
+  textContainer: {
+    marginLeft: 30,
+  },
+  textOne: {
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#555555',
+    fontSize: responsiveFontSize(3),
+    marginBottom: 6,
+  },
+  textTwo: {
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#555555',
+    fontSize: responsiveFontSize(3),
+    marginBottom: 6,
+  },
+  textThree: {
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#9388E8',
+    fontSize: responsiveFontSize(3),
+    marginBottom: 10,
+  },
+  textFour: {
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#9388E8',
+    fontSize: responsiveFontSize(2),
+  },
+  loginBtnContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 200,
+  },
+  googleLoginBtn: {
+    width: responsiveScreenWidth(50),
+    height: responsiveScreenHeight(5),
+    backgroundColor: '#3f81EC',
+    borderRadius: 10,
+    marginBottom: 30,
+  },
+  googleLoginText: {
+    width: responsiveScreenWidth(40),
+    height: responsiveScreenHeight(5),
+    fontSize: responsiveFontSize(2),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: '900',
+    marginLeft: 45,
+    marginTop: 12,
+    color: '#FFFFFF',
+  },
+  guestLoginBtn: {
+    width: responsiveScreenWidth(50),
+    height: responsiveScreenHeight(5),
+    fontSize: responsiveFontSize(2),
+    backgroundColor: '#9388E8',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  guestLoginText: {
+    fontSize: responsiveFontSize(2),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 });

@@ -95,7 +95,6 @@ const DrawingUnit = ({ unit }) => {
         }
       >
         <ImageBackground
-          onPress={() => console.log('onPress()')}
           source={{
             uri: unit.thumbnailUri,
           }}

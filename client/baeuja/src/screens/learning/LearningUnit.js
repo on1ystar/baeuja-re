@@ -202,33 +202,3 @@ const LearningUnit = ({
 };
 
 export default LearningUnit;
-
-/**
- * <LearningUnit>
- *  시간, 영상 재생 상태 감지 중
- *  sentences
- *  curruentTime
- *  currentSentenceId
- *  -> youtube
- *    특정 시간에 호출 <DrawScript/> 해당 문장 단어 props로 전달
- *  -> button
- *    <SpeechEvaluationResult/>
- * </LearningUnit>
- *
- * DrawScript
- */
-// 현재 시간을 감지하고 있는 setInterval
-//  -> 현재 문장을 바꿔
-
-// 현재 문장 아이디 업데이트 함수 -> 현재 시간이 바뀔 때마다 호출되는 함수
-// {
-//   유튜브 현재 시간을 보고 있어
-//   다음 문장이 와야 되냐를 보고
-//   외야 될 타이밍에
-//   현재 문장을 업데이트 (set)
-// }
-
-// 문장을 그리는 컴포넌트(현재 문장 스테이트) -> 현재 문장이 바뀔 때마다 호출 (컴포넌트니까 그냥 setState로 어떤 상태가 바뀌면 어차피 다시 렌더링)
-// {
-//   현재 문장만 그려주면 됨
-// }

@@ -118,6 +118,9 @@ const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
   },
+  container: {
+    marginRight: 10,
+  },
   koreanScript: {
     fontSize: responsiveFontSize(2.4),
     color: '#555555',

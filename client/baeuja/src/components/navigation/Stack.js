@@ -24,7 +24,7 @@ const Stack = () => (
       backgroundColor: '#FFFFFF',
     }}
   >
-    <NativeStack.Screen name="Login" component={Login} />
+    <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
     <NativeStack.Screen options={{ presentation: 'modal' }} name="MoreInfo" component={MoreInfo} />
     <NativeStack.Screen name="LearningUnits" component={LearningUnits} />
     <NativeStack.Screen name="LearningUnit" component={LearningUnit} />

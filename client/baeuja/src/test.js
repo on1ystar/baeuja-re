@@ -1,57 +1,52 @@
-// let englishSentence;
-// let resultEnglishWords = [];
-// let englishResult = [];
+let userVoiceTime = [
+  0, 0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24, 0.27, 0.3, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48,
+  0.51, 0.54, 0.57, 0.6, 0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87, 0.9, 0.93, 0.96,
+  0.99, 1.02, 1.05, 1.08,
+];
 
-// const currentSentence = {
-//   koreanText: '낮에는 따사로운 인간적인 여자',
-//   translatedText: 'A warm, humane woman during the day.',
-//   words: [
-//     {
-//       wordId: 1,
-//       sentenceId: 1,
-//       prevKoreanText: '낮',
-//       prevTranslatedText: 'day',
-//       originalKoreanText: '낮',
-//       originalTranslatedText: 'day',
-//     },
-//     {
-//       wordId: 2,
-//       sentenceId: 1,
-//       prevKoreanText: '여자',
-//       prevTranslatedText: 'woman',
-//       originalKoreanText: '여자',
-//       originalTranslatedText: 'woman',
-//     },
-//   ],
-// };
+let userVoiceHz = [
+  1.0, 0.9490644687475824, 0.9240346416498786, 0.9365134108115544, 0.9365134108115544,
+  0.9240346416498786, 0.9116277449098528, 0.9116277449098528, 0.9116277449098528,
+  0.8992923066367889, 0.8992923066367889, 0.9116277449098528, 0.9240346416498786,
+  0.9116277449098528, 0.8627106387532312, 0.8267574220281297, 0.7914218600467381,
+  0.8031324111797429, 0.8149108008453328, 0.8149108008453328, 0.8031324111797429,
+  0.7914218600467381, 0.7797787567251228, 0.7566933418702539, 0.7001332209431652,
+  0.35595412321074926, 0.11133347024572683, 0.058176452561485625, 0.02875220086193469,
+  0.02150175154443927, 0.02150175154443927, 0.0, 0.02875220086193469, 0.07314549212114656,
+  0.058176452561485625, 0.036044651605041854, 0.1347812965707849,
+];
 
-// englishSentence = currentSentence.translatedText.toLowerCase();
+let perfectVoiceTime = [
+  0, 0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24, 0.27, 0.3, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48,
+  0.51, 0.54, 0.57, 0.6, 0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87, 0.9, 0.93, 0.96,
+  0.99, 1.02, 1.05, 1.08,
+];
 
-// for (let i = 0; i < currentSentence.words.length; i++) {
-//   resultEnglishWords.push(currentSentence.words[i].prevTranslatedText);
-// }
+let perfectVoiceHz = [
+  1.0, 0.9490644687475824, 0.9240346416498786, 0.9365134108115544, 0.9365134108115544,
+  0.9240346416498786, 0.9116277449098528, 0.9116277449098528, 0.9116277449098528,
+  0.8992923066367889, 0.8992923066367889, 0.9116277449098528, 0.9240346416498786,
+  0.9116277449098528, 0.8627106387532312, 0.8267574220281297, 0.7914218600467381,
+  0.8031324111797429, 0.8149108008453328, 0.8149108008453328, 0.8031324111797429,
+  0.7914218600467381, 0.7797787567251228, 0.7566933418702539, 0.7001332209431652,
+  0.35595412321074926, 0.11133347024572683, 0.058176452561485625, 0.02875220086193469,
+  0.02150175154443927, 0.02150175154443927, 0.0, 0.02875220086193469, 0.07314549212114656,
+  0.058176452561485625, 0.036044651605041854, 0.1347812965707849,
+];
 
-// resultEnglishWords.forEach((word) => {
-//   const idx = englishSentence.indexOf(word);
-//   englishSentence =
-//     englishSentence.slice(0, idx) +
-//     `<Text>${word}</Text>` +
-//     englishSentence.slice(idx + word.length);
-// });
-// englishSentence = englishSentence.split(`<Text>`);
-// englishSentence = englishSentence.split(`</Text>`);
+let perfectVoiceData = [];
+let userVoiceData = [];
 
-// console.log(englishSentence);
+for (let i = 0; i < userVoiceHz.length; i++) {
+  let voiceActorData = {};
+  let userData = {};
+  voiceActorData.x = perfectVoiceTime[i];
+  voiceActorData.y = perfectVoiceHz[i];
+  perfectVoiceData.push(voiceActorData);
+  userData.x = userVoiceTime[i];
+  userData.y = userVoiceHz[i];
+  userVoiceData.push(userData);
+}
 
-// // englishResult.push(englishSentence);
-
-// // console.log(englishSentence);
-
-// // let sentence = 'A warm, humane woman during the day day.';
-// // ['day', 'woman'].forEach((word) => {
-// //   const idx = sentence.indexOf(word);
-// //   sentence = sentence.slice(0, idx) + `<Text>${word}<Text>` + sentence.slice(idx + word.length);
-// // });
-// // console.log(sentence);
-
-console.log('.'.indexOf('woman'));
+console.log(perfectVoiceData);
+console.log(userVoiceData);

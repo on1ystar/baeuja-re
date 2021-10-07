@@ -1,3 +1,4 @@
+// Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
 import {
@@ -25,7 +26,13 @@ import Icon2 from 'react-native-vector-icons/Feather'; // Feather
 import Icon3 from 'react-native-vector-icons/MaterialIcons'; // MaterialIcons
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import * as Progress from 'react-native-progress'; // React Native Progress
+import 'react-native-gesture-handler'; // React Native Gesture Handler
+
 // import RNFS from 'react-native-fs'; // React Native File System
+
+// Component import
+import SpeechEvaluationResult from './SpeechEvaluationResult';
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
@@ -34,8 +41,9 @@ const Tools = ({ currentSentence }) => {
   const audioRecorderPlayer = new AudioRecorderPlayer();
 
   const [isStopped, setIsStopped] = useState(false);
-  const [evaluatedSentence, setevaluatedSentence] = useState(null);
-  const [pitchData, setpitchData] = useState(null);
+  const [evaluatedSentence, setEvaluatedSentence] = useState(null);
+  const [pitchData, setPitchData] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
@@ -153,8 +161,13 @@ const Tools = ({ currentSentence }) => {
             console.log(
               `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
             );
-            setevaluatedSentence(evaluatedSentence);
-            setpitchData(pitchData);
+            console.log(`pitchData : ${pitchData}`);
+            console.log(`pitchData : ${pitchData.userVoice.hz}`);
+            console.log(`pitchData : ${pitchData.userVoice.time}`);
+
+            // console.log(`Perfect Voice Hz : ${pitchData.perfectVoice.hz}`);
+            setEvaluatedSentence(evaluatedSentence);
+            setPitchData(pitchData);
             if (!success) throw new Error(errorMessage);
             console.log('success getting Evaluated Data');
           })
@@ -230,6 +243,7 @@ const Tools = ({ currentSentence }) => {
     });
   };
 
+  // 학습 도구 부분 리턴
   return (
     <View>
       <View style={LearningStyles.learningButtonContainer}>
@@ -255,7 +269,7 @@ const Tools = ({ currentSentence }) => {
 
         {/* 음성 녹음 중지 버튼 */}
         <TouchableOpacity style={LearningStyles.learningButton} onPress={onStopRecord}>
-          <Ionicons name="stop" size={30} color="#9388E8" />
+          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
         </TouchableOpacity>
 
         {/* 음성 재생 버튼 */}
@@ -264,15 +278,26 @@ const Tools = ({ currentSentence }) => {
           onPress={() => onStartPlay()}
           disabled={!isStopped}
         >
-          <Ionicons name="ear-outline" size={30} color="#9388E8" />
+          <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#9388E8" />
         </TouchableOpacity>
       </View>
       <View>
         {isStopped ? (
-          evaluatedSentence !== null ? (
-            <Text>발음평가결과</Text>
+          evaluatedSentence !== null && pitchData !== null ? (
+            <View>
+              <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
+            </View>
           ) : (
-            <Text>로딩중...</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+              <Progress.Circle
+                size={80}
+                animated={true}
+                color={'#9388E8'}
+                borderWidth={8}
+                strokeCap={'round'}
+                indeterminate={true}
+              />
+            </View>
           )
         ) : (
           <></>
