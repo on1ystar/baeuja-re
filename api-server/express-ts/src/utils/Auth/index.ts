@@ -10,10 +10,19 @@ export const checkUserId = async (
   res: Response,
   next: NextFunction
 ) => {
+  // Authorization header 존재 x
+  if (!req.headers.authorization) {
+    console.info('Not found Authorization token');
+    return res.status(401).json({
+      success: false,
+      errorMessage: 'Not found Authorization token'
+    });
+  }
   const [authType, token] = req.headers.authorization?.split(' ') as string[];
   // Authorization header에 Bearer 키워드가 없거나 잘못 입력된 경우
-  if (authType !== 'Bearer') {
-    res.status(400).json({
+  if (authType.toLowerCase() !== 'bearer') {
+    console.info('Invalid bearer keyword');
+    return res.status(401).json({
       success: false,
       errorMessage: 'Authorization header type is not Bearer'
     });
@@ -23,22 +32,16 @@ export const checkUserId = async (
     token,
     conf.jwtToken.secretKey as string,
     conf.jwtToken.option,
-    async (error, decodedToken) => {
-      if (error?.name === 'TokenExpiredError') {
-        console.error(error);
+    async (decodedError, decodedToken) => {
+      if (decodedError) {
+        console.error(decodedError);
         return res.status(401).json({
           success: false,
-          tokenExpired: true,
-          errorMessage: error?.message
-        });
-      } else if (error) {
-        console.error(error);
-        return res.status(401).json({
-          success: false,
-          errorMessage: error?.message
+          tokenExpired:
+            decodedError?.name === 'TokenExpiredError' ? true : false,
+          errorMessage: decodedError?.message
         });
       }
-      console.log(decodedToken);
       const userId = decodedToken?.userId;
       try {
         if (!(await User.isExistById(poolClient, parseInt(userId)))) {

@@ -4,7 +4,7 @@
 */
 
 import express, { Router } from 'express';
-import { upload } from '../../utils/Multer';
+import { upload } from '../../../utils/Multer';
 import {
   evaluateUserVoice,
   recordPerfectVoiceCounts,

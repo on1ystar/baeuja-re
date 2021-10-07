@@ -103,7 +103,8 @@ export class Sentence {
           (SELECT * FROM user_sentence_history 
           WHERE user_id = ${userId}) as user_sentence_history 
         ON sentence.sentence_id = user_sentence_history .sentence_id 
-        WHERE sentence.content_id = ${contentId} AND sentence.unit_index = ${unitIndex}`
+        WHERE sentence.content_id = ${contentId} AND sentence.unit_index = ${unitIndex}
+        ORDER BY sentence.sentence_id ASC`
       );
       if (!queryResult.rowCount)
         throw new Error('contentId or unitIndex does not exist');
@@ -138,7 +139,8 @@ export class Sentence {
         FROM sentence 
         JOIN word
         ON sentence.sentence_id = word.sentence_id 
-        WHERE sentence.content_id = ${contentId} AND sentence.unit_index = ${unitIndex}`
+        WHERE sentence.content_id = ${contentId} AND sentence.unit_index = ${unitIndex}
+        ORDER BY word.word_id ASC`
       );
       if (!queryResult.rowCount)
         throw new Error('contentId or unitIndex does not exist');

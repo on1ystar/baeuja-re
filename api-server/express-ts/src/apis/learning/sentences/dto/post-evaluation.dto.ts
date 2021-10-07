@@ -4,9 +4,9 @@
 */
 
 import { PoolClient } from 'pg';
-import conf from '../../../config';
-import { pool } from '../../../db';
-import { Sentence } from '../../../entities/sentence.entity';
+import conf from '../../../../config';
+import { pool } from '../../../../db';
+import { Sentence } from '../../../../entities/sentence.entity';
 
 interface SentenceType {
   readonly sentenceId: number;
@@ -39,6 +39,8 @@ export default class PostEvaluationDTO {
     } catch (error) {
       console.error('❌ Error: post-evaluation.dto.ts getInstance function');
       throw error;
+    } finally {
+      client.release();
     }
   }
 }

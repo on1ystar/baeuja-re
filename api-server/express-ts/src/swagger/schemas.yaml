@@ -348,19 +348,19 @@ UserSentenceHistory:
         latestLearningAt:
           type: string
           description: 최근 학습 시각
-# -------------------------- auth -------------------------- #
-Auth:
+# -------------------------- login -------------------------- #
+LoginedResult:
   type: object
   properties:
     success:
       type: boolean
       example: true
-    userId:
-      type: number
-      description: user id
+    token:
+      type: string
+      description: JWT TOKEN for auth
     isMember:
       type: boolean
-      description: 이미 가입한 유저인 지
+      description: true -> member(이미 가입한 회원) | false -> new member or guest
 # -------------------------- user -------------------------- #
 User:
   type: object

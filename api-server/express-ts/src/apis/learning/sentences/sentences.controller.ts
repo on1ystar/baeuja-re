@@ -1,25 +1,25 @@
 /* eslint-disable no-console */
 /** 
  @description 문장 학습을 위한 컨트롤러
- @version feature/api/PEAC-38-learning-list-api
+ @version feature/api/testing-setup-with-jest
  */
 
 import axios from 'axios';
 import { Response, Request } from 'express';
-import conf from '../../config';
+import conf from '../../../config';
 import PostEvaluationDTO from './dto/post-evaluation.dto';
-import UserSentenceEvaluation from '../../entities/user-sentence-evaluation.entity';
+import UserSentenceEvaluation from '../../../entities/user-sentence-evaluation.entity';
 import { MulterError } from 'multer';
-import { s3Client } from '../../utils/s3';
+import { s3Client } from '../../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { UserSentenceHistory } from '../../entities/user-sentence-history.entity';
+import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
 import { PoolClient } from 'pg';
-import { pool } from '../../db';
+import { pool } from '../../../db';
 
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
-// /sentences/:sentenceId/units/evaluation
+// /sentences/:sentenceId/evaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const evaluateUserVoice = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;
@@ -101,7 +101,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     await client.query('COMMIT');
 
     return res
-      .status(200)
+      .status(201)
       .json({ success: true, evaluatedSentence, pitchData });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -135,7 +135,7 @@ export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
 
     await client.query('COMMIT');
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
     });
@@ -170,7 +170,7 @@ export const recordUserVoiceCounts = async (req: Request, res: Response) => {
 
     await client.query('COMMIT');
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
     });
