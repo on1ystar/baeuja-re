@@ -48,7 +48,7 @@ def evaluationUserSpeech():
 			'perfect_id': perfect_id,
 			'perfect_voice_uri': perfect_voice_uri,
 			'sentence_id': sentence_id,
-			'korean_text': korean_txt
+			'korean_text': korean_text
 		}
 		utils.makeLog(log_data)
 
