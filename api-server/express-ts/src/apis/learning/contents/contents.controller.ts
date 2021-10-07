@@ -10,7 +10,7 @@ import { Sentence } from '../../../entities/sentence.entity';
 import { UserContentHistory } from '../../../entities/user-content-history.entity';
 import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
 import { UserUnitHistory } from '../../../entities/user-unit-history.entity.';
-import GetUnitsKPOPDTO from './dto/get-units-K-POP.dto';
+import GetUnitsKpopDTO from './dto/get-units-K-pop.dto';
 import GetUnitsOthersDTO from './dto/get-units-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
 import { PoolClient } from 'pg';
@@ -101,14 +101,14 @@ export const getUnits = async (req: Request, res: Response) => {
     );
     // 콘텐츠가 K-POP인 경우
     if (content.classification === 'K-POP') {
-      const getUnitsKPOPDTOs = await GetUnitsKPOPDTO.getInstances(
+      const getUnitsKpopDTOs = await GetUnitsKpopDTO.getInstances(
         userId,
         +contentId
       );
 
       await client.query('COMMIT');
 
-      Promise.all(getUnitsKPOPDTOs).then(units => {
+      Promise.all(getUnitsKpopDTOs).then(units => {
         return res.status(200).json({ success: true, units });
       });
     } else {
@@ -134,7 +134,7 @@ export const getUnits = async (req: Request, res: Response) => {
   }
 };
 
-// 유닛 선택 -> 유닛 학습 화면을 구성하기 위한 데이터 응답
+// /contents/:contentId/units/:unitIndex
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUnit = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;

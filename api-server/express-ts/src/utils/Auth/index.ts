@@ -20,7 +20,7 @@ export const checkUserId = async (
   }
   const [authType, token] = req.headers.authorization?.split(' ') as string[];
   // Authorization header에 Bearer 키워드가 없거나 잘못 입력된 경우
-  if (authType !== 'Bearer') {
+  if (authType.toLowerCase() !== 'bearer') {
     console.info('Invalid bearer keyword');
     return res.status(401).json({
       success: false,

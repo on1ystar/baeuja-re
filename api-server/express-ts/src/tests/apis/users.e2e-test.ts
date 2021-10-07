@@ -6,30 +6,29 @@ import { pool } from '../../db';
 import TestSetup from '../e2eTestSetup';
 
 const testSetup = new TestSetup();
-
+const userId = 1;
+const postUserinfo = {
+  google: {
+    email: 'test2@test.com',
+    locale: 'ko'
+  },
+  guest: {
+    locale: 'ko'
+  }
+};
+let token: string;
 beforeAll(async () => {
   await testSetup.initializeTestDB();
+  token = testSetup.getToken();
 });
 afterAll(async () => {
   await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
 });
 
 describe('e2e Testing users app', () => {
-  const token = testSetup.getToken();
-  console.log(token);
-  const postUserinfo = {
-    google: {
-      email: 'test2@test.com',
-      locale: 'ko'
-    },
-    guest: {
-      locale: 'ko'
-    }
-  };
-
   describe('GET /users', () => {
     it('should valid response user objects list', async () => {
-      const { userId, email, nickname } = testSetup.getUser();
+      const { email, nickname } = testSetup.getUser();
       const res = await request(app)
         .get('/users')
         .auth(token, { type: 'bearer' });
@@ -101,9 +100,8 @@ describe('e2e Testing users app', () => {
   describe('GET /users/:userId', () => {
     it("should valid response user's detail object", async () => {
       const res = await request(app)
-        .get('/users/1')
+        .get(`/users/${userId}`)
         .auth(token, { type: 'bearer' });
-      console.log(res.body.errorMessage);
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       const ats = {
@@ -119,7 +117,7 @@ describe('e2e Testing users app', () => {
 
     it("should return 401 if the user's id in token and the url param's id do not match", async () => {
       const res = await request(app)
-        .get(`/users/2`)
+        .get(`/users/${userId + 1}`)
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);
@@ -128,9 +126,9 @@ describe('e2e Testing users app', () => {
 
   describe('PATCH /users/:userId', () => {
     it('should valid response updated a user object', async () => {
-      const { userId, email } = testSetup.getUser();
+      const { email } = testSetup.getUser();
       const res = await request(app)
-        .patch(`/users/1`)
+        .patch(`/users/${userId}`)
         .send({ nickname: 'updatedNickname' })
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(200);
@@ -144,7 +142,7 @@ describe('e2e Testing users app', () => {
 
     it("should return 401 if the user's id in token and the url param's id do not match", async () => {
       const res = await request(app)
-        .patch(`/users/2`)
+        .patch(`/users/${userId + 1}`)
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);
@@ -153,7 +151,7 @@ describe('e2e Testing users app', () => {
 
   describe('DELETE /users/:userId', () => {
     it('should valid response deleted a user object', async () => {
-      const { userId, email } = testSetup.getUser();
+      const { email } = testSetup.getUser();
       const res = await request(app)
         .delete(`/users/1`)
         .auth(token, { type: 'bearer' });
@@ -168,7 +166,7 @@ describe('e2e Testing users app', () => {
 
     it("should return 401 if the user's id in token and the url param's id do not match", async () => {
       const res = await request(app)
-        .delete(`/users/2`)
+        .delete(`/users/${userId + 1}`)
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);

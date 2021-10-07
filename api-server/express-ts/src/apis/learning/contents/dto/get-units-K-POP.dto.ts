@@ -1,5 +1,5 @@
 /**
- * @description 학습 유닛 리스트 화면 구성을 위한 DTO (K-POP)
+ * @description 학습 유닛 리스트 화면 구성을 위한 DTO (K-pop)
  * @version feature/api/PEAC-38-learning-list-api
  */
 
@@ -13,7 +13,7 @@ interface WordType {
   readonly originalKoreanText: string;
 }
 
-export default class GetUnitsKPOPDTO {
+export default class GetUnitsKpopDTO {
   constructor(
     readonly contentId: number,
     readonly unitIndex: number,
@@ -50,7 +50,7 @@ export default class GetUnitsKPOPDTO {
           ['Word.wordId', 'Word.originalKoreanText']
         );
         const wordsCounts = words.length;
-        return new GetUnitsKPOPDTO(
+        return new GetUnitsKpopDTO(
           contentId,
           unit.unitIndex,
           unit.thumbnailUri,
@@ -62,7 +62,7 @@ export default class GetUnitsKPOPDTO {
       });
       return mappedUnitList;
     } catch (error) {
-      console.error('❌ Error: get-units-K-POP.dto.ts getInstance function');
+      console.error('❌ Error: get-units-K-pop.dto.ts getInstance function');
       throw error;
     } finally {
       client.release();

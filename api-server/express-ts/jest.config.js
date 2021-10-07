@@ -2,6 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.(ts|tsx)'],
+  testMatch: ['**/tests/**/*.(e2e-test|test).(ts|tsx)'],
   globalTeardown: './test-teardown-globals.js'
 };

@@ -6,16 +6,19 @@ import conf from '../config';
 export default class TestSetup {
   readonly user: Record<string, unknown>;
 
-  constructor(user?: Record<string, unknown>) {
-    if (user) this.user = user;
-    else
-      this.user = {
-        userId: 1,
-        email: 'test@test.com',
-        nickname: 'test1',
-        locale: 'ko',
-        roleId: 2
-      };
+  constructor(
+    readonly contentId?: number | undefined,
+    readonly unitIndex?: number | undefined,
+    readonly sentenceId?: number | undefined,
+    readonly wordId?: number | undefined
+  ) {
+    this.user = {
+      userId: 1,
+      email: 'test@test.com',
+      nickname: 'test1',
+      locale: 'ko',
+      roleId: 2
+    };
   }
 
   initializeTestDB = async (): Promise<void> => {
@@ -58,4 +61,29 @@ export default class TestSetup {
       conf.jwtToken.secretKey as string,
       conf.jwtToken.optionExpired
     );
+
+  getNumOfContents = async (): Promise<number> =>
+    +(await pool.query('SELECT count(*) FROM content')).rows[0].count;
+
+  getNumOfUnits = async (): Promise<number> =>
+    +(
+      await pool.query('SELECT count(*) FROM unit WHERE content_id = $1', [
+        this.contentId
+      ])
+    ).rows[0].count;
+
+  getNumOfSentences = async (): Promise<number> =>
+    +(
+      await pool.query(
+        'SELECT count(*) FROM sentence WHERE content_id = $1 and unit_index = $2',
+        [this.contentId, this.unitIndex]
+      )
+    ).rows[0].count;
+
+  getNumOfWords = async (): Promise<number> =>
+    +(
+      await pool.query('SELECT count(*) FROM word WHERE sentence_id = $1', [
+        this.sentenceId
+      ])
+    ).rows[0].count;
 }
