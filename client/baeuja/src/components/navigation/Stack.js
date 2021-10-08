@@ -6,9 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'; // 
 import { View, Text, TouchableOpacity } from 'react-native'; // React Native Component
 
 // Screnn import
-import Units from '../../screens/learning/Units';
+import LearningUnits from '../../screens/learning/LearningUnits';
 import Login from '../../screens/login/Login';
-import Learning from '../../screens/learning/Learning';
+import LearningUnit from '../../screens/learning/LearningUnit';
+import MoreInfo from '../../screens/learning/MoreInfo';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -17,11 +18,16 @@ const Stack = () => (
     screenOptions={{
       headerBackTitleVisible: false,
       headerTintColor: '#9388E8',
+      backgroundColor: '#FFFFFF',
+    }}
+    sceneContainerStyle={{
+      backgroundColor: '#FFFFFF',
     }}
   >
-    <NativeStack.Screen name="Units" component={Units} />
-    <NativeStack.Screen name="Learning" component={Learning} />
-    <NativeStack.Screen name="Login" component={Login} />
+    <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
+    <NativeStack.Screen options={{ presentation: 'modal' }} name="MoreInfo" component={MoreInfo} />
+    <NativeStack.Screen name="LearningUnits" component={LearningUnits} />
+    <NativeStack.Screen name="LearningUnit" component={LearningUnit} />
   </NativeStack.Navigator>
 );
 

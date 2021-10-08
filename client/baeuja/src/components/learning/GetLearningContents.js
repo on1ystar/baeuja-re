@@ -89,26 +89,36 @@ const DrawingContent = ({ content }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'Units',
+                screen: 'LearningUnits',
                 params: {
                   contentId,
                 },
               })
             }
           >
-            <Text style={styles.title}>{content.title}</Text>
+            <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+              {content.title}
+            </Text>
             <Text style={styles.artist}>{content.artist}</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.infoIconContainer}>
-          <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            return navigation.navigate('Stack', {
+              screen: 'MoreInfo',
+              params: {
+                contentId,
+              },
+            });
+          }}
+          style={styles.infoIconContainer}
+        >
+          <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-export default GetLearningContents;
 
 const styles = StyleSheet.create({
   allContainer: {
@@ -131,6 +141,7 @@ const styles = StyleSheet.create({
     marginLeft: 24,
   },
   title: {
+    width: responsiveScreenWidth(50),
     marginTop: 12,
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
@@ -144,11 +155,15 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
   infoIconContainer: {
+    marginLeft: 15,
     justifyContent: 'flex-end',
     alignSelf: 'center',
     // backgroundColor: '#000000',
   },
   infoIcon: {
-    fontSize: responsiveFontSize(2),
+    color: '#aaaaaa',
+    fontSize: responsiveFontSize(3),
   },
 });
+
+export default GetLearningContents;

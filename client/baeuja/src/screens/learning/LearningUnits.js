@@ -19,21 +19,7 @@ import {
 // Component
 import GetUnits from '../../components/learning/GetUnits';
 
-// class Unit extends React.Component {
-//   render() {
-//     const { navigation } = this.props;
-
-//     return (
-//       <ScrollView>
-//         <View style={styles.allContainer}>
-//           <GetUnits />
-//         </View>
-//       </ScrollView>
-//     );
-//   }
-// }
-
-const Units = ({
+const LearningUnits = ({
   route: {
     params: { contentId },
   },
@@ -52,7 +38,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
   },
 });
 
-export default Units;
+export default LearningUnits;

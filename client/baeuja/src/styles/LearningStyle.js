@@ -14,6 +14,7 @@ import {
 const LearningStyles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   youtubeContainer: {
     flex: 1,
@@ -72,8 +73,8 @@ const LearningStyles = StyleSheet.create({
     height: 35,
     borderRadius: 20,
     borderStyle: 'solid',
-    borderWidth: 2,
-    borderColor: '#555555',
+    borderWidth: 1.5,
+    borderColor: '#CCCCCC',
     marginRight: 20,
   },
   voiceEvaluationContainer: {
