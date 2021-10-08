@@ -39,6 +39,8 @@ export default class PostEvaluationDTO {
     } catch (error) {
       console.error('❌ Error: post-evaluation.dto.ts getInstance function');
       throw error;
+    } finally {
+      client.release();
     }
   }
 }
