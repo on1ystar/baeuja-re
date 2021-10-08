@@ -28,11 +28,13 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
+import { GOOGLE_API_IOS_CLIENT_ID } from '@env'; // React Native Dotenv
 
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
     console.log('Component rendered');
+    AsyncStorage.clear();
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         // token이 있을 경우 홈으로 이동
@@ -52,7 +54,7 @@ class Login extends Component {
   // 구글 로그인 함수
   googleSignIn = async () => {
     GoogleSignin.configure({
-      iosClientId: '983890334644-jgtfh2ue7vbuit6hem38bt96jq5ir52d.apps.googleusercontent.com',
+      iosClientId: GOOGLE_API_IOS_CLIENT_ID,
     });
     try {
       await GoogleSignin.hasPlayServices();
@@ -60,6 +62,12 @@ class Login extends Component {
         user: { email, name },
       } = await GoogleSignin.signIn();
       this.getToken('google', { email, name });
+
+      this.props.navigation.dispatch(
+        CommonActions.navigate('Tabs', {
+          screen: 'Home',
+        })
+      );
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -78,7 +86,7 @@ class Login extends Component {
     let config = {};
     const locale = RNLocalize.getCountry();
 
-    const url = `https://api.k-peach.io/auth/${authMethod}`;
+    const url = `https://api.k-peach.io/users`;
     try {
       if (authMethod === 'google') {
         config = {
@@ -97,7 +105,9 @@ class Login extends Component {
           method: 'post',
           url,
           data: {
-            locale,
+            userinfo: {
+              locale,
+            },
           },
         };
       }
@@ -110,6 +120,12 @@ class Login extends Component {
       }
 
       this.saveToken(token);
+
+      this.props.navigation.dispatch(
+        CommonActions.navigate('Tabs', {
+          screen: 'Home',
+        })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -122,6 +138,7 @@ class Login extends Component {
     });
   };
 
+  // Login 화면 전체 렌더링 (return)
   render() {
     return (
       <View style={styles.container}>
@@ -156,7 +173,13 @@ class Login extends Component {
             <View>
               <TouchableOpacity onPress={() => this.getToken('guest')}>
                 <View style={styles.guestLoginBtn}>
-                  <Text style={styles.guestLoginText}>Sign in with Guest</Text>
+                  <ImageBackground
+                    transitionDuration={1000}
+                    source={require('../../assets/icons/captureLogo.png')}
+                    style={{ width: 40, height: 43, backgroundColor: '#FFFFFF' }}
+                  >
+                    <Text style={styles.guestLoginText}>Sign in with Guest</Text>
+                  </ImageBackground>
                 </View>
               </TouchableOpacity>
             </View>
@@ -245,13 +268,15 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2),
     backgroundColor: '#9388E8',
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   guestLoginText: {
+    width: responsiveScreenWidth(40),
+    height: responsiveScreenHeight(5),
     fontSize: responsiveFontSize(2),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '900',
+    marginLeft: 45,
+    marginTop: 12,
     color: '#FFFFFF',
   },
 });

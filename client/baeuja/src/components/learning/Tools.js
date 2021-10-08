@@ -284,7 +284,7 @@ const Tools = ({ currentSentence }) => {
       <View>
         {isStopped ? (
           evaluatedSentence !== null && pitchData !== null ? (
-            <View>
+            <View style={{ marginBottom: 20 }}>
               <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
             </View>
           ) : (
