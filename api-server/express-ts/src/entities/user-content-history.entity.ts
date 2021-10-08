@@ -95,7 +95,6 @@ export class UserContentHistory {
         `SELECT COUNT(*) FROM user_content_history
         WHERE user_id = ${userId} AND content_id = ${contentId} `
       );
-      if (!queryResult.rowCount) throw new Error('contentId does not exist');
 
       // 존재하지 않음
       if (+queryResult.rows[0].count === 0) return false;

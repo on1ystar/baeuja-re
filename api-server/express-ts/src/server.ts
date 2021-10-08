@@ -3,7 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const port: number = process.env.RUN === 'dev' ? 4001 : 3000;
+const port: number =
+  process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'test'
+    ? 4001
+    : 3000;
 
 app.listen(port, (): void =>
   // eslint-disable-next-line no-console

@@ -13,11 +13,10 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import usersApp from './users';
 import cors from 'cors';
-import learningApp from './learning';
+import usersApp from './apis/users';
+import learningApp from './apis/learning';
 import appRouter from './app.router';
-import authApp from './auth';
 import { checkUserId } from './utils/Auth';
 
 const app: Application = express();
@@ -28,12 +27,11 @@ app.use(helmet()); // 보안 모듈
 app.use(logger); // 로그 관리 모듈
 app.use(express.json()); // request body parsing
 app.use(express.urlencoded({ extended: true })); // url query prameter parsing
-usersApp.use(cors()); // cors 모듈
+app.use(cors()); // cors 모듈
 
 app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
-app.use('/users', checkUserId, usersApp); // injecting users app
+app.use('/users', usersApp); // injecting users app
 app.use('/learning', checkUserId, learningApp); // injecting learning app
-app.use('/auth', authApp); // injection auth app
 
 export default app;

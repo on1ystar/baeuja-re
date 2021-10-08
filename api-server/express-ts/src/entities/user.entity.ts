@@ -28,7 +28,7 @@ export class User {
     )
       throw new Error('email or nickname or locale or roleId is undefined');
     try {
-      const createdUserId: QueryResult<any> = (
+      const createdUserId = (
         await client.query(
           `INSERT INTO users 
         VALUES(DEFAULT, '${this.email}', '${this.nickname}', '${
@@ -49,7 +49,7 @@ export class User {
   // 닉네임 변경
   updateUserNickname = async (client: PoolClient, nickname: string) => {
     try {
-      const updatedUser: QueryResult<any> = (
+      const updatedUser = (
         await client.query(
           `UPDATE users
           SET nickname = '${nickname}', modified_at = ${getNowKO()}
@@ -68,7 +68,7 @@ export class User {
   // 최근 로그인 시간 갱신
   updateLatestLogin = async (client: PoolClient) => {
     try {
-      const updatedUser: QueryResult<any> = (
+      const updatedUser = (
         await client.query(
           `UPDATE users
           SET latest_login = ${getNowKO()}
@@ -88,7 +88,7 @@ export class User {
   delete = async (client: PoolClient) => {
     try {
       if (this.userId === undefined) throw new Error('userId is undefined');
-      const deletedUser: QueryResult<any> = (
+      const deletedUser = (
         await client.query(
           `DELETE FROM users
           WHERE user_id = ${this.userId}

@@ -37,6 +37,11 @@ const conf: {
       issuer: string | undefined;
       subject: string | undefined;
     };
+    optionExpired: {
+      expiresIn: string | undefined;
+      issuer: string | undefined;
+      subject: string | undefined;
+    };
   };
 } = {
   peachApi: {
@@ -53,7 +58,10 @@ const conf: {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     pw: process.env.DB_PW,
-    name: process.env.DB_NAME,
+    name:
+      process.env.NODE_ENV === 'test'
+        ? process.env.DB_TEST_NAME
+        : process.env.DB_NAME,
     port: process.env.DB_PORT
   },
   googleApi: {
@@ -82,6 +90,11 @@ const conf: {
       subject: process.env.JWT_SUBJECT
     },
     optionGuest: {
+      issuer: process.env.JWT_ISSUER,
+      subject: process.env.JWT_SUBJECT
+    },
+    optionExpired: {
+      expiresIn: '0',
       issuer: process.env.JWT_ISSUER,
       subject: process.env.JWT_SUBJECT
     }
