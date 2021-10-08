@@ -10,7 +10,7 @@
     "dev:js": "npm run api-docs &&  tsc && NODE_ENV=dev nodemon build/server.js",
     "pm2:start": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --env production --watch '*.ts'",
     "pm2:reload": "sudo pm2 reload baeuja-api-server --update-env",
-    "test:e2e": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
+    "test:e2e": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --watchAll --coverage",
     "test:file": "nodemon --exec 'ts-node' src/test.ts"
   },
   "author": "on1ystar",

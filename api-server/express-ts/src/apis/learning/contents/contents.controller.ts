@@ -10,7 +10,7 @@ import { Sentence } from '../../../entities/sentence.entity';
 import { UserContentHistory } from '../../../entities/user-content-history.entity';
 import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
 import { UserUnitHistory } from '../../../entities/user-unit-history.entity.';
-import GetUnitsKpopDTO from './dto/get-units-K-pop.dto';
+import GetUnitsKpopDTO from './dto/get-units-K-POP.dto';
 import GetUnitsOthersDTO from './dto/get-units-others.dto';
 import GetUnitDTO from './dto/get-unit.dto';
 import { PoolClient } from 'pg';
