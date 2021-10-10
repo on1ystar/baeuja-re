@@ -42,7 +42,7 @@ const Script = ({ currentSentence }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
+            <Text key={word.wordId} style={{ color: '#3EB2FF', textDecorationLine: 'underline' }}>
               {word.prevKoreanText}
             </Text>
           );
@@ -93,7 +93,7 @@ const Script = ({ currentSentence }) => {
 
   return (
     <View>
-      <Card containerStyle={{ borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
         <View>
           <Text style={styles.koreanScript}>
             🇰🇷 : <Text>{drawKoreanSentence()}</Text>

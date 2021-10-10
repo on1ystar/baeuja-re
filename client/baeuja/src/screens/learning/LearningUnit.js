@@ -171,8 +171,9 @@ const LearningUnit = ({
                 modestbranding: 1,
                 rel: 0,
               }}
-              height={250}
+              height={responsiveScreenHeight(26)}
               onChangeState={onStateChange}
+              volume={50}
             />
           </View>
           <View>

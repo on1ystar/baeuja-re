@@ -1,7 +1,15 @@
 /* eslint-disable react/prop-types */
-// Library impoer
+// Library import
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native'; // React Native Component
 import {
   responsiveHeight,
   responsiveWidth,
@@ -15,25 +23,71 @@ import {
   useResponsiveFontSize,
 } from 'react-native-responsive-dimensions'; // React Native Responsive Layout
 import { Divider } from 'react-native-elements'; // Elements
+import { useNavigation } from '@react-navigation/native'; // Navigation
 
-// 컴포넌트
+// Component import
 import GetLearningContents from '../../components/learning/GetLearningContents';
+import GetKdramaLearningContents from '../../components/learning/GetKdramaLearningContents';
+import GetKmovieLearningContents from '../../components/learning/GetKmovieLearningContents';
 
 class LearningMain extends React.Component {
   render() {
+    const { navigate } = this.props.navigation;
     return (
-      <ScrollView style={styles.allContainer}>
+      <View style={styles.allContainer}>
         <Text style={styles.mainText}>Learning</Text>
         <Divider
           style={{ width: '100%', marginTop: 10 }}
-          color="#dddddd"
+          color="#EEEEEE"
           insetType="middle"
-          width={2}
+          width={1}
           orientation="horizontal"
         />
-        <Text style={styles.titleText}>K-POP</Text>
-        <GetLearningContents />
-      </ScrollView>
+        <View style={styles.kpopTextContainer}>
+          <Text style={styles.titleText}>K-POP</Text>
+          <TouchableOpacity
+            style={styles.moreText}
+            onPress={() =>
+              navigate('Stack', {
+                screen: 'GetKpopLearningContents',
+              })
+            }
+          >
+            <Text>more</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView style={styles.kpopScrollViewContainer}>
+          <GetLearningContents />
+        </ScrollView>
+        <Divider
+          style={{ width: '100%', marginTop: 10 }}
+          color="#EEEEEE"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
+        <Text style={styles.titleText}>K-Drama</Text>
+        <ScrollView style={styles.kdramaScrollViewContainer}>
+          <View style={styles.kdramaScrollViewHider}>
+            <GetKdramaLearningContents />
+          </View>
+          <Text style={styles.comingSoon}>Coming Soon...</Text>
+        </ScrollView>
+        <Divider
+          style={{ width: '100%', marginTop: 10 }}
+          color="#EEEEEE"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
+        <Text style={styles.titleText}>K-Movie</Text>
+        <ScrollView style={styles.kmovieScrollViewContainer}>
+          <View style={styles.kmovieScrollViewHider}>
+            <GetKmovieLearningContents />
+          </View>
+          <Text style={styles.comingSoon}>Coming Soon...</Text>
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -51,6 +105,40 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#9388E8',
     // backgroundColor: 'black',
+  },
+  kpopTextContainer: {
+    width: responsiveScreenWidth(100),
+    flexDirection: 'row',
+  },
+  moreText: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    marginLeft: responsiveScreenWidth(60),
+  },
+  kpopScrollViewContainer: {
+    flex: 1,
+  },
+  kdramaScrollViewContainer: {
+    flex: 1,
+  },
+  kdramaScrollViewHider: {
+    opacity: 0.3,
+    backgroundColor: '#FFFFFF',
+  },
+  kmovieScrollViewHider: {
+    opacity: 0.3,
+    backgroundColor: '#FFFFFF',
+  },
+  comingSoon: {
+    position: 'absolute',
+    color: '#000000',
+    fontSize: responsiveFontSize(4),
+    left: responsiveScreenWidth(25),
+    top: responsiveScreenHeight(7),
+    fontWeight: 'bold',
+  },
+  kmovieScrollViewContainer: {
+    flex: 1,
   },
   cardContainer: {},
   cardTitle: {

@@ -29,12 +29,13 @@ import {
 } from '@react-native-google-signin/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
 import { GOOGLE_API_IOS_CLIENT_ID } from '@env'; // React Native Dotenv
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
     console.log('Component rendered');
-    AsyncStorage.clear();
+    // AsyncStorage.clear();
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         // token이 있을 경우 홈으로 이동
@@ -172,7 +173,7 @@ class Login extends Component {
             </View>
             <View>
               <TouchableOpacity onPress={() => this.getToken('guest')}>
-                <View style={styles.guestLoginBtn}>
+                {/* <View style={styles.guestLoginBtn}>
                   <ImageBackground
                     transitionDuration={1000}
                     source={require('../../assets/icons/captureLogo.png')}
@@ -180,7 +181,10 @@ class Login extends Component {
                   >
                     <Text style={styles.guestLoginText}>Sign in with Guest</Text>
                   </ImageBackground>
-                </View>
+                </View> */}
+
+                <Text style={styles.guestLoginText}>Sign in Guest</Text>
+                <Ionicons size={30} name="chevron-forward-outline" color={'#9388E8'} />
               </TouchableOpacity>
             </View>
           </View>
@@ -272,11 +276,19 @@ const styles = StyleSheet.create({
   guestLoginText: {
     width: responsiveScreenWidth(40),
     height: responsiveScreenHeight(5),
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(2.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    marginLeft: 45,
-    marginTop: 12,
-    color: '#FFFFFF',
+    color: '#9388E8',
+  },
+  guestLoginContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  guestLoginText2: {
+    fontSize: responsiveFontSize(2.5),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: '900',
+    color: '#9388E8',
   },
 });

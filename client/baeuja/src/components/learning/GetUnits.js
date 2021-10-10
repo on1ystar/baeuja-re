@@ -81,7 +81,7 @@ const DrawingUnit = ({ unit }) => {
   const unitIndex = unit.unitIndex;
 
   return (
-    <View>
+    <View style={styles.allContainer}>
       <TouchableOpacity
         style={styles.thumbNailContainer}
         onPress={() =>
@@ -126,6 +126,7 @@ export default GetUnits;
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   thumbNailContainer: {
     marginTop: 30,

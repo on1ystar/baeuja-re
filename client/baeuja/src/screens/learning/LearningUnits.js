@@ -25,7 +25,7 @@ const LearningUnits = ({
   },
 }) => {
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       <View style={styles.allContainer}>
         <GetUnits contentId={contentId} />
       </View>
@@ -38,6 +38,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  container: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
 });

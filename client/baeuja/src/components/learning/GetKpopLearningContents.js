@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // Library import
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -18,7 +18,7 @@ import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
-class GetLearningContents extends React.Component {
+class GetKpopLearningContents extends React.Component {
   state = {
     count: 0,
     isLoading: true,
@@ -61,13 +61,13 @@ class GetLearningContents extends React.Component {
   render() {
     const { contents, isLoading } = this.state;
     return (
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
         {isLoading ? (
           <Text> </Text>
         ) : (
           contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
         )}
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginLeft: 22,
     width: responsiveScreenWidth(100),
-    // backgroundColor: '#000000',
   },
   thumbnailImage: {
     width: 70,
@@ -166,4 +165,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GetLearningContents;
+export default GetKpopLearningContents;
