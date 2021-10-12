@@ -8,6 +8,7 @@ import { View, Text, TouchableOpacity } from 'react-native'; // React Native Com
 // Screen import
 import Login from '../../screens/login/Login';
 import GetKpopLearningContents from '../learning/GetKpopLearningContents';
+import LearningWord from '../../screens/learning/LearningWord';
 import LearningUnits from '../../screens/learning/LearningUnits';
 import LearningUnit from '../../screens/learning/LearningUnit';
 import MoreInfo from '../../screens/learning/MoreInfo';
@@ -28,6 +29,7 @@ const Stack = () => (
     <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
     <NativeStack.Screen options={{ presentation: 'modal' }} name="MoreInfo" component={MoreInfo} />
     <NativeStack.Screen name="GetKpopLearningContents" component={GetKpopLearningContents} />
+    <NativeStack.Screen name="LearningWord" component={LearningWord} />
     <NativeStack.Screen options={{ flex: 1 }} name="LearningUnits" component={LearningUnits} />
     <NativeStack.Screen name="LearningUnit" component={LearningUnit} />
   </NativeStack.Navigator>

@@ -113,7 +113,7 @@ const DrawingContent = ({ content }) => {
           }}
           style={styles.infoIconContainer}
         >
-          <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
+          <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
         </TouchableOpacity>
       </View>
     </View>

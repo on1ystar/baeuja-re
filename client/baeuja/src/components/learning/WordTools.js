@@ -39,7 +39,7 @@ import LearningStyles from '../../styles/LearningStyle';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-const Tools = ({ currentSentence }) => {
+const WordTools = ({ currentSentence, words }) => {
   const [isMoreThanOneTimeRecord, setIsMoreThanOneTimeRecord] = useState(false);
   const [evaluatedSentence, setEvaluatedSentence] = useState(null);
   const [pitchData, setPitchData] = useState(null);
@@ -51,7 +51,7 @@ const Tools = ({ currentSentence }) => {
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
     setIsPlayPerfectVoice(true);
-    const music = new Sound(currentSentence.perfectVoiceUri, '', (error) => {
+    const music = new Sound(words[0].perfectVoiceUri, '', (error) => {
       if (error) {
         console.log('play failed');
         return;
@@ -94,7 +94,7 @@ const Tools = ({ currentSentence }) => {
 
         if (!success) throw new Error(errorMessage);
 
-        console.log('success getting sentenceHistory Data');
+        console.log('success getting wordHistory Data');
       } catch (error) {
         console.log(error);
       }
@@ -244,7 +244,7 @@ const Tools = ({ currentSentence }) => {
             }}
             disabled={isPlayPerfectVoice}
           >
-            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+            <Ionicons name="volume-medium" size={30} color="#9388E8"></Ionicons>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -253,7 +253,7 @@ const Tools = ({ currentSentence }) => {
               onPlayPerfectVoice();
             }}
           >
-            <Ionicons name="volume-off-outline" size={30} color="#BBBBBB"></Ionicons>
+            <Ionicons name="volume-medium-outline" size={30} color="#BBBBBB"></Ionicons>
           </TouchableOpacity>
         )}
 
@@ -334,4 +334,4 @@ const Tools = ({ currentSentence }) => {
   );
 };
 
-export default Tools;
+export default WordTools;

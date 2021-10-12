@@ -22,7 +22,8 @@ const Words = ({ currentSentence }) => {
         <Text style={{ color: '#797979' }}>
           {word.originalKoreanText} : {word.originalTranslatedText}
         </Text>
-      </View>
+      </View>,
+      '  '
     );
   });
   return (
@@ -43,8 +44,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'black',
-    width: responsiveScreenWidth(30),
+    maxWidth: responsiveScreenWidth(50),
+    minWidth: responsiveScreenWidth(25),
     height: responsiveScreenHeight(2.5),
+    marginRight: responsiveScreenWidth(2),
     borderRadius: 10,
     borderStyle: 'solid',
     borderColor: '#CCCCCC',

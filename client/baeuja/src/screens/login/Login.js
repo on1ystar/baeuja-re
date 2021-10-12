@@ -1,5 +1,5 @@
 // Library import
-import React, { Component } from 'react'; // React Hooks
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import {
   StyleSheet,
   Button,
@@ -171,28 +171,31 @@ class Login extends Component {
                 </View>
               </TouchableOpacity>
             </View>
-            <View>
-              <TouchableOpacity onPress={() => this.getToken('guest')}>
-                {/* <View style={styles.guestLoginBtn}>
-                  <ImageBackground
-                    transitionDuration={1000}
-                    source={require('../../assets/icons/captureLogo.png')}
-                    style={{ width: 40, height: 43, backgroundColor: '#FFFFFF' }}
-                  >
-                    <Text style={styles.guestLoginText}>Sign in with Guest</Text>
-                  </ImageBackground>
-                </View> */}
-
-                <Text style={styles.guestLoginText}>Sign in Guest</Text>
-                <Ionicons size={30} name="chevron-forward-outline" color={'#9388E8'} />
-              </TouchableOpacity>
-            </View>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.guestLoginContainer}
+              onPress={() => this.getToken('guest')}
+            >
+              <Text style={styles.guestLoginText}>Don't want to sign up? Try Guest Mode</Text>
+              <Ionicons size={25} name="chevron-forward-outline" color={'#9388E8'} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
     );
   }
 }
+
+// {/* <View style={styles.guestLoginBtn}>
+//                   <ImageBackground
+//                     transitionDuration={1000}
+//                     source={require('../../assets/icons/captureLogo.png')}
+//                     style={{ width: 40, height: 43, backgroundColor: '#FFFFFF' }}
+//                   >
+//                     <Text style={styles.guestLoginText}>Sign in with Guest</Text>
+//                   </ImageBackground>
+//                 </View> */}
 
 export default Login;
 
@@ -274,16 +277,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   guestLoginText: {
-    width: responsiveScreenWidth(40),
-    height: responsiveScreenHeight(5),
-    fontSize: responsiveFontSize(2.5),
+    fontSize: responsiveFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
     color: '#9388E8',
   },
   guestLoginContainer: {
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   guestLoginText2: {
     fontSize: responsiveFontSize(2.5),

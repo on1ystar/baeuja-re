@@ -11,16 +11,10 @@ import {
   TouchableOpacity,
 } from 'react-native'; // React Native Component
 import {
-  responsiveHeight,
-  responsiveWidth,
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
   responsiveScreenFontSize,
-  useResponsiveHeight,
-  useResponsiveWidth,
-  useResponsiveScreenHeight,
-  useResponsiveFontSize,
 } from 'react-native-responsive-dimensions'; // React Native Responsive Layout
 import { Divider } from 'react-native-elements'; // Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
@@ -67,7 +61,11 @@ class LearningMain extends React.Component {
           orientation="horizontal"
         />
         <Text style={styles.titleText}>K-Drama</Text>
-        <ScrollView style={styles.kdramaScrollViewContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.kdramaScrollViewContainer}
+        >
           <View style={styles.kdramaScrollViewHider}>
             <GetKdramaLearningContents />
           </View>
@@ -81,7 +79,11 @@ class LearningMain extends React.Component {
           orientation="horizontal"
         />
         <Text style={styles.titleText}>K-Movie</Text>
-        <ScrollView style={styles.kmovieScrollViewContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.kmovieScrollViewContainer}
+        >
           <View style={styles.kmovieScrollViewHider}>
             <GetKmovieLearningContents />
           </View>
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: 45,
+    marginTop: responsiveScreenHeight(7),
     marginLeft: 22,
     fontSize: responsiveFontSize(3.2),
     fontFamily: 'NanumSquareOTFB',
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   },
   comingSoon: {
     position: 'absolute',
-    color: '#000000',
+    color: '#555555',
     fontSize: responsiveFontSize(4),
     left: responsiveScreenWidth(25),
     top: responsiveScreenHeight(7),

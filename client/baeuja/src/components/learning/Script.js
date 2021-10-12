@@ -13,17 +13,21 @@ import {
   useResponsiveScreenHeight,
 } from 'react-native-responsive-dimensions'; // Responsive layout
 import { Card } from 'react-native-elements'; // React Native Elements
+import { useNavigation } from '@react-navigation/native'; // Navigation
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 // Component import
 import Words from './Words';
 
 const Script = ({ currentSentence }) => {
-  // 한국어 문장 만들기
+  const navigation = useNavigation();
+  const [isBookmarked, setIsBookmarked] = useState(currentSentence.isBookmark);
   let koreanResult = [];
   let englishResult = [];
 
   console.log('Current Sentence is :', currentSentence);
 
+  // 한국어 문장 만들기
   const drawKoreanSentence = () => {
     koreanResult = [currentSentence.koreanText.toLowerCase()];
 
@@ -42,9 +46,27 @@ const Script = ({ currentSentence }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: '#3EB2FF', textDecorationLine: 'underline' }}>
-              {word.prevKoreanText}
-            </Text>
+            <TouchableOpacity
+              key={word.wordId}
+              onPress={() =>
+                navigation.navigate('Stack', {
+                  screen: 'LearningWord',
+                  params: {
+                    word,
+                  },
+                })
+              }
+            >
+              <Text
+                style={{
+                  fontSize: responsiveFontSize(2.4),
+                  color: '#3EB2FF',
+                  textDecorationLine: 'underline',
+                }}
+              >
+                {word.prevKoreanText}
+              </Text>
+            </TouchableOpacity>
           );
           temp.push(element.slice(idx + word.prevKoreanText.length));
         } else {
@@ -76,9 +98,27 @@ const Script = ({ currentSentence }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
-              {word.prevTranslatedText}
-            </Text>
+            <TouchableOpacity
+              key={word.wordId}
+              onPress={() =>
+                navigation.navigate('Stack', {
+                  screen: 'LearningWord',
+                  params: {
+                    word,
+                  },
+                })
+              }
+            >
+              <Text
+                style={{
+                  fontSize: responsiveFontSize(2.4),
+                  color: '#3eb2ff',
+                  textDecorationLine: 'underline',
+                }}
+              >
+                {word.prevTranslatedText}
+              </Text>
+            </TouchableOpacity>
           );
           temp.push(element.slice(idx + word.prevTranslatedText.length));
         } else {
@@ -94,6 +134,19 @@ const Script = ({ currentSentence }) => {
   return (
     <View>
       <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+        <TouchableOpacity
+          style={styles.bookmarkContainer}
+          onPress={() => {
+            setIsBookmarked(!isBookmarked);
+            console.log(isBookmarked);
+          }}
+        >
+          <Ionicons
+            size={25}
+            color={isBookmarked ? '#FFAD41' : '#AAAAAA'}
+            name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
+          ></Ionicons>
+        </TouchableOpacity>
         <View>
           <Text style={styles.koreanScript}>
             🇰🇷 : <Text>{drawKoreanSentence()}</Text>
@@ -121,13 +174,23 @@ const styles = StyleSheet.create({
   container: {
     marginRight: 10,
   },
+  bookmarkContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    right: responsiveScreenWidth(-3),
+    top: responsiveScreenHeight(-1),
+  },
   koreanScript: {
-    fontSize: responsiveFontSize(2.4),
+    fontSize: responsiveFontSize(2.3),
     color: '#555555',
     marginBottom: 5,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
   },
   englishScript: {
-    fontSize: responsiveFontSize(2.4),
+    fontSize: responsiveFontSize(2.3),
     color: '#555555',
     marginBottom: 15,
   },

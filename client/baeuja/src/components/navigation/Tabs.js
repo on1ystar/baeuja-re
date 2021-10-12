@@ -9,6 +9,7 @@ import Bookmark from '../../screens/bookmark/Bookmark';
 import Home from '../../screens/home/Home';
 import Review from '../../screens/review/Review';
 import My from '../../screens/my/My';
+import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 
 const Tab = createBottomTabNavigator();
 

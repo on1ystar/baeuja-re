@@ -136,7 +136,24 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
+
+    // mergeLibDexDebug 때문에 추가
+    packagingOptions { 
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/DEPENDENCIES.txt'
+
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
     splits {
         abi {
             reset()
@@ -189,6 +206,10 @@ android {
 }
 
 dependencies {
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation project(':@react-native-async-storage')
+    compile project(':react-native-audio-recorder-player')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

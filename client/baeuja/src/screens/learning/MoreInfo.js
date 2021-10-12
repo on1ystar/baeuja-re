@@ -67,27 +67,29 @@ const MoreInfo = ({
   }, []);
 
   return (
-    <ScrollView style={styles.allContainer}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>
-          {artist} - {title}
-        </Text>
-      </View>
-      <View style={styles.thumbnailImageContainer}>
-        <Image
-          style={styles.thumbnailImage}
-          transitionDuration={1000}
-          source={{
-            uri: thumbnailUri,
-          }}
-        />
-      </View>
-      <Card
-        containerStyle={{ borderRadius: 10, marginTop: 25 }}
-        style={styles.descriptionContainer}
-      >
-        <Text>{description}</Text>
-      </Card>
+    <View style={styles.allContainer}>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>
+            {artist} - {title}
+          </Text>
+        </View>
+        <View style={styles.thumbnailImageContainer}>
+          <Image
+            style={styles.thumbnailImage}
+            transitionDuration={1000}
+            source={{
+              uri: thumbnailUri,
+            }}
+          />
+        </View>
+        <Card
+          containerStyle={{ borderRadius: 10, marginTop: 25 }}
+          style={styles.descriptionContainer}
+        >
+          <Text>{description}</Text>
+        </Card>
+      </ScrollView>
       <View style={styles.Container}>
         <TouchableOpacity
           onPress={() =>
@@ -103,7 +105,7 @@ const MoreInfo = ({
           <Text style={styles.goToLearn}>Go to Learn</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -112,10 +114,16 @@ export default MoreInfo;
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   Container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    // backgroundColor: '#FFFFFF',
+    width: responsiveScreenWidth(100),
+    bottom: responsiveScreenHeight(0),
   },
   thumbnailImageContainer: {
     marginTop: 25,
