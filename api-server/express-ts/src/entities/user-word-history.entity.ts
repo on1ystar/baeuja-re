@@ -1,13 +1,15 @@
-export interface UserWordHistory {
-  userId?: number;
-  wordId?: number;
-  counts?: number;
-  perfectVoiceCounts?: number;
-  userVoiceCounts?: number;
-  averageScore?: number;
-  highestScore?: number;
-  learningRate?: number;
-  latestLearningAt?: string;
-  isBookmark?: boolean;
-  bookmarkAt?: string;
+export default class UserWordHistory {
+  constructor(
+    readonly userId?: number,
+    readonly wordId?: number,
+    readonly counts?: number,
+    readonly perfectVoiceCounts?: number,
+    readonly userVoiceCounts?: number,
+    readonly averageScore?: number,
+    readonly highestScore?: number,
+    readonly learningRate?: number,
+    readonly latestLearningAt?: string,
+    readonly isBookmark?: boolean,
+    readonly bookmarkAt?: string
+  ) {}
 }

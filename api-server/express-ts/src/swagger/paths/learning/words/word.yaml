@@ -1,13 +1,13 @@
-post:
+get:
   tags:
-    - learning/sentences
-  summary: 성우 음성 재생 학습 기록 저장 요청
+    - learning/words
+  summary: 터치한 단어 요청 (단어 학습 화면)
   security:
     - bearerAuth: []
   parameters:
-    - name: sentenceId
+    - name: wordId
       in: path
-      description: 터치한 sentence Id
+      description: 터치한 word id
       required: true
       schema:
         type: number
@@ -17,16 +17,22 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/SentencePerfectVoiceHistory'
+            $ref: '../../../openapi.yaml#/components/schemas/Word'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
     401-UnauthorizedError:
       description: Access token이 없거나 유효하지 않음
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
