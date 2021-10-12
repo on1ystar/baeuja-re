@@ -6,17 +6,24 @@
 import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
-import { User } from '../../entities/user.entity';
+import User from '../../entities/user.entity';
 import jwt from 'jsonwebtoken';
-import { Role } from '../../entities/role.entity';
+import Role from '../../entities/role.entity';
 import conf from '../../config';
+import UserRepository, {
+  UserToBeSaved
+} from '../../repositories/user.repository';
 
 // GET /users
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUsers = async (req: Request, res: Response) => {
   const client: PoolClient = await pool.connect();
   try {
-    const users = await User.find(client, ['userId', 'email', 'nickname']);
+    const users: User[] = await UserRepository.findAll(client, [
+      'userId',
+      'email',
+      'nickname'
+    ]);
     return res.status(200).json({ success: true, users });
   } catch (error) {
     console.log(error);
@@ -43,7 +50,7 @@ export const getUserDetail = async (req: Request, res: Response) => {
     // reqeust params 유효성 검사
     if (isNaN(+userId)) throw new Error('invalid syntax of params');
 
-    const user = await User.findOne(client, +userId, [
+    const user: User = await UserRepository.findOne(client, +userId, [
       'userId',
       'email',
       'nickname',
@@ -57,7 +64,6 @@ export const getUserDetail = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
-
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -66,9 +72,8 @@ export const getUserDetail = async (req: Request, res: Response) => {
 
 // POST /users
 export const postUser = async (req: Request, res: Response) => {
-  // email?(google login일 때만), locale
   const { userinfo } = req.body;
-  const poolClient: PoolClient = await pool.connect();
+  const client: PoolClient = await pool.connect();
 
   try {
     if (userinfo.locale === undefined) {
@@ -84,28 +89,29 @@ export const postUser = async (req: Request, res: Response) => {
     if (
       // users 테이블에 유저 정보가 이미 있는 경우(이미 회원가입 된 유저)
       userinfo.email &&
-      (await User.isExistByEmail(poolClient, userinfo.email as string))
+      (await UserRepository.isExistByEmail(client, userinfo.email as string))
     ) {
       userId = (
-        await User.findOneByEmail(poolClient, userinfo.email as string, [
+        await UserRepository.findOneByEmail(client, userinfo.email as string, [
           'userId'
         ])
-      ).userId;
+      ).userId as number;
       isMember = true;
-      await new User(userId).updateLatestLogin(poolClient);
+      await UserRepository.updateLatestLogin(client, userId);
     } else {
       // users 테이블에 유저 정보가 없거나 guest인 경우(회원가입)
       // Create a new ussr
-      const user: User = new User(
-        undefined, // userId
-        userinfo.email ? userinfo.email : 'NULL', // email
-        userinfo.email
+      const user: UserToBeSaved = {
+        email: userinfo.email ? userinfo.email : 'NULL',
+        nickname: userinfo.email
           ? 'member' + String(Date.now()).slice(-8)
-          : 'guest' + String(Date.now()).slice(-8), // nickname
-        userinfo.locale, // locale
-        userinfo.email ? Role.getRoleId('member') : Role.getRoleId('guest') // roleId
-      );
-      userId = Number((await user.create(poolClient)).userId);
+          : 'guest' + String(Date.now()).slice(-8),
+        locale: userinfo.locale,
+        roleId: userinfo.email
+          ? (Role.getRoleId('member') as number)
+          : (Role.getRoleId('guest') as number)
+      };
+      userId = Number((await UserRepository.save(client, user)).userId);
     }
 
     console.info(`Login \t user_id: ${userId}`);
@@ -121,7 +127,7 @@ export const postUser = async (req: Request, res: Response) => {
     const errorMessage = (error as Error).message;
     return res.status(500).json({ sucess: false, errorMessage });
   } finally {
-    poolClient.release();
+    client.release();
   }
 };
 
@@ -142,15 +148,18 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
     // reqeust params 유효성 검사
     if (isNaN(+userId)) throw new Error('invalid syntax of params');
 
-    if (!(await User.isExistById(client, +userId)))
+    if (!(await UserRepository.isExistById(client, +userId)))
       throw new Error('userId does not exist. ');
 
-    const user: User = new User(+userId);
-    const updatedUser = await user.updateUserNickname(client, nickname);
+    const updatedUser: User = await UserRepository.updateUserNickname(
+      client,
+      +userId,
+      nickname
+    );
     return res.status(200).json({
       success: true,
       user: {
-        userId: updatedUser.user_id,
+        userId: updatedUser.userId,
         email: updatedUser.email,
         nickname
       }
@@ -180,15 +189,14 @@ export const deleteUser = async (req: Request, res: Response) => {
     // reqeust params 유효성 검사
     if (isNaN(+userId)) throw new Error('invalid syntax of params');
 
-    if (!(await User.isExistById(client, +userId)))
+    if (!(await UserRepository.isExistById(client, +userId)))
       throw new Error('userId does not exist. ');
 
-    const user: User = new User(+userId);
-    const deletedUser = await user.delete(client);
+    const deletedUser = await UserRepository.delete(client, +userId);
     return res.status(200).json({
       success: true,
       user: {
-        userId: deletedUser.user_id,
+        userId: deletedUser.userId,
         email: deletedUser.email,
         nickname: deletedUser.nickname
       }

@@ -3,8 +3,8 @@
   @version PEAC-131-guest-login
 */
 
-export class Role {
-  constructor(readonly roleId: number, readonly name: string) {}
+export default class Role {
+  constructor(readonly roleId?: number, readonly name?: string) {}
 
   static getRoleId(roleName: string): number | undefined {
     if (roleName === 'admin') return 1;

@@ -1,25 +1,31 @@
 /* eslint-disable no-console */
-/** 
+/**
  @description 문장 학습을 위한 컨트롤러
  @version feature/api/testing-setup-with-jest
  */
 
 import axios from 'axios';
 import { Response, Request } from 'express';
+import { PoolClient } from 'pg';
+import { pool } from '../../../db';
 import conf from '../../../config';
-import PostEvaluationDTO from './dto/post-evaluation.dto';
-import UserSentenceEvaluation from '../../../entities/user-sentence-evaluation.entity';
+import PostEvaluationDTO, {
+  SentenceOfPostEvaluationDTO
+} from './dto/post-evaluation.dto';
 import { MulterError } from 'multer';
 import { s3Client } from '../../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { UserSentenceHistory } from '../../../entities/user-sentence-history.entity';
-import { PoolClient } from 'pg';
-import { pool } from '../../../db';
+import { UsersentenceHistoryPK } from '../../../entities/user-sentence-history.entity';
+import UserSentenceEvaluationRepository, {
+  UserSentenceEvaluationToBeSaved
+} from '../../../repositories/user-sentence-evaluation.repository';
+import SentenceRepository from '../../../repositories/sentence.repository';
+import UserSentenceHistoryRepository from '../../../repositories/user-sentence-history.repository';
 
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 
-// /sentences/:sentenceId/evaluation
+// /sentences/:sentenceId/userSentenceEvaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const evaluateUserVoice = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;
@@ -34,9 +40,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
-    console.time('evaluateUserVoice');
     const sentenceEvaluationCounts =
-      await UserSentenceEvaluation.getSentenceEvaluationCounts(
+      await UserSentenceEvaluationRepository.getSentenceEvaluationCounts(
         client,
         userId,
         +sentenceId
@@ -54,11 +59,18 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     console.info('✅ Success S3 upload--------------');
 
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
-    const postEvaluationDTO = await PostEvaluationDTO.getInstance(
-      userId,
-      `${S3_URL}/${conf.s3.bucketData}/${Key}`, // userVoiceUri for requesting to AI server
-      +sentenceId
-    );
+    const sentence: SentenceOfPostEvaluationDTO = {
+      sentenceId: +sentenceId,
+      koreanText: (
+        await SentenceRepository.findOne(client, +sentenceId, ['koreanText'])
+      ).koreanText as string,
+      perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
+    };
+    const postEvaluationDTO: PostEvaluationDTO = {
+      userId: +userId,
+      userVoiceUri: `${S3_URL}/${conf.s3.bucketData}/${Key}`,
+      sentence
+    };
     // responsed to ai server
     let {
       // eslint-disable-next-line prefer-const
@@ -84,19 +96,21 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     if (!success) throw new Error('fail to ai server rest communication');
 
     // 발음 평가 결과 DB 저장
-    const userSentenceEvaluation = new UserSentenceEvaluation(
+    const userSentenceEvaluation: UserSentenceEvaluationToBeSaved = {
       userId,
-      +sentenceId,
+      sentenceId: +sentenceId,
       sentenceEvaluationCounts,
-      evaluatedSentence.sttResult,
-      evaluatedSentence.score,
-      `${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
-    );
+      sttResult: evaluatedSentence.sttResult,
+      score: evaluatedSentence.score,
+      userVoiceUri: `${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
+    };
     evaluatedSentence = {
       ...evaluatedSentence,
-      ...(await userSentenceEvaluation.create(client))
+      ...(await UserSentenceEvaluationRepository.save(
+        client,
+        userSentenceEvaluation
+      ))
     };
-    console.timeEnd('evaluateUserVoice');
 
     await client.query('COMMIT');
 
@@ -115,69 +129,61 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
   }
 };
 
-// /sentences/:sentenceId/perfect-voice
+// /sentences/:sentenceId/userSentenceHistory
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const recordPerfectVoiceCounts = async (req: Request, res: Response) => {
+export const recordUserSentenceHistory = async (
+  req: Request,
+  res: Response
+) => {
   const userId: number = res.locals.userId;
   const { sentenceId } = req.params;
+  const { column } = req.query;
   const client: PoolClient = await pool.connect();
 
   try {
     // request params 유효성 검사
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
+    if (column !== 'perfectVoiceCounts' && column !== 'userVoiceCounts')
+      throw new Error("invalid query string's syntax");
 
-    await client.query('BEGIN');
-
-    const perfectVoiceCounts = await new UserSentenceHistory(
+    const UserSentenceHistoryPK: UsersentenceHistoryPK = {
       userId,
-      +sentenceId
-    ).updatePerfectVoiceCounts(client);
-
-    await client.query('COMMIT');
-
+      sentenceId: +sentenceId
+    };
+    let sentenceHistory;
+    // 성우 음성 재생 횟수 증가
+    if (column === 'perfectVoiceCounts') {
+      const perfectVoiceCounts =
+        await UserSentenceHistoryRepository.updatePerfectVoiceCounts(
+          client,
+          UserSentenceHistoryPK
+        );
+      sentenceHistory = {
+        userId,
+        sentenceId: +sentenceId,
+        perfectVoiceCounts
+      };
+    }
+    // 사용자 음성 재생 횟수 증가
+    else {
+      const userVoiceCounts =
+        await UserSentenceHistoryRepository.updateUserVoiceCounts(
+          client,
+          UserSentenceHistoryPK
+        );
+      sentenceHistory = {
+        userId,
+        sentenceId: +sentenceId,
+        userVoiceCounts
+      };
+    }
     return res.status(201).json({
       success: true,
-      sentenceHistory: { userId, sentenceId: +sentenceId, perfectVoiceCounts }
+      sentenceHistory
     });
   } catch (error) {
-    await client.query('ROLLBACK');
-
     console.error(error);
     const errorMessage = (error as Error).message;
-    return res.status(400).json({ success: false, errorMessage });
-  } finally {
-    client.release();
-  }
-};
-
-// /sentences/:sentenceId/user-voice
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const recordUserVoiceCounts = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
-  const { sentenceId } = req.params;
-  const client: PoolClient = await pool.connect();
-
-  try {
-    // request params 유효성 검사
-    if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
-
-    await client.query('BEGIN');
-
-    const userVoiceCounts = await new UserSentenceHistory(
-      userId,
-      +sentenceId
-    ).updateUserVoiceCounts(client);
-
-    await client.query('COMMIT');
-
-    return res.status(201).json({
-      success: true,
-      sentenceHistory: { userId, sentenceId: +sentenceId, userVoiceCounts }
-    });
-  } catch (error) {
-    await client.query('ROLLBACK');
-    const errorMessage = (error as Error).message;
-    console.error(error);
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
