@@ -10,13 +10,13 @@ servers:
   - url: http://localhost:4001/
 tags:
   - name: users
-    description: users APIs
+    description: users app APIs
   - name: learning/contents
-    description: learning content and unit APIs
+    description: contents in learning app APIs
   - name: learning/sentences
-    description: learning sentence APIs
+    description: sentences in learning app APIs
   - name: learning/words
-    description: learning word APIs
+    description: words in learning app APIs
 paths:
   # /auth/google:
   #   $ref: './paths/auth/google.yaml'
@@ -25,19 +25,25 @@ paths:
   /learning/contents:
     $ref: './paths/learning/contents.yaml'
   /learning/contents/{contentId}:
-    $ref: './paths/learning/content.yaml'
+    $ref: './paths/learning/contents/content.yaml'
   /learning/contents/{contentId}/units:
-    $ref: './paths/learning/units.yaml'
+    $ref: './paths/learning/contents/units.yaml'
   /learning/contents/{contentId}/units/{unitIndex}:
-    $ref: './paths/learning/unit.yaml'
-  /learning/sentences/{sentenceId}/perfect-voice:
-    $ref: './paths/learning/sentencePerfectVoice.yaml'
-  /learning/sentences/{sentenceId}/user-voice:
-    $ref: './paths/learning/sentenceUserVoice.yaml'
-  /learning/sentences/{sentenceId}/evaluation:
-    $ref: './paths/learning/sentenceEvaluation.yaml'
+    $ref: './paths/learning/contents/unit.yaml'
+  /learning/contents/{contentId}/units/{unitIndex}/sentences:
+    $ref: './paths/learning/contents/sentences.yaml'
+  /learning/sentences/{sentenceId}/userSentenceHistory:
+    $ref: './paths/learning/sentences/userSentenceHistory.yaml'
+  /learning/sentences/{sentenceId}/userSentenceEvaluation:
+    $ref: './paths/learning/sentences/userSentenceEvaluation.yaml'
   /learning/words/{wordId}:
-    $ref: './paths/learning/word.yaml'
+    $ref: './paths/learning/words/word.yaml'
+  /learning/words/{wordId}/sentences:
+    $ref: './paths/learning/words/sentences.yaml'
+  /learning/words/{wordId}/userWordHistory:
+    $ref: './paths/learning/words/userWordHistory.yaml'
+  /learning/words/{wordId}/userWordEvaluation:
+    $ref: './paths/learning/words/userWordEvaluation.yaml'
   /users:
     $ref: './paths/users/users.yaml'
   /users/{userId}:

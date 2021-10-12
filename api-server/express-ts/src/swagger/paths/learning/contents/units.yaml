@@ -17,28 +17,28 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/UnitsInKPOP'
+            $ref: '../../../openapi.yaml#/components/schemas/LearningUnitsInKPOP'
     200-304-Others:
       description: 요청 성공 (K-DRAMA or K-MOVIE content 터치 시)
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/UnitsInOthers'
+            $ref: '../../../openapi.yaml#/components/schemas/LearningUnitsInOthers'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
     401-UnauthorizedError:
       description: Access token이 없거나 유효하지 않음
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
     404-NotFound:
       description: 서버는 요청받은 리소스를 찾을 수 없음
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/Error'
+            $ref: '../../../openapi.yaml#/components/schemas/Error'

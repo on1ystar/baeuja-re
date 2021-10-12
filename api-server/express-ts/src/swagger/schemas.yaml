@@ -1,5 +1,5 @@
 # -------------------------- learning -------------------------- #
-Contents:
+LearningContents:
   type: object
   properties:
     success:
@@ -24,7 +24,7 @@ Contents:
             type: string
           progressRate:
             type: number
-Content:
+LearningContent:
   type: object
   properties:
     success:
@@ -45,7 +45,7 @@ Content:
           type: string
         thumbnailUri:
           type: string
-UnitsInKPOP:
+LearningUnitsInKPOP:
   type: object
   properties:
     success:
@@ -80,7 +80,7 @@ UnitsInKPOP:
                   type: number
                 originalKoreanText:
                   type: string
-UnitsInOthers:
+LearningUnitsInOthers:
   type: object
   properties:
     success:
@@ -117,8 +117,7 @@ UnitsInOthers:
                 type: boolean
               learningRate:
                 type: number
-
-Unit:
+LearningUnit:
   type: object
   properties:
     success:
@@ -143,55 +142,85 @@ Unit:
         endTime:
           type: string
           example: 0:32
-        sentences:
-          type: array
-          items:
-            type: object
-            properties:
-              sentenceId:
+LearningSentences:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+            example: 1
+          koreanText:
+            type: string
+            example: 낮에는 따사로운 인간적인 여자
+          translatedText:
+            type: string
+            example: A warm, humane woman during the day.
+          perfectVoiceUri:
+            type: string
+            example: https://cdn.k-peach.io/perfect-voice/test.wav
+          startTime:
+            type: string
+            example: 0:18
+          endTime:
+            type: string
+            example: 0:21
+          isBookmark:
+            type: boolean
+            example: false
+          words:
+            type: array
+            items:
+              type: object
+              wordId:
                 type: number
                 example: 1
-              koreanText:
+              prevKoreanText:
                 type: string
-                example: 낮에는 따사로운 인간적인 여자
-              translatedText:
+                example: 낮
+              prevTranslatedText:
                 type: string
-                example: A warm, humane woman during the day.
-              perfectVoiceUri:
+                example: day
+              originalKoreanText:
                 type: string
-                example: https://cdn.k-peach.io/perfect-voice/test.wav
-              startTime:
+                example: 낮
+              originalTranslatedText:
                 type: string
-                example: 0:18
-              endTime:
-                type: string
-                example: 0:21
-              isBookmark:
-                type: boolean
-                example: false
-              words:
-                type: array
-                items:
-                  type: object
-                  wordId:
-                    type: number
-                    example: 1
-                  sentenceId:
-                    type: number
-                    example: 1
-                  prevKoreanText:
-                    type: string
-                    example: 낮
-                  prevTranslatedText:
-                    type: string
-                    example: day
-                  originalKoreanText:
-                    type: string
-                    example: 낮
-                  originalTranslatedText:
-                    type: string
-                    example: day
-SentencePerfectVoiceHistory:
+                example: day
+LearningSentencesContainingWord:
+  type: array
+  items:
+    type: object
+    properties:
+      sentenceId:
+        type: number
+        example: 1
+      koreanText:
+        type: string
+        example: 낮에는 따사로운 인간적인 여자
+      translatedText:
+        type: string
+        example: A warm, humane woman during the day.
+      word:
+        type: array
+        items:
+          type: object
+          wordId:
+            type: number
+            example: 1
+          prevKoreanText:
+            type: string
+            example: 낮
+          prevTranslatedText:
+            type: string
+            example: day
+LearningSentencePerfectVoiceCounts:
   type: object
   properties:
     success:
@@ -207,7 +236,7 @@ SentencePerfectVoiceHistory:
         perfectVoiceCounts:
           type: number
           description: 성우 음성 재생 횟수
-SentenceUserVoiceHistory:
+LearningSentenceUserVoiceCounts:
   type: object
   properties:
     success:
@@ -223,7 +252,7 @@ SentenceUserVoiceHistory:
         userVoiceCounts:
           type: number
           description: 사용자 음성 재생 횟수
-SentenceEvaluation:
+LearningSentenceEvaluation:
   type: object
   properties:
     success:
@@ -277,77 +306,107 @@ Word:
     success:
       type: boolean
       example: true
-    words:
-      type: array
-      items:
-        type: object
-        properties:
-          wordId:
-            type: number
-          sentenceId:
-            type: number
-          prevKoreanText:
-            type: string
-          prevTranslatedText:
-            type: string
-          originalKoreanText:
-            type: string
-          originalTranslatedText:
-            type: string
-          perfectVoiceUri:
-            type: string
-          importance:
-            type: string
-          isBookmark:
-            type: boolean
-          relatedSentences:
-            type: array
-            description: 단어가 포함된 예시 문장 리스트
-            items:
-              type: object
-              properties:
-                sentenceId:
-                  type: number
-                unitIndex:
-                  type: number
-                contentId:
-                  type: number
-                koreanText:
-                  type: string
-                translatedText:
-                  type: string
-# -------------------------- history -------------------------- #
-UserSentenceHistory:
+    word:
+      type: object
+      properties:
+        wordId:
+          type: number
+        sentenceId:
+          type: number
+        prevKoreanText:
+          type: string
+        prevTranslatedText:
+          type: string
+        originalKoreanText:
+          type: string
+        originalTranslatedText:
+          type: string
+        perfectVoiceUri:
+          type: string
+        importance:
+          type: string
+        isBookmark:
+          type: boolean
+LearningWordEvaluation:
   type: object
   properties:
     success:
       type: boolean
       example: true
-    userSentenceHistory:
+    evaluategWord:
+      type: object
+      properties:
+        wordEvaluationCounts:
+          type: number
+          description: 같은 단어에 대한 발음 평가 횟수
+        userId:
+          type: number
+        wordId:
+          type: number
+        score:
+          type: number
+        sttResult:
+          type: string
+        userVoiceUri:
+          type: string
+          description: 저장된 사용자 음성 경로
+    pitchData:
+      type: object
+      properties:
+        perfectVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+        userVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+LearningWordPerfectVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    wordHistory:
       type: object
       properties:
         userId:
           type: number
-        sentenceId:
+        wordId:
           type: number
-        counts:
-          type: number
-          description: 학습 횟수
         perfectVoiceCounts:
           type: number
           description: 성우 음성 재생 횟수
+LearningWordUserVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    wordHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        wordId:
+          type: number
         userVoiceCounts:
           type: number
           description: 사용자 음성 재생 횟수
-        averageScore:
-          type: number
-        highestScore:
-          type: number
-        learningRate:
-          type: number
-        latestLearningAt:
-          type: string
-          description: 최근 학습 시각
 # -------------------------- login -------------------------- #
 LoginedResult:
   type: object

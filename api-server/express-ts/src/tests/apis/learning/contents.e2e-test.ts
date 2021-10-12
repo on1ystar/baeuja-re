@@ -110,7 +110,7 @@ describe('e2e Testing learning/contents app', () => {
 
   // 콘텐츠 유닛 학습
   describe('GET /content/:contentId/units/:unitIndex', () => {
-    it('should valid response a unit object with sentences and words', async () => {
+    it('should valid response a unit ', async () => {
       const res = await request(app)
         .get(`/learning/contents/${contentId}/units/${unitIndex}`)
         .auth(token, { type: 'bearer' });
@@ -118,8 +118,6 @@ describe('e2e Testing learning/contents app', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.unit.contentId).toBe(contentId);
       expect(res.body.unit.unitIndex).toBe(unitIndex);
-      expect(res.body.sentences.length).toBe(numOfSentences);
-      expect(res.body.sentences[0].words.length).toBe(numOfWords);
       // 학습 기록 저장 테스트
       expect(
         +(
@@ -164,6 +162,19 @@ describe('e2e Testing learning/contents app', () => {
           )
         ).rows[0].counts
       ).toBe(2);
+    });
+  });
+
+  // 콘텐츠 유닛에 포함된 문장
+  describe('GET /content/:contentId/units/:unitIndex/sentences', () => {
+    it('should valid response sentences containing words', async () => {
+      const res = await request(app)
+        .get(`/learning/contents/${contentId}/units/${unitIndex}/sentences`)
+        .auth(token, { type: 'bearer' });
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.sentences.length).toBe(numOfSentences);
+      expect(res.body.sentences[0].words.length).toBe(numOfWords);
     });
   });
 });

@@ -1,9 +1,11 @@
-export interface UserWordEvaluation {
-  wordEvaluationCounts?: number;
-  userId?: number;
-  wordId?: number;
-  sttResult?: string;
-  score?: number;
-  userVoiceUri?: string;
-  createdAt?: string;
+export default class UserWordEvaluation {
+  constructor(
+    readonly userId?: number,
+    readonly wordId?: number,
+    readonly wordEvaluationCounts?: number,
+    readonly sttResult?: string,
+    readonly score?: number,
+    readonly userVoiceUri?: string,
+    readonly createdAt?: string
+  ) {}
 }

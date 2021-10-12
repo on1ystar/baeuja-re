@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
-import { User } from '../../entities/user.entity';
 import jwt from 'jsonwebtoken';
 import conf from '../../config';
+import UserRepository from '../../repositories/user.repository';
 
 export const checkUserId = async (
   req: Request,
@@ -44,7 +44,7 @@ export const checkUserId = async (
       }
       const userId = decodedToken?.userId;
       try {
-        if (!(await User.isExistById(poolClient, parseInt(userId)))) {
+        if (!(await UserRepository.isExistById(poolClient, parseInt(userId)))) {
           return res.status(401).json({
             success: false,
             errorMessage: 'The scheme does not exist in table'

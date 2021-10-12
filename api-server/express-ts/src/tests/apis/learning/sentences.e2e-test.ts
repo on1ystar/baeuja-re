@@ -24,10 +24,10 @@ afterAll(async () => {
 
 describe('e2e Testing learning/sentences app', () => {
   // 발화 평가
-  describe('POST /learning/sentences/:sentenceId/evaluation', () => {
+  describe('POST /learning/sentences/:sentenceId/userSentenceEvaluation', () => {
     it('should valid response the result of speech evaluation', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/evaluation`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceEvaluation`)
         .auth(token, { type: 'bearer' })
         .attach(
           'userVoice',
@@ -44,7 +44,7 @@ describe('e2e Testing learning/sentences app', () => {
 
     it('should increase the sentence evaluation counts', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/evaluation`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceEvaluation`)
         .auth(token, { type: 'bearer' })
         .attach(
           'userVoice',
@@ -55,10 +55,11 @@ describe('e2e Testing learning/sentences app', () => {
     });
   });
   // 성우 음성 재생 기록
-  describe('POST /learning/sentences/:sentenceId/perfect-voice', () => {
+  describe('POST /learning/sentences/:sentenceId/userSentenceHistory', () => {
     it('should valid response the perfect voice counts', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/perfect-voice`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .query({ column: 'perfectVoiceCounts' })
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
@@ -71,16 +72,26 @@ describe('e2e Testing learning/sentences app', () => {
 
     it('should increase the perfect voice counts', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/perfect-voice`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .query({ column: 'perfectVoiceCounts' })
         .auth(token, { type: 'bearer' });
       expect(res.body.sentenceHistory.perfectVoiceCounts).toBe(2);
     });
+
+    it('should increase the perfect voice counts', async () => {
+      const res = await request(app)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .auth(token, { type: 'bearer' });
+      expect(res.body.success).toBe(false);
+      expect(res.body.errorMessage).toBe("invalid query string's syntax");
+    });
   });
   // 사용자 음성 재생 기록
-  describe('POST /learning/sentences/:sentenceId/user-voice', () => {
+  describe('POST /learning/sentences/:sentenceId/userSentenceHistory', () => {
     it('should valid response the user voice counts', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/user-voice`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .query({ column: 'userVoiceCounts' })
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
@@ -93,7 +104,8 @@ describe('e2e Testing learning/sentences app', () => {
 
     it('should increase the user voice counts', async () => {
       const res = await request(app)
-        .post(`/learning/sentences/${sentenceId}/user-voice`)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .query({ column: 'userVoiceCounts' })
         .auth(token, { type: 'bearer' });
       expect(res.body.sentenceHistory.userVoiceCounts).toBe(2);
     });
