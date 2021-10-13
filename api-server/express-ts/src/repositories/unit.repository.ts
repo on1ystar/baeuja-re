@@ -101,42 +101,4 @@ export default class UnitRepository {
       throw error;
     }
   };
-
-  // 유닛에 포한된 단어 리스트
-  static leftJoinSentenceAndWord = async (
-    client: PoolClient,
-    contentId: number,
-    unitIndex: number,
-    _columns: any[]
-  ): Promise<Word[]> => {
-    try {
-      // SELECT할 컬럼이 최소 1개 이상 있어야 함
-      if (_columns.length === 0)
-        throw new Error('At least 1 column in _column is required');
-
-      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
-      const SELECT_COLUMNS = getSelectColumns(_columns);
-
-      const queryResult: QueryResult<any> = await client.query(
-        `SELECT ${SELECT_COLUMNS} FROM unit 
-        LEFT JOIN sentence 
-        ON unit.content_id = sentence.content_id 
-            AND unit.unit_index = sentence.unit_index  
-        LEFT JOIN word 
-        ON sentence.sentence_id = word.sentence_id 
-        WHERE unit.content_id = ${contentId} 
-            AND unit.unit_index = ${unitIndex} 
-            AND word.word_id IS NOT NULL`
-      );
-      if (!queryResult.rowCount)
-        throw new Error('contentId or unitIndex does not exist');
-
-      return queryResult.rows;
-    } catch (error) {
-      console.error(
-        '❌ Error: unit.repository.ts leftJoinSentenceAndWord function '
-      );
-      throw error;
-    }
-  };
 }

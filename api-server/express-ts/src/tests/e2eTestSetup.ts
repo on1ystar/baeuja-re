@@ -82,8 +82,9 @@ export default class TestSetup {
 
   getNumOfWords = async (): Promise<number> =>
     +(
-      await pool.query('SELECT count(*) FROM word WHERE sentence_id = $1', [
-        this.sentenceId
-      ])
+      await pool.query(
+        'SELECT count(*) FROM sentence_word WHERE sentence_id = $1',
+        [this.sentenceId]
+      )
     ).rows[0].count;
 }

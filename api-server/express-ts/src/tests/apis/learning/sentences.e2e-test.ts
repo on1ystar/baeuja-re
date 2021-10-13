@@ -78,9 +78,18 @@ describe('e2e Testing learning/sentences app', () => {
       expect(res.body.sentenceHistory.perfectVoiceCounts).toBe(2);
     });
 
-    it('should increase the perfect voice counts', async () => {
+    it('should return 404 if the column query not found', async () => {
       const res = await request(app)
         .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .auth(token, { type: 'bearer' });
+      expect(res.body.success).toBe(false);
+      expect(res.body.errorMessage).toBe("invalid query string's syntax");
+    });
+
+    it('should return 404 if the column query not found', async () => {
+      const res = await request(app)
+        .post(`/learning/sentences/${sentenceId}/userSentenceHistory`)
+        .query({ column: 'anything' })
         .auth(token, { type: 'bearer' });
       expect(res.body.success).toBe(false);
       expect(res.body.errorMessage).toBe("invalid query string's syntax");

@@ -1,14 +1,15 @@
 import Sentence from '../../../../entities/sentence.entity';
 import UserSentenceHistory from '../../../../entities/user-sentence-history.entity';
+import SentenceWord from '../../../../entities/sentence-word.entity';
 import Word from '../../../../entities/word.entity';
 
-export interface WordOfLearningSentenceDTO extends Word {
+export interface WordOfLearningSentenceDTO extends Word, SentenceWord {
   readonly wordId: number;
   readonly sentenceId: number;
-  readonly prevKoreanText: string;
-  readonly prevTranslatedText: string;
-  readonly originalKoreanText: string;
-  readonly originalTranslatedText: string;
+  readonly koreanInText: string;
+  readonly translationInText: string;
+  readonly korean: string;
+  readonly translation: string;
 }
 
 export interface SentenceOfLearningSentenceDTO
@@ -23,6 +24,7 @@ export interface SentenceOfLearningSentenceDTO
   readonly isBookmark: boolean;
 }
 
-export default interface LearningSentenceDTO extends Sentence {
+export default interface LearningSentenceDTO
+  extends SentenceOfLearningSentenceDTO {
   readonly words: WordOfLearningSentenceDTO[];
 }

@@ -154,11 +154,11 @@ export const getUnits = async (
             ['sentenceId']
           )
         ).length;
-        const words: Word[] = await UnitRepository.leftJoinSentenceAndWord(
+        const words: Word[] = await SentenceRepository.joinWord(
           client,
           unit.contentId,
           unit.unitIndex,
-          [{ Word: ['wordId', 'originalKoreanText'] }]
+          [{ Word: ['wordId', 'korean'] }]
         );
         const wordsCounts: number = words.length;
         return {
@@ -257,7 +257,6 @@ export const getUnit = async (req: Request, res: Response) => {
       contentId: +contentId,
       unitIndex: +unitIndex
     };
-    console.log('userUnitHistoryPK: ', userUnitHistoryPK);
     const isExist: boolean = await UserUnitHistoryRepository.isExist(
       client,
       userUnitHistoryPK
@@ -265,12 +264,10 @@ export const getUnit = async (req: Request, res: Response) => {
     // 존재하지 않으면 유닛 및 포함된 문장 학습 기록 생성
     if (!isExist) {
       await UserUnitHistoryRepository.save(client, userUnitHistoryPK); // 유닛 학습 기록 생성
-      console.log('created UserUnitHistory !!!!!!!!!!!!!!!!!!!!!!');
       await UserContentHistoryRepository.updateProgressRate(client, {
         userId,
         contentId: +contentId
       });
-      console.log('created UserContentHistory !!!!!!!!!!!!!!!!!!!!!!');
 
       // 문장 학습 기록 생성
       const sentenceIdList = (
@@ -292,7 +289,6 @@ export const getUnit = async (req: Request, res: Response) => {
     // 존재하면 학습 횟수 1 증가, 문장 최근 학습 기록 갱신
     else {
       await UserUnitHistoryRepository.updateCounts(client, userUnitHistoryPK);
-      console.log('updated UserUnitHistory !!!!!!!!!!!!!!!!!!!!!!');
       await UserSentenceHistoryRepository.updateLatestLearningAtByUnit(
         client,
         userId,
@@ -342,7 +338,9 @@ export const getSentences = async (
               'perfectVoiceUri',
               'startTime',
               'endTime'
-            ],
+            ]
+          },
+          {
             UserSentenceHistory: ['isBookmark']
           }
         ]
@@ -350,14 +348,10 @@ export const getSentences = async (
     const words: WordOfLearningSentenceDTO[] =
       await SentenceRepository.joinWord(client, +contentId, +unitIndex, [
         {
-          Word: [
-            'wordId',
-            'sentenceId',
-            'prevKoreanText',
-            'prevTranslatedText',
-            'originalKoreanText',
-            'originalTranslatedText'
-          ]
+          Word: ['wordId', 'korean', 'translation']
+        },
+        {
+          SentenceWord: ['sentenceId', 'koreanInText', 'translationInText']
         }
       ]);
     const LearningSentenceDTOs: LearningSentenceDTO[] = sentences.map(

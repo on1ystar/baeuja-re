@@ -78,7 +78,7 @@ LearningUnitsInKPOP:
               properties:
                 wordId:
                   type: number
-                originalKoreanText:
+                korean:
                   type: string
 LearningUnitsInOthers:
   type: object
@@ -181,43 +181,47 @@ LearningSentences:
               wordId:
                 type: number
                 example: 1
-              prevKoreanText:
+              koreanInText:
                 type: string
                 example: 낮
-              prevTranslatedText:
+              translationInText:
                 type: string
                 example: day
-              originalKoreanText:
+              korean:
                 type: string
                 example: 낮
-              originalTranslatedText:
+              translation:
                 type: string
                 example: day
 LearningSentencesContainingWord:
-  type: array
-  items:
-    type: object
-    properties:
-      sentenceId:
-        type: number
-        example: 1
-      koreanText:
-        type: string
-        example: 낮에는 따사로운 인간적인 여자
-      translatedText:
-        type: string
-        example: A warm, humane woman during the day.
-      word:
-        type: array
-        items:
-          type: object
-          wordId:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
             type: number
             example: 1
-          prevKoreanText:
+          contentId:
+            type: number
+            example: 1
+          unitIndex:
+            type: number
+            example: 1
+          koreanText:
+            type: string
+            example: 낮에는 따사로운 인간적인 여자
+          translatedText:
+            type: string
+            example: A warm, humane woman during the day.
+          koreanInText:
             type: string
             example: 낮
-          prevTranslatedText:
+          translationInText:
             type: string
             example: day
 LearningSentencePerfectVoiceCounts:
@@ -311,15 +315,9 @@ Word:
       properties:
         wordId:
           type: number
-        sentenceId:
-          type: number
-        prevKoreanText:
+        korean:
           type: string
-        prevTranslatedText:
-          type: string
-        originalKoreanText:
-          type: string
-        originalTranslatedText:
+        translation:
           type: string
         perfectVoiceUri:
           type: string
