@@ -26,97 +26,93 @@ import json
 app = Flask(__name__)
 
 @app.route('/evaluation/word', methods = ['GET', 'POST'])
-def evalutaionWord():
+def evaluationWord():
+	"""
+	:description:	evaluation user's speech compare with voice_actor speech by using Pitch and STT
+	:return:		int, evaluation score
+	"""
 	if request.method == 'POST':
-
-		# get wave file path
-		perfect_dir = path.getPerfectWordDir()
-		user_dir = path.getUserWordDir()
-
 		# get data from request.json
-		user_id = str(request.json['userId'])
-		user_voice_uri = request.json['userVoiceUri']
-		perfect_voice_uri = request.json['word']['perfectVoiceUri']
-		perfect_id = utils.getFileName(perfect_voice_uri)
-		word_id = str(request.json['word']['wordId'])
-		korean_text = request.json['word']['korean']
+		user = VoiceInfo(id = str(request.json['userId']),
+				uri = request.json['userVoiceUri']
+			)
+
+		perfect = VoiceInfo(id = str(request.json['word']['wordId']),
+				uri = request.json['word']['perfectVoiceUri'],
+				text = request.json['word']['korean']
+			)
 
 		# log about request
-		log_data = {
-			'method': 'evaluationWord()',
-			'user_id': user_id,
-			'user_voide_uri': user_voice_uri,
-			'korean_text': korean_text
-		}
-		utils.makeLog(log_data)
+		utils.makeLog({'user': user, 'perfect': perfect})
 
 		# download user_voice and perfect_voice
-		user_voice_file_name = utils.downloadSoundFile(user_voice_uri, user_dir)
-		user_voice_path = user_dir + user_voice_file_name
+		user_file_name = utils.downloadSoundFile(user.uri, path.getUserWordDir())
+		user.path = path.getUserWordDir() + user_file_name
 
 		# make shell command
-		user_convert_command = utils.getCommand(user_voice_path, user_id, "word-convert")
-
-		# voice file to flac, 16bit 16khz with ffmpeg
+		user_command = Command(
+				convert = utils.getCommand(user.path, user.id, "word-convert"),
+				decode = utils.getCommand(user.path, user.id, "word-decode")
+			)
+		# voice file to flac, 16bit 16kHz with ffmpeg
 		try:
-			user_convert_worker = subprocess.call([user_convert_command], shell=True)
+			user_convert_worker = subprocess.call([user_command.convert], shell=True)
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
 					"success":False,
-					"error": "file convert to flac timeout"
 				})
 
-		decoder_worker = subprocess.Popen([decode_command], shell=True)
-
-		# get perfect pitch from flac
-
-		if perfect_pitch is None:
-			return jsonify({
-					"success": False,
-					"error": "cannot found pitch"
-				})
+		# stt
+		user_decoder_worker = subprocess.Popen([user_command.decode], shell=True)
 		
 		# speech to text and get stt score
 		try:
-			decoder_worker.wait(timeout=10)
-			result_stt = korean.getKoreanText(path.getLogDir() + user_id + ".log")
-			stt_score = korean.levenshtein(korean_text, result_stt)
-		
+			user_decoder_worker.wait(timeout=10)
+			user.text = korean.getKoreanText(path.getLogDir() + user.id + ".log")
+			stt_score = korean.levenshtein(perfect.text, user.text)
+
 		except subprocess.TimeoutExpired:
 			return jsonify({
-					"success":False,
+					"success": False,
 					"error": "decode timeout"
 				})
-
+		print('')
+		print('user_id is ', user.id)
+		print('user_uri is ', user.uri)
+		print('user_path is ', user.path)
+		print('user_convert_command is ', user_command.convert)
+		print('user_decode_command is ', user_command.decode)
+		print('user_text is ', user.text)
+		print('')
 
 		# calculate real score
 		result_score = stt_score
 
 		# log
-		log_data = {
-			'result_stt': result_stt,
-			'result_score': result_score
-		}
-		utils.makeLog(log_data)
+		utils.makeLog({'result_stt': user.text, 'result_score': result_score})
 
+		empty_list = list()
 		return jsonify({
 				"success":True,
 				"evaluatedWord":{
 					"score": result_score,
-					"sttResult": result_stt
+					"sttResult": user.text
 					},
 				"pitchData":{
 					"perfectVoice":{
-						"time": [],
-						"hz": []
+						"time": json.dumps(empty_list),
+						"hz": json.dumps(empty_list)
 						},
 					"userVoice":{
-						"time": [],
-						"hz": []
+						"time": json.dumps(empty_list),
+						"hz": json.dumps(empty_list)
 						}
 					}
 				})
+
+if __name__ == "__main__":
+	app.run(host='0.0.0.0', port=8080)
 
 @app.route('/evaluation/sentence', methods = ['GET', 'POST'])
 def evaluationSentence():
@@ -146,7 +142,7 @@ def evaluationSentence():
 		# make shell command
 		user_command = Command(
 				convert = utils.getCommand(user.path, user.id, "sentence-convert"),
-				decode = utils.getCommand(user.path, user.id, "decode")
+				decode = utils.getCommand(user.path, user.id, "sentence-decode")
 			)
 	
 		# voice file to flac, 16bit 16kHz with ffmpeg
