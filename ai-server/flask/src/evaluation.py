@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process pitch score
-# Modified: 2021.10.06
-# Version: 0.4.2
+# Modified: 2021.10.13
+# Version: 0.4.3
 
 import numpy as np
 import librosa, librosa.display
@@ -19,7 +19,11 @@ def getNormalized(data: list) -> list:
 	"""
 
 	normalized_data_list = list()
-	max_value, min_value = max(data), min(data)
+	try:
+		max_value, min_value = max(data), min(data)
+	except ValueError as err:
+		utils.makeLog(err)
+		return None
 
 	if max_value - min_value == 0 or len(data) == 0:
 		utils.makeLog(data)
@@ -54,6 +58,7 @@ def getPitch(wav_file: str, sample_rate=16000) -> list:
 
 	# get normalized pitch
 	normalized_pitch = getNormalized(removed_nan_f0)
+
 	if normalized_pitch is None:
 		utils.makeLog(f0)
 		return None, None, None
@@ -86,10 +91,12 @@ def getTimes(pitch_len: int, removed_nan_pitch_len: int, sample_rate=16000) -> l
 	# makes time list for every index
 	times = list()
 	times.append(0)
+
 	for i in range(1, removed_nan_pitch_len):
 		time = times[i-1] + gap
 		times.append(time)
 		times[i] = round(times[i], 2)
+
 	return times
 
 def _getScore(data_1, data_2) :
@@ -101,7 +108,7 @@ def _getScore(data_1, data_2) :
 	"""
 	return (max(data_1, data_2) - abs(data_1 - data_2)) / (max(data_1, data_2) + abs(data_1 - data_2))
 
-def getPitchScore(perfect_pitch: list, user_pitch: list, perfect_time: list, user_time: list, perfect_duration: float, user_duration: float) -> int:
+def getPitchScore(perfect, user) -> int:
 	"""
 	:description:				get score about pitch, duration, dtw
 	:param perfect_pitch:		list, extracted pitch from voice actor
@@ -114,38 +121,37 @@ def getPitchScore(perfect_pitch: list, user_pitch: list, perfect_time: list, use
 	"""
 
 	# get pitch length
-	perfect_pitch_len = len(perfect_pitch)
-	user_pitch_len = len(user_pitch)
+	perfect_pitch_len, user_pitch_len = len(perfect.pitch), len(user.pitch)
 	
 	log_data = {
 		'perfect_pitch_len': perfect_pitch_len,
 		'user_pitch_len': user_pitch_len,
-		'perfect_duration': perfect_duration,
-		'user_duration': user_duration
+		'perfect_duration': perfect.duration,
+		'user_duration': user.duration
 	}
 	utils.makeLog(log_data)
 
 	# set weight about score, sum is 20
 	# pitch:	7
 	# duration: 7
-	# dtw:		6
+	# dtw: 6
 	pitch_score_weight= 7
 	duration_score_weight = 7
 	dtw_score_weight = 6
 
 	# get score about pitch, duration
 	pitch_score = _getScore(perfect_pitch_len, user_pitch_len) * pitch_score_weight
-	duration_score = _getScore(perfect_duration, user_duration) * duration_score_weight
+	duration_score = _getScore(perfect.duration, user.duration) * duration_score_weight
 
 	# prepare to use fastdtw
-	perfect_data = list(zip(perfect_time, perfect_pitch))
-	user_data = list(zip(user_time, user_pitch))
+	perfect_data = list(zip(perfect.time, perfect.pitch))
+	user_data = list(zip(user.time, user.pitch))
 
 	# get dtw distance using fastdtw
 	dtw_distance, _ = fastdtw(perfect_data, user_data) # need to add radius, euclide.. scipy is so heavy, must get euclidean value
 
 	# calculate dtw score with pitch, duration
-	dtw_evaluation_score = abs((user_pitch_len / user_duration) - dtw_distance)
+	dtw_evaluation_score = abs((user_pitch_len / user.duration) - dtw_distance)
 
 	if dtw_evaluation_score <= 0.1 * user_pitch_len:
 		dtw_score = dtw_score_weight
