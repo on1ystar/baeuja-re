@@ -7,7 +7,7 @@
 import { PoolClient, QueryResult } from 'pg';
 import format from 'pg-format';
 import { getNowKO } from '../utils/Date';
-import { UsersentenceHistoryPK } from '../entities/user-sentence-history.entity';
+import { UserSentenceHistoryPK } from '../entities/user-sentence-history.entity';
 import SentenceRepository from './sentence.repository';
 import { UnitPK } from '../entities/unit.entity';
 
@@ -17,7 +17,7 @@ const DEFAULT_LEARNING_RATE = 0;
  * @property userId: number
  * @property sentenceId: number
  */
-export type UserSentenceHistoryToBeSaved = UsersentenceHistoryPK;
+export type UserSentenceHistoryToBeSaved = UserSentenceHistoryPK;
 
 export default class UserSentenceHistoryRepository {
   // 사용자 문장 학습 기록 생성
@@ -41,7 +41,7 @@ export default class UserSentenceHistoryRepository {
         `✅ inserted user_sentence_history table's row [${userId}, ${sentenceId}]`
       );
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts save function '
       );
       throw error;
@@ -51,7 +51,7 @@ export default class UserSentenceHistoryRepository {
   // 성우 음성 재생 횟수 1 증가
   static updatePerfectVoiceCounts = async (
     client: PoolClient,
-    { userId, sentenceId }: UsersentenceHistoryPK
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<number> => {
     try {
       const perfectVoiceCounts: number = (
@@ -72,7 +72,7 @@ export default class UserSentenceHistoryRepository {
       );
       return perfectVoiceCounts;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts updatePerfectVoiceCounts function '
       );
       throw error;
@@ -83,7 +83,7 @@ export default class UserSentenceHistoryRepository {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static updateUserVoiceCounts = async (
     client: PoolClient,
-    { userId, sentenceId }: UsersentenceHistoryPK
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<number> => {
     try {
       const userVoiceCounts: number = (
@@ -104,7 +104,7 @@ export default class UserSentenceHistoryRepository {
       );
       return userVoiceCounts;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts updateUserVoiceCounts function '
       );
       throw error;
@@ -114,7 +114,7 @@ export default class UserSentenceHistoryRepository {
   // 사용자 문장 학습 기록 존재 여부
   static isExist = async (
     client: PoolClient,
-    { userId, sentenceId }: UsersentenceHistoryPK
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<boolean> => {
     try {
       const queryResult: QueryResult<any> = await client.query(
@@ -126,7 +126,7 @@ export default class UserSentenceHistoryRepository {
       if (+queryResult.rows[0].count === 0) return false;
       return true;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts isExist function '
       );
       throw error;
@@ -155,7 +155,7 @@ export default class UserSentenceHistoryRepository {
       await client.query(ARRAY_INSERT_SQL);
       console.info("✅ inserted user_sentence_history table's rows");
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts createList function '
       );
       throw error;
@@ -191,7 +191,7 @@ export default class UserSentenceHistoryRepository {
         "✅ updated user_sentence_history table's latest_learning_at"
       );
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-history.repository.ts updateLatestLearningAtByUnit function '
       );
       throw error;

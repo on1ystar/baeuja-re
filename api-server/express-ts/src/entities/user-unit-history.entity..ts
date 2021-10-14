@@ -3,18 +3,16 @@
   @version feature/api/PEAC-39-PEAC-170-user-sentence-history-api
 */
 
-export class UserUnitHistory {
-  constructor(
-    readonly userId?: number,
-    readonly contentId?: number,
-    readonly unitIndex?: number,
-    readonly counts?: number,
-    readonly latestLearningAt?: string
-  ) {}
+export class UserUnitHistoryPK {
+  readonly userId?: number;
+
+  readonly contentId?: number;
+
+  readonly unitIndex?: number;
 }
 
-export interface UserUnitHistoryPK extends UserUnitHistory {
-  readonly userId: number;
-  readonly contentId: number;
-  readonly unitIndex: number;
+export class UserUnitHistory extends UserUnitHistoryPK {
+  constructor(readonly counts?: number, readonly latestLearningAt?: string) {
+    super();
+  }
 }

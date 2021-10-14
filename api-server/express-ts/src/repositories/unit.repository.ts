@@ -34,7 +34,7 @@ export default class UnitRepository {
 
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: unit.repository.ts findOne function ');
+      console.warn('❌ Error: unit.repository.ts findOne function ');
       throw error;
     }
   };
@@ -61,9 +61,7 @@ export default class UnitRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error(
-        '❌ Error: unit.repository.ts findAllByContentId function '
-      );
+      console.warn('❌ Error: unit.repository.ts findAllByContentId function ');
       throw error;
     }
   };
@@ -95,7 +93,7 @@ export default class UnitRepository {
       if (!queryResult.rowCount) throw new Error('contentId does not exist');
       return queryResult.rows;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: unit.repository.ts leftJoinUserUnitHistory function '
       );
       throw error;

@@ -1,7 +1,11 @@
-export default class UserWordHistory {
+export class UserWordHistoryPK {
+  readonly userId?: number;
+
+  readonly wordId?: number;
+}
+
+export default class UserWordHistory extends UserWordHistoryPK {
   constructor(
-    readonly userId?: number,
-    readonly wordId?: number,
     readonly counts?: number,
     readonly perfectVoiceCounts?: number,
     readonly userVoiceCounts?: number,
@@ -11,5 +15,7 @@ export default class UserWordHistory {
     readonly latestLearningAt?: string,
     readonly isBookmark?: boolean,
     readonly bookmarkAt?: string
-  ) {}
+  ) {
+    super();
+  }
 }

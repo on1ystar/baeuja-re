@@ -2,9 +2,12 @@
   @version feature/api/api-route-refactoring
 */
 
-export default class Content {
+export class ContentPK {
+  readonly contentId?: number;
+}
+
+export default class Content extends ContentPK {
   constructor(
-    readonly contentId?: number,
     readonly classification?: string,
     readonly title?: string,
     readonly description?: string,
@@ -14,9 +17,7 @@ export default class Content {
     readonly director?: string,
     readonly createdAt?: string,
     readonly modifiedAt?: string
-  ) {}
-}
-
-export interface ContentPK extends Content {
-  readonly contentId: number;
+  ) {
+    super();
+  }
 }

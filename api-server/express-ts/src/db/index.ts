@@ -23,7 +23,7 @@ export const pool: pg.Pool = new pg.Pool({
 //     const client: pg.PoolClient = await pool.connect();
 //     return client;
 //   } catch (error) {
-//     console.error('db connecting error: ', error.stack);
+//     console.warn('db connecting error: ', error.stack);
 //     return error;
 //   }
 // })();

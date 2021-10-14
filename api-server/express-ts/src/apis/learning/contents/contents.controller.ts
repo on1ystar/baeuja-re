@@ -222,7 +222,7 @@ export const getUnits = async (
     }
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
     return res.status(400).json({ success: false, errorMessage });
   } finally {
@@ -300,7 +300,7 @@ export const getUnit = async (req: Request, res: Response) => {
     return res.status(200).json({ success: true, unit });
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
 
     return res.status(400).json({ success: false, errorMessage });
@@ -367,7 +367,7 @@ export const getSentences = async (
       .status(200)
       .json({ success: true, sentences: LearningSentenceDTOs });
   } catch (error) {
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
 
     return res.status(400).json({ success: false, errorMessage });

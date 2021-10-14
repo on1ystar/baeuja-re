@@ -33,7 +33,7 @@ export default class SentenceRepository {
 
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: sentence.repository.ts findOne function ');
+      console.warn('❌ Error: sentence.repository.ts findOne function ');
       throw error;
     }
   };
@@ -62,7 +62,7 @@ export default class SentenceRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error('❌ Error: sentence.repository.ts findByUnit function ');
+      console.warn('❌ Error: sentence.repository.ts findByUnit function ');
       throw error;
     }
   };
@@ -98,7 +98,7 @@ export default class SentenceRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: sentence.repository.ts leftJoinUserSentenceHistory function '
       );
       throw error;
@@ -135,7 +135,7 @@ export default class SentenceRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error('❌ Error: sentence.repository.ts joinWord function ');
+      console.warn('❌ Error: sentence.repository.ts joinWord function ');
       throw error;
     }
   };

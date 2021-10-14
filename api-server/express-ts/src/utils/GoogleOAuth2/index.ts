@@ -35,7 +35,7 @@
 //       const { email, name, locale } = (await oauth2.userinfo.v2.me.get()).data;
 //       return { email, name, locale };
 //     } catch (error) {
-//       console.error('❌ Error: GoogleOAuth2 getUserinfo function');
+//       console.warn('❌ Error: GoogleOAuth2 getUserinfo function');
 //       throw error;
 //     }
 //   };

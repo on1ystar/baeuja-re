@@ -3,10 +3,14 @@
   @version hotfix/api/PEAC-38-progressRate
 */
 
-export default class UserSentenceHistory {
+export class UserSentenceHistoryPK {
+  readonly userId?: number;
+
+  readonly sentenceId?: number;
+}
+
+export default class UserSentenceHistory extends UserSentenceHistoryPK {
   constructor(
-    readonly userId?: number,
-    readonly sentenceId?: number,
     readonly perfectVoiceCounts?: number,
     readonly userVoiceCounts?: number,
     readonly averageScore?: number,
@@ -15,10 +19,7 @@ export default class UserSentenceHistory {
     readonly latestLearningAt?: string,
     readonly isBookmark?: boolean,
     readonly bookmarkAt?: string
-  ) {}
-}
-
-export interface UsersentenceHistoryPK extends UserSentenceHistory {
-  readonly userId: number;
-  readonly sentenceId: number;
+  ) {
+    super();
+  }
 }

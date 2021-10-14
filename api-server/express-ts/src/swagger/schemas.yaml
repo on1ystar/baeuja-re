@@ -178,27 +178,29 @@ LearningSentences:
             type: array
             items:
               type: object
-              wordId:
-                type: number
-                example: 1
-              koreanInText:
-                type: string
-                example: 낮
-              translationInText:
-                type: string
-                example: day
-              korean:
-                type: string
-                example: 낮
-              translation:
-                type: string
-                example: day
+              properties:
+                wordId:
+                  type: number
+                  example: 1
+                koreanInText:
+                  type: string
+                  example: 낮
+                translationInText:
+                  type: string
+                  example: day
+                korean:
+                  type: string
+                  example: 낮
+                translation:
+                  type: string
+                  example: day
 LearningSentencesContainingWord:
   type: object
   properties:
     success:
       type: boolean
       example: true
+    sentences:
       type: array
       items:
         type: object

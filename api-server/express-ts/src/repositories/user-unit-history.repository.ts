@@ -34,7 +34,7 @@ export default class UserUnitHistoryRepository {
       );
       console.info("✅ inserted user_unit_history table's row");
     } catch (error) {
-      console.error('❌ Error: user-unit-history.repository.ts save function ');
+      console.warn('❌ Error: user-unit-history.repository.ts save function ');
       throw error;
     }
   };
@@ -58,7 +58,7 @@ export default class UserUnitHistoryRepository {
       );
       console.info("✅ updated user_unit_history table's counts ++ ");
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-unit-history.repository.ts updateCounts function '
       );
       throw error;
@@ -88,7 +88,7 @@ export default class UserUnitHistoryRepository {
 
       return queryResult.rows[0];
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-unit-history.repository.ts findOne function '
       );
       throw error;
@@ -118,7 +118,7 @@ export default class UserUnitHistoryRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-unit-history.repository.ts findAllByContent function '
       );
       throw error;
@@ -141,7 +141,7 @@ export default class UserUnitHistoryRepository {
       if (+queryResult.rows[0].count === 0) return false;
       return true;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-unit-history.repository.ts isExist function '
       );
       throw error;

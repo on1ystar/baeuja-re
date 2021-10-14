@@ -23,7 +23,7 @@ export default class SentenceWordRepository {
       if (!queryResult.rowCount) throw new Error('wordId does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: sentece_word.repository.ts findAllByWordId function '
       );
       throw error;
@@ -53,7 +53,7 @@ export default class SentenceWordRepository {
       if (!queryResult.rowCount) throw new Error('wordId does not exist');
       return queryResult.rows;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: sentece_word.repository.ts joinSentence function '
       );
       throw error;

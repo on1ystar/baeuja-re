@@ -30,7 +30,7 @@ export default class ContentRepository {
       if (!queryResult.rowCount) throw new Error('contentId does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: content.repository.ts findOne function ');
+      console.warn('❌ Error: content.repository.ts findOne function ');
       throw error;
     }
   };
@@ -60,7 +60,7 @@ export default class ContentRepository {
 
       return queryResult.rows;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: ontent.repository.ts leftJoinUserContentHistory function '
       );
       throw error;

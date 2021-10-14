@@ -23,7 +23,7 @@ export default class WordRepository {
       if (!queryResult.rowCount) throw new Error('wordId does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: word.repository.ts findOne function ');
+      console.warn('❌ Error: word.repository.ts findOne function ');
       throw error;
     }
   };
@@ -51,7 +51,7 @@ export default class WordRepository {
       if (!queryResult.rowCount) throw new Error('wordId does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: word.repository.ts leftJoinUserWordHistory function '
       );
       throw error;

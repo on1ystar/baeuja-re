@@ -29,7 +29,7 @@ export default class UserSentenceEvaluationRepository {
       score,
       userVoiceUri
     }: UserSentenceEvaluationToBeSaved
-  ): Promise<UserSentenceEvaluation> => {
+  ): Promise<any> => {
     try {
       await client.query(
         `INSERT INTO user_sentence_evaluation
@@ -39,20 +39,20 @@ export default class UserSentenceEvaluationRepository {
           sentenceId,
           sentenceEvaluationCounts,
           sttResult,
-          score,
+          Math.round(score),
           userVoiceUri,
           false, // is_public (DEFAULT = false)
           getNowKO() // created_at
         ]
       );
       return {
-        sentenceEvaluationCounts: sentenceEvaluationCounts,
-        userId: userId,
-        sentenceId: sentenceId,
-        userVoiceUri: userVoiceUri
+        sentenceEvaluationCounts,
+        userId,
+        sentenceId,
+        userVoiceUri
       };
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-evaluation.repository.ts save function '
       );
       throw error;
@@ -80,7 +80,7 @@ export default class UserSentenceEvaluationRepository {
       );
       return sentenceEvaluationCounts;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-sentence-evaluation.repository.ts getSentenceEvaluationCounts function '
       );
       throw error;
