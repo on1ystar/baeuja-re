@@ -6,7 +6,7 @@
 
 import Content from '../entities/content.entity';
 import { PoolClient, QueryResult } from 'pg';
-import { getSelectColumns } from '../utils/Query';
+import { getSelectColumns, getSelectColumnsWithoutAs } from '../utils/Query';
 
 export default class ContentRepository {
   // 콘텐츠 1개에 대한 row 반환
@@ -61,7 +61,46 @@ export default class ContentRepository {
       return queryResult.rows;
     } catch (error) {
       console.warn(
-        '❌ Error: ontent.repository.ts leftJoinUserContentHistory function '
+        '❌ Error: content.repository.ts leftJoinUserContentHistory function '
+      );
+      throw error;
+    }
+  };
+
+  // join unit AND sentence AND sentence_word
+  static joinUnitAndSentenceAndSentenceWord = async (
+    client: PoolClient,
+    _columns: any[]
+  ): Promise<any[]> => {
+    const LIMIT_NUM = 5;
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+      const GROUP_BY_COLUMNS = getSelectColumnsWithoutAs(_columns);
+
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT content.modified_at as "updatedAt", ${SELECT_COLUMNS},
+          count(DISTINCT unit.unit_index) as "countsOfUnits", count(DISTINCT sentence_word.sentence_id) as "countsOfSentences", count(DISTINCT sentence_word.word_id) as "countsOfWords"
+        FROM content
+        JOIN unit
+        ON content.content_id = unit.content_id
+        JOIN sentence
+        ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index
+        JOIN sentence_word
+        ON sentence.sentence_id = sentence_word.sentence_id
+        GROUP BY content.modified_at, ${GROUP_BY_COLUMNS}
+        ORDER BY content.modified_at DESC LIMIT ${LIMIT_NUM}`
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+
+      return queryResult.rows;
+    } catch (error) {
+      console.warn(
+        '❌ Error: content.repository.ts joinUnitAndSentenceAndSentenceWord function '
       );
       throw error;
     }

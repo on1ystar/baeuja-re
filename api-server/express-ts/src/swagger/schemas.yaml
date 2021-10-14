@@ -1,3 +1,33 @@
+# -------------------------- home -------------------------- #
+NewContents:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    contents:
+      type: array
+      items:
+        type: object
+        properties:
+          updatedAt:
+            type: string
+          contentId:
+            type: number
+          title:
+            type: string
+          artist:
+            type: string
+          director:
+            type: string
+          thumbnailUri:
+            type: string
+          countsOfUnits:
+            type: number
+          countsOfSentences:
+            type: number
+          countsOfWords:
+            type: number
 # -------------------------- learning -------------------------- #
 LearningContents:
   type: object

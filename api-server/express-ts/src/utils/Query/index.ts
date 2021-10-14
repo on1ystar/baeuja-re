@@ -30,3 +30,24 @@ export const getSelectColumns = (_columns: any[]): string => {
   });
   return SELECT_COLUMNS.slice(1);
 };
+
+export const getSelectColumnsWithoutAs = (_columns: any[]): string => {
+  let columnObjs;
+  if (typeof _columns[0] === 'string') {
+    columnObjs = [{ tableName: '', columns: _columns }];
+  } else {
+    columnObjs = _columns.map(row => ({
+      tableName: `${snakeCase(Object.keys(row)[0])}.`,
+      columns: Object.values(row)[0] as Array<string>
+    }));
+  }
+  let SELECT_COLUMNS = '';
+
+  columnObjs.forEach(columnObj => {
+    columnObj.columns.forEach(column => {
+      SELECT_COLUMNS =
+        SELECT_COLUMNS + `,${columnObj.tableName}${snakeCase(String(column))}`;
+    });
+  });
+  return SELECT_COLUMNS.slice(1);
+};

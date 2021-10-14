@@ -1,10 +1,10 @@
 /**
     @author 정성진(on1ystar)
     @email tjdwls0607@naver.com
-    @version 1.0, PEAC-39 learning-unit-sentence-with-evaluation
+    @version 1.0
     @copyright BAEUJA
-    @script npm run dev:js
-    @script npm run dev:ts
+    @script npm run build
+    @script npm run pm2:start
     @description BAEUJA API SERVER ENTRY POINT
 */
 import express, { Application } from 'express';
@@ -16,8 +16,8 @@ import path from 'path';
 import cors from 'cors';
 import usersApp from './apis/users';
 import learningApp from './apis/learning';
-import appRouter from './app.router';
 import { checkUserId } from './utils/Auth';
+import homeApp from './apis/home';
 
 const app: Application = express();
 const logger = morgan('dev');
@@ -29,8 +29,8 @@ app.use(express.json()); // request body parsing
 app.use(express.urlencoded({ extended: true })); // url query prameter parsing
 app.use(cors()); // cors 모듈
 
-app.use('/', appRouter); // 루트
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
+app.use('/home', checkUserId, homeApp); // injecting home app
 app.use('/users', usersApp); // injecting users app
 app.use('/learning', checkUserId, learningApp); // injecting learning app
 
