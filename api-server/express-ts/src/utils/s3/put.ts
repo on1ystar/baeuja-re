@@ -2,21 +2,28 @@ import { s3Client } from '.';
 import conf from '../../config';
 import { pool } from '../../db';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+import fs from 'fs';
+import wait from 'waait';
 
-export const putContentThumbnail = async () => {
-  const queryResult = (await pool.query('SELECT content_id FROM content')).rows;
+export const putContent = async () => {
+  const queryResult = (
+    await pool.query('SELECT word_id as "wordId", korean FROM word')
+  ).rows;
+
   queryResult.forEach(async row => {
     try {
       const data = await s3Client.send(
         new PutObjectCommand({
           Bucket: conf.s3.bucketData,
-          Key: `thumbnail/contents/${String(row.content_id)}/units/`
+          Key: `perfect-voice/words/${row.wordId}.wav`,
+          Body: fs.readFileSync(
+            `/Users/on1ystar/Documents/audio/words/${row.korean}.wav`
+          )
         })
       );
-      console.log('Success', data);
-      return data; // For unit tests.
     } catch (err) {
       console.log('Error', err);
     }
+    await wait(50);
   });
 };

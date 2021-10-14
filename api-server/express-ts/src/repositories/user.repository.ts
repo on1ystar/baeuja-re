@@ -50,7 +50,7 @@ export default class UserRepository {
 
       return { userId: createdUserId, email: email };
     } catch (error) {
-      console.error('❌ Error: user.repository.ts save function ');
+      console.warn('❌ Error: user.repository.ts save function ');
       throw error;
     }
   };
@@ -74,9 +74,7 @@ export default class UserRepository {
       console.info(`✅  updated user's nickname -> ${nicknameToUpdate}`);
       return { userId: user_id, email, nickname };
     } catch (error) {
-      console.error(
-        '❌ Error: user.repository.ts updateUserNickname function '
-      );
+      console.warn('❌ Error: user.repository.ts updateUserNickname function ');
       throw error;
     }
   };
@@ -99,7 +97,7 @@ export default class UserRepository {
       console.info(`✅  updated latest login at -> ${getNowKO()}`);
       return { userId: user_id, email, nickname };
     } catch (error) {
-      console.error('❌ Error: user.repository.ts updateLatestLogin function ');
+      console.warn('❌ Error: user.repository.ts updateLatestLogin function ');
       throw error;
     }
   };
@@ -118,7 +116,7 @@ export default class UserRepository {
       console.info(`✅ deleted user `);
       return { userId: user_id, email, nickname };
     } catch (error) {
-      console.error('❌ Error: user.repository.ts delete function ');
+      console.warn('❌ Error: user.repository.ts delete function ');
       throw error;
     }
   };
@@ -136,7 +134,7 @@ export default class UserRepository {
       if (+queryResult.rows[0].count === 0) return false;
       return true;
     } catch (error) {
-      console.error('❌ Error: user.repository.ts isExist function ');
+      console.warn('❌ Error: user.repository.ts isExist function ');
       throw error;
     }
   };
@@ -155,7 +153,7 @@ export default class UserRepository {
       if (+queryResult.rows[0].count === 0) return false;
       return true;
     } catch (error) {
-      console.error('❌ Error: user.repository.ts isExistById function ');
+      console.warn('❌ Error: user.repository.ts isExistById function ');
       throw error;
     }
   };
@@ -180,7 +178,7 @@ export default class UserRepository {
         throw new Error("User table's row does not exist");
       return queryResult.rows;
     } catch (error) {
-      console.error('❌ Error: user.repository.ts find function ');
+      console.warn('❌ Error: user.repository.ts find function ');
       throw error;
     }
   };
@@ -205,7 +203,7 @@ export default class UserRepository {
       if (!queryResult.rowCount) throw new Error('user id does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: user.repository.ts findOne function ');
+      console.warn('❌ Error: user.repository.ts findOne function ');
       throw error;
     }
   };
@@ -231,7 +229,7 @@ export default class UserRepository {
       if (!queryResult.rowCount) throw new Error('email does not exist');
       return queryResult.rows[0];
     } catch (error) {
-      console.error('❌ Error: user.repository.ts findOneByEmail function ');
+      console.warn('❌ Error: user.repository.ts findOneByEmail function ');
       throw error;
     }
   };

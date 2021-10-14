@@ -6,7 +6,7 @@
   "scripts": {
     "api-docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml",
     "build": "npm run api-docs && tsc",
-    "dev:ts": "npm run api-docs && NODE_ENV=dev nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
+    "dev:ts": "npm run api-docs && NODE_ENV=test nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
     "dev:js": "npm run api-docs &&  tsc && NODE_ENV=dev nodemon build/server.js",
     "pm2:start": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --env production --watch '*.ts'",
     "pm2:reload": "sudo pm2 reload baeuja-api-server --update-env",
@@ -60,6 +60,7 @@
     "supertest": "^6.1.6",
     "swagger-cli": "^4.0.4",
     "swagger-ui-express": "^4.1.6",
+    "waait": "^1.0.5",
     "yamljs": "^0.3.0"
   }
 }

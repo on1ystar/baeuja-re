@@ -39,8 +39,8 @@ export default class TestSetup {
         ]
       );
     } catch (error) {
-      console.error('Failed initializing test db');
-      console.error(error);
+      console.warn('Failed initializing test db');
+      console.warn(error);
     } finally {
       poolClient.release();
     }
@@ -65,14 +65,14 @@ export default class TestSetup {
   getNumOfContents = async (): Promise<number> =>
     +(await pool.query('SELECT count(*) FROM content')).rows[0].count;
 
-  getNumOfUnits = async (): Promise<number> =>
+  getNumOfUnitsInContent = async (): Promise<number> =>
     +(
       await pool.query('SELECT count(*) FROM unit WHERE content_id = $1', [
         this.contentId
       ])
     ).rows[0].count;
 
-  getNumOfSentences = async (): Promise<number> =>
+  getNumOfSentencesInUnit = async (): Promise<number> =>
     +(
       await pool.query(
         'SELECT count(*) FROM sentence WHERE content_id = $1 and unit_index = $2',
@@ -80,10 +80,22 @@ export default class TestSetup {
       )
     ).rows[0].count;
 
-  getNumOfWords = async (): Promise<number> =>
+  getNumOfWordsInSentence = async (): Promise<number> =>
     +(
-      await pool.query('SELECT count(*) FROM word WHERE sentence_id = $1', [
-        this.sentenceId
-      ])
+      await pool.query(
+        'SELECT count(*) FROM sentence_word WHERE sentence_id = $1',
+        [this.sentenceId]
+      )
     ).rows[0].count;
+
+  getNumOfSentencesContainingWord = async (): Promise<number> =>
+    +(
+      await pool.query(
+        'SELECT count(*) FROM sentence_word WHERE word_id = $1',
+        [this.wordId]
+      )
+    ).rows[0].count;
+
+  getNumOfWords = async (): Promise<number> =>
+    +(await pool.query('SELECT count(*) FROM word ')).rows[0].count;
 }

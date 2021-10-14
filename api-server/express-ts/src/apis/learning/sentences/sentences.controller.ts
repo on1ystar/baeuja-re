@@ -9,13 +9,13 @@ import { Response, Request } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../../db';
 import conf from '../../../config';
-import PostEvaluationDTO, {
-  SentenceOfPostEvaluationDTO
-} from './dto/post-evaluation.dto';
+import PostSentenceToAIDTO, {
+  SentenceOfPostSentenceToAIDTO
+} from './dto/post-sentence-to-ai.dto';
 import { MulterError } from 'multer';
 import { s3Client } from '../../../utils/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { UsersentenceHistoryPK } from '../../../entities/user-sentence-history.entity';
+import { UserSentenceHistoryPK } from '../../../entities/user-sentence-history.entity';
 import UserSentenceEvaluationRepository, {
   UserSentenceEvaluationToBeSaved
 } from '../../../repositories/user-sentence-evaluation.repository';
@@ -59,14 +59,14 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     console.info('✅ Success S3 upload--------------');
 
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
-    const sentence: SentenceOfPostEvaluationDTO = {
+    const sentence: SentenceOfPostSentenceToAIDTO = {
       sentenceId: +sentenceId,
       koreanText: (
         await SentenceRepository.findOne(client, +sentenceId, ['koreanText'])
       ).koreanText as string,
       perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
     };
-    const postEvaluationDTO: PostEvaluationDTO = {
+    const postEvaluationDTO: PostSentenceToAIDTO = {
       userId: +userId,
       userVoiceUri: `${S3_URL}/${conf.s3.bucketData}/${Key}`,
       sentence
@@ -87,7 +87,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     } = (
       await axios({
         method: 'post',
-        url: `${AI_SERVER_URL}/evaluation`,
+        url: `${AI_SERVER_URL}/evaluation/sentence`,
         data: {
           ...postEvaluationDTO
         }
@@ -121,7 +121,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     await client.query('ROLLBACK');
 
     if (error instanceof MulterError) console.log('❌ MulterError ');
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
     return res.status(400).json({ success: false, errorMessage });
   } finally {
@@ -146,7 +146,7 @@ export const recordUserSentenceHistory = async (
     if (column !== 'perfectVoiceCounts' && column !== 'userVoiceCounts')
       throw new Error("invalid query string's syntax");
 
-    const UserSentenceHistoryPK: UsersentenceHistoryPK = {
+    const userSentenceHistoryPK: UserSentenceHistoryPK = {
       userId,
       sentenceId: +sentenceId
     };
@@ -156,7 +156,7 @@ export const recordUserSentenceHistory = async (
       const perfectVoiceCounts =
         await UserSentenceHistoryRepository.updatePerfectVoiceCounts(
           client,
-          UserSentenceHistoryPK
+          userSentenceHistoryPK
         );
       sentenceHistory = {
         userId,
@@ -169,7 +169,7 @@ export const recordUserSentenceHistory = async (
       const userVoiceCounts =
         await UserSentenceHistoryRepository.updateUserVoiceCounts(
           client,
-          UserSentenceHistoryPK
+          userSentenceHistoryPK
         );
       sentenceHistory = {
         userId,
@@ -182,7 +182,7 @@ export const recordUserSentenceHistory = async (
       sentenceHistory
     });
   } catch (error) {
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
     return res.status(400).json({ success: false, errorMessage });
   } finally {

@@ -32,7 +32,7 @@ export default class UserContentHistoryRepository {
       );
       console.info("✅ inserted user_content_history table's row");
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-content-history.repository.ts save function '
       );
       throw error;
@@ -57,7 +57,7 @@ export default class UserContentHistoryRepository {
       );
       console.info("✅ updated user_content_history table's counts ++ ");
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-content-history.repository.ts updateCounts function '
       );
       throw error;
@@ -73,8 +73,8 @@ export default class UserContentHistoryRepository {
       // content에 포함되는 unit_index
       const userUnitHistoryRows = await UnitRepository.leftJoinUserUnitHistory(
         client,
-        userId,
-        contentId,
+        userId as number,
+        contentId as number,
         [{ UserUnitHistory: ['unitIndex'] }]
       );
       // 학습 기록이 있는 유닛 개수 / 전체 유닛 개수 => 소수점 2자리까지 반올림
@@ -86,11 +86,11 @@ export default class UserContentHistoryRepository {
         `UPDATE user_content_history
         SET progress_rate = $1, latest_learning_at = $2
         WHERE user_id = $3 AND content_id = $4`,
-        [progressRate * 100, getNowKO(), userId, contentId]
+        [Math.round(progressRate * 100), getNowKO(), userId, contentId]
       );
       console.info("✅ updated user_content_history table's progress_rate");
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-content-history.repository.ts updateProgressRate function '
       );
       throw error;
@@ -112,7 +112,7 @@ export default class UserContentHistoryRepository {
       if (+queryResult.rows[0].count === 0) return false;
       return true;
     } catch (error) {
-      console.error(
+      console.warn(
         '❌ Error: user-content-history.repository.ts isExist function '
       );
       throw error;

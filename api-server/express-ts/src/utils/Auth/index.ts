@@ -34,7 +34,7 @@ export const checkUserId = async (
     conf.jwtToken.option,
     async (decodedError, decodedToken) => {
       if (decodedError) {
-        console.error(decodedError);
+        console.warn(decodedError);
         return res.status(401).json({
           success: false,
           tokenExpired:

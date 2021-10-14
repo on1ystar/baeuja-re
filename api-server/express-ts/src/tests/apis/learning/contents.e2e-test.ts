@@ -10,17 +10,17 @@ const sentenceId = 1;
 let token: string;
 const testSetup = new TestSetup(contentId, unitIndex, sentenceId);
 let numOfContents: number;
-let numOfUnits: number;
-let numOfSentences: number;
-let numOfWords: number;
+let numOfUnitsInContent: number;
+let numOfSentencesInUnit: number;
+let numOfWordsInSentence: number;
 
 beforeAll(async () => {
   await testSetup.initializeTestDB();
   token = testSetup.getToken();
   numOfContents = await testSetup.getNumOfContents();
-  numOfUnits = await testSetup.getNumOfUnits();
-  numOfSentences = await testSetup.getNumOfSentences();
-  numOfWords = await testSetup.getNumOfWords();
+  numOfUnitsInContent = await testSetup.getNumOfUnitsInContent();
+  numOfSentencesInUnit = await testSetup.getNumOfSentencesInUnit();
+  numOfWordsInSentence = await testSetup.getNumOfWordsInSentence();
 });
 afterAll(async () => {
   await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
@@ -76,7 +76,7 @@ describe('e2e Testing learning/contents app', () => {
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.units.length).toBe(numOfUnits);
+      expect(res.body.units.length).toBe(numOfUnitsInContent);
       expect(res.body.units[unitIndex - 1].contentId).toBe(contentId);
       expect(res.body.units[unitIndex - 1].unitIndex).toBe(unitIndex);
       // 학습 기록 저장 테스트
@@ -145,7 +145,7 @@ describe('e2e Testing learning/contents app', () => {
             [userId]
           )
         ).rows[0].count
-      ).toBe(numOfSentences);
+      ).toBe(numOfSentencesInUnit);
     });
 
     // 학습 기록 저장 테스트
@@ -173,8 +173,8 @@ describe('e2e Testing learning/contents app', () => {
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.sentences.length).toBe(numOfSentences);
-      expect(res.body.sentences[0].words.length).toBe(numOfWords);
+      expect(res.body.sentences.length).toBe(numOfSentencesInUnit);
+      expect(res.body.sentences[0].words.length).toBe(numOfWordsInSentence);
     });
   });
 });

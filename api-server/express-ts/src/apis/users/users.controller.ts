@@ -123,7 +123,7 @@ export const postUser = async (req: Request, res: Response) => {
     );
     res.status(isMember ? 200 : 201).json({ success: true, token, isMember });
   } catch (error) {
-    console.error(error);
+    console.warn(error);
     const errorMessage = (error as Error).message;
     return res.status(500).json({ sucess: false, errorMessage });
   } finally {

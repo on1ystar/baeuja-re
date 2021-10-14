@@ -3,16 +3,14 @@
   @version PEAC-162 PEAC-163 complete: evaluate user voice and insert result to db
 */
 
-import Sentence from '../../../../entities/sentence.entity';
-
-export interface SentenceOfPostEvaluationDTO extends Sentence {
+export interface SentenceOfPostSentenceToAIDTO {
   readonly sentenceId: number;
   readonly koreanText: string;
   readonly perfectVoiceUri: string;
 }
 
-export default interface PostEvaluationDTO {
+export default interface PostSentenceToAIDTO {
   readonly userId: number;
   readonly userVoiceUri: string;
-  readonly sentence: SentenceOfPostEvaluationDTO;
+  readonly sentence: SentenceOfPostSentenceToAIDTO;
 }

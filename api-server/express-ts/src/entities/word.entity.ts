@@ -1,14 +1,15 @@
-export default class Word {
+export class UserWordPK {
+  readonly wordId?: number;
+}
+
+export default class Word extends UserWordPK {
   constructor(
-    readonly wordId?: number,
-    readonly sentenceId?: number,
-    readonly prevKoreanText?: string,
-    readonly prevTranslatedText?: string,
-    readonly originalKoreanText?: string,
-    readonly originalTranslatedText?: string,
+    readonly korean?: string,
+    readonly translation?: string,
     readonly perfectVoiceUri?: string,
     readonly importance?: string,
-    readonly createdAt?: string,
-    readonly modifiedAt?: string
-  ) {}
+    readonly createdAt?: string
+  ) {
+    super();
+  }
 }
