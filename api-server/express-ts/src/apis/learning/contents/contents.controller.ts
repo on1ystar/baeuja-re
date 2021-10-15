@@ -261,40 +261,18 @@ export const getUnit = async (req: Request, res: Response) => {
       client,
       userUnitHistoryPK
     );
-    // 존재하지 않으면 유닛 및 포함된 문장 학습 기록 생성
+    // 존재하지 않으면 유닛 학습 기록 생성
     if (!isExist) {
       await UserUnitHistoryRepository.save(client, userUnitHistoryPK); // 유닛 학습 기록 생성
       await UserContentHistoryRepository.updateProgressRate(client, {
         userId,
         contentId: +contentId
       });
-
-      // 문장 학습 기록 생성
-      const sentenceIdList = (
-        await SentenceRepository.findAllByUnit(
-          client,
-          { contentId: +contentId, unitIndex: +unitIndex },
-          ['sentenceId']
-        )
-      ).map(row => {
-        // !(await UserSentenceHistory.isExist(client, userId, row.sentenceId))
-        return row.sentenceId;
-      });
-      await UserSentenceHistoryRepository.createList(
-        client,
-        userId,
-        sentenceIdList
-      );
     }
-    // 존재하면 학습 횟수 1 증가, 문장 최근 학습 기록 갱신
-    else {
+    // 존재하면 학습 횟수 1 증가
+    else
       await UserUnitHistoryRepository.updateCounts(client, userUnitHistoryPK);
-      await UserSentenceHistoryRepository.updateLatestLearningAtByUnit(
-        client,
-        userId,
-        { unitIndex: +unitIndex, contentId: +contentId }
-      );
-    }
+
     // ----- 학습 기록 저장 -----
     await client.query('COMMIT');
     return res.status(200).json({ success: true, unit });
@@ -362,7 +340,30 @@ export const getSentences = async (
         };
       }
     );
-
+    // 문장 학습 기록이 없는 경우 새로 생성
+    if (
+      !(await UserSentenceHistoryRepository.isExist(client, {
+        userId,
+        sentenceId: sentences[0].sentenceId
+      }))
+    ) {
+      // 문장 학습 기록 생성
+      const sentenceIdList: number[] = sentences.map(
+        sentence => sentence.sentenceId
+      );
+      await UserSentenceHistoryRepository.createList(
+        client,
+        userId,
+        sentenceIdList
+      );
+    } else {
+      // 문장 최근 학습 날짜 갱신
+      await UserSentenceHistoryRepository.updateLatestLearningAtByUnit(
+        client,
+        userId,
+        { unitIndex: +unitIndex, contentId: +contentId }
+      );
+    }
     return res
       .status(200)
       .json({ success: true, sentences: LearningSentenceDTOs });

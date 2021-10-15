@@ -1,7 +1,7 @@
 get:
   tags:
     - learning/contents
-  summary: 특정 content 추가 정보(더 보기) 요청
+  summary: 특정 content 추가 정보(더 보기)
   security:
     - bearerAuth: []
   parameters:

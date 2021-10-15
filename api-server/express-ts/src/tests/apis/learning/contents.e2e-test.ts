@@ -137,15 +137,6 @@ describe('e2e Testing learning/contents app', () => {
           )
         ).rows[0].counts
       ).toBe(1);
-      expect(
-        +(
-          await pool.query(
-            'SELECT count(*) FROM user_sentence_history \
-          WHERE user_id = $1',
-            [userId]
-          )
-        ).rows[0].count
-      ).toBe(numOfSentencesInUnit);
     });
 
     // 학습 기록 저장 테스트
@@ -175,6 +166,15 @@ describe('e2e Testing learning/contents app', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.sentences.length).toBe(numOfSentencesInUnit);
       expect(res.body.sentences[0].words.length).toBe(numOfWordsInSentence);
+      expect(
+        +(
+          await pool.query(
+            'SELECT count(*) FROM user_sentence_history \
+          WHERE user_id = $1',
+            [userId]
+          )
+        ).rows[0].count
+      ).toBe(numOfSentencesInUnit);
     });
   });
 });

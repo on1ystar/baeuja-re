@@ -1,7 +1,7 @@
 get:
   tags:
     - learning/contents
-  summary: content 터치 시 learning unit 리스트 요청
+  summary: content 터치 시 learning unit 리스트
   security:
     - bearerAuth: []
   parameters:

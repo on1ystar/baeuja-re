@@ -1,6 +1,7 @@
 import { PoolClient, QueryResult } from 'pg';
 import { UserWordHistoryPK } from '../entities/user-word-history.entity';
 import { getNowKO } from '../utils/Date';
+import { getSelectColumns } from '../utils/Query';
 
 const DEFAULT_LEARNING_RATE = 0;
 
@@ -33,6 +34,40 @@ export default class UserWordHistoryRepository {
     }
   };
 
+  // 즐겨찾기 단어 리스트
+  static joinWord = async (
+    client: PoolClient,
+    userId: number,
+    sortBy: string,
+    option: string,
+    _columns: any[]
+  ): Promise<any[]> => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT ${SELECT_COLUMNS} 
+        FROM user_word_history
+        JOIN word
+        ON user_word_history.word_id = word.word_id
+        WHERE user_word_history.user_id = ${userId} AND user_word_history.is_bookmark = true
+        ORDER BY user_word_history.${sortBy} ${option}`
+      );
+
+      return queryResult.rows;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts joinWord function '
+      );
+      throw error;
+    }
+  };
+
   // 단어 학습 횟수 1 증가
   static updateCounts = async (
     client: PoolClient,
@@ -57,28 +92,6 @@ export default class UserWordHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-word-history.repository.ts updateCounts function '
-      );
-      throw error;
-    }
-  };
-
-  // 존재 여부
-  static isExist = async (
-    client: PoolClient,
-    { userId, wordId }: UserWordHistoryPK
-  ): Promise<boolean> => {
-    try {
-      const queryResult: QueryResult<any> = await client.query(
-        `SELECT count(*) FROM user_word_history
-        WHERE user_id = ${userId} AND word_id = ${wordId}`
-      );
-
-      // 존재하지 않음
-      if (+queryResult.rows[0].count === 0) return false;
-      return true;
-    } catch (error) {
-      console.warn(
-        '❌ Error: user-word-history.repository.ts isExist function '
       );
       throw error;
     }
@@ -138,6 +151,57 @@ export default class UserWordHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-word-history.repository.ts updateUserVoiceCounts function '
+      );
+      throw error;
+    }
+  };
+
+  // 즐갸칮기 추가/삭제
+  static updateIsBookmark = async (
+    client: PoolClient,
+    { userId, wordId }: UserWordHistoryPK
+  ): Promise<boolean> => {
+    try {
+      const isBookmark: boolean = (
+        await client.query(
+          `UPDATE user_word_history 
+          SET is_bookmark = NOT is_bookmark, bookmark_at = $1 
+          WHERE user_id = $2 AND word_id = $3 
+          RETURNING is_bookmark`,
+          [
+            getNowKO(), // latest_learning_at
+            userId,
+            wordId
+          ]
+        )
+      ).rows[0].is_bookmark;
+      console.info("✅ updated user_word_history table's is_bookmark");
+      return isBookmark;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts updateIsBookmark function '
+      );
+      throw error;
+    }
+  };
+
+  // 존재 여부
+  static isExist = async (
+    client: PoolClient,
+    { userId, wordId }: UserWordHistoryPK
+  ): Promise<boolean> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT count(*) FROM user_word_history
+        WHERE user_id = ${userId} AND word_id = ${wordId}`
+      );
+
+      // 존재하지 않음
+      if (+queryResult.rows[0].count === 0) return false;
+      return true;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts isExist function '
       );
       throw error;
     }
