@@ -1,7 +1,7 @@
 get:
   tags:
     - home
-  summary: 랜덤한 학습 문장 또는 단어 추천 (default 5개) 요청
+  summary: 랜덤한 학습 문장 또는 단어 추천 (default 5개)
   security:
     - bearerAuth: []
   responses:

@@ -19,6 +19,8 @@ tags:
     description: sentences in learning app APIs
   - name: learning/words
     description: words in learning app APIs
+  - name: bookmark
+    description: bookmark app APIs
 paths:
   /home/contents:
     $ref: './paths/home/contents.yaml'
@@ -50,6 +52,14 @@ paths:
     $ref: './paths/users/users.yaml'
   /users/{userId}:
     $ref: './paths/users/user.yaml'
+  /bookmark/sentences:
+    $ref: './paths/bookmark/sentences.yaml'
+  /bookmark/sentences/{sentenceId}:
+    $ref: './paths/bookmark/sentence.yaml'
+  /bookmark/words:
+    $ref: './paths/bookmark/words.yaml'
+  /bookmark/words/{wordId}:
+    $ref: './paths/bookmark/word.yaml'
 components:
   parameters:
     $ref: './parameters.yaml'

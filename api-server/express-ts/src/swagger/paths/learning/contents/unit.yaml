@@ -1,7 +1,7 @@
 get:
   tags:
     - learning/contents
-  summary: learning unit 데이터 조회
+  summary: learning unit 데이터
   security:
     - bearerAuth: []
   parameters:

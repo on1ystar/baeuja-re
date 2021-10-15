@@ -1,16 +1,22 @@
-get:
+post:
   tags:
-    - home
-  summary: 최상단 new contents (default 5개)
+    - bookmark
+  summary: 즐겨찾기 추가/삭제 (즐겨찾기가 안 되어 있으면 추가, 되어 있으면 삭제)
   security:
     - bearerAuth: []
+  parameters:
+    - name: wordId
+      in: path
+      description: word id
+      schema:
+        type: number
   responses:
     200-304:
       description: 요청 성공
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/NewContents'
+            $ref: '../../openapi.yaml#/components/schemas/PostBookmark'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:

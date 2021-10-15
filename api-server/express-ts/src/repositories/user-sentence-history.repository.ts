@@ -10,6 +10,7 @@ import { getNowKO } from '../utils/Date';
 import { UserSentenceHistoryPK } from '../entities/user-sentence-history.entity';
 import SentenceRepository from './sentence.repository';
 import { UnitPK } from '../entities/unit.entity';
+import { getSelectColumns } from '../utils/Query';
 
 const DEFAULT_LEARNING_RATE = 0;
 
@@ -48,6 +49,40 @@ export default class UserSentenceHistoryRepository {
     }
   };
 
+  // 즐겨찾기 문장 리스트
+  static joinSentence = async (
+    client: PoolClient,
+    userId: number,
+    sortBy: string,
+    option: string,
+    _columns: any[]
+  ): Promise<any[]> => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT ${SELECT_COLUMNS} 
+        FROM user_sentence_history
+        JOIN sentence
+        ON user_sentence_history.sentence_id = sentence.sentence_id
+        WHERE user_sentence_history.user_id = ${userId} AND user_sentence_history.is_bookmark = true
+        ORDER BY user_sentence_history.${sortBy} ${option}`
+      );
+
+      return queryResult.rows;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts joinSentence function '
+      );
+      throw error;
+    }
+  };
+
   // 성우 음성 재생 횟수 1 증가
   static updatePerfectVoiceCounts = async (
     client: PoolClient,
@@ -80,7 +115,6 @@ export default class UserSentenceHistoryRepository {
   };
 
   // 사용자 음성 재생 횟수 1 증가
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static updateUserVoiceCounts = async (
     client: PoolClient,
     { userId, sentenceId }: UserSentenceHistoryPK
@@ -106,6 +140,71 @@ export default class UserSentenceHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-sentence-history.repository.ts updateUserVoiceCounts function '
+      );
+      throw error;
+    }
+  };
+
+  // 유닛에 포함된 문장들의 최근 학습 시간 갱신
+  static updateLatestLearningAtByUnit = async (
+    client: PoolClient,
+    userId: number,
+    { contentId, unitIndex }: UnitPK
+  ): Promise<void> => {
+    try {
+      const sentenceIdList = await SentenceRepository.findAllByUnit(
+        client,
+        { contentId, unitIndex },
+        ['sentenceId']
+      );
+      await client.query(
+        `UPDATE user_sentence_history 
+          SET latest_learning_at = $1
+          WHERE user_id = $2 
+            AND $3 <= sentence_id 
+            AND sentence_id <= $4`,
+        [
+          getNowKO(),
+          userId,
+          sentenceIdList[0].sentenceId,
+          sentenceIdList[sentenceIdList.length - 1].sentenceId
+        ]
+      );
+      console.info(
+        "✅ updated user_sentence_history table's latest_learning_at"
+      );
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts updateLatestLearningAtByUnit function '
+      );
+      throw error;
+    }
+  };
+
+  // 즐갸칮기 추가/삭제
+  static updateIsBookmark = async (
+    client: PoolClient,
+    { userId, sentenceId }: UserSentenceHistoryPK
+  ): Promise<boolean> => {
+    try {
+      const isBookmark: boolean = (
+        await client.query(
+          `UPDATE user_sentence_history 
+          SET is_bookmark = NOT is_bookmark, bookmark_at = $1 
+          WHERE user_id = $2 AND sentence_id = $3 
+          RETURNING is_bookmark`,
+          [
+            getNowKO(), // latest_learning_at
+            userId,
+            sentenceId
+          ]
+        )
+      ).rows[0].is_bookmark;
+      console.info("✅ updated user_sentence_history table's is_bookmark");
+      return isBookmark;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts updateIsBookmark function '
       );
       throw error;
     }
@@ -157,42 +256,6 @@ export default class UserSentenceHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-sentence-history.repository.ts createList function '
-      );
-      throw error;
-    }
-  };
-
-  // 유닛에 포함된 문장들의 최근 학습 시간 갱신
-  static updateLatestLearningAtByUnit = async (
-    client: PoolClient,
-    userId: number,
-    { contentId, unitIndex }: UnitPK
-  ): Promise<void> => {
-    try {
-      const sentenceIdList = await SentenceRepository.findAllByUnit(
-        client,
-        { contentId, unitIndex },
-        ['sentenceId']
-      );
-      await client.query(
-        `UPDATE user_sentence_history 
-          SET latest_learning_at = $1
-          WHERE user_id = $2 
-            AND $3 <= sentence_id 
-            AND sentence_id <= $4`,
-        [
-          getNowKO(),
-          userId,
-          sentenceIdList[0].sentenceId,
-          sentenceIdList[sentenceIdList.length - 1].sentenceId
-        ]
-      );
-      console.info(
-        "✅ updated user_sentence_history table's latest_learning_at"
-      );
-    } catch (error) {
-      console.warn(
-        '❌ Error: user-sentence-history.repository.ts updateLatestLearningAtByUnit function '
       );
       throw error;
     }

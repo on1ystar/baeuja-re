@@ -18,6 +18,7 @@ import usersApp from './apis/users';
 import learningApp from './apis/learning';
 import { checkUserId } from './utils/Auth';
 import homeApp from './apis/home';
+import bookmarkApp from './apis/bookmark';
 
 const app: Application = express();
 const logger = morgan('dev');
@@ -33,5 +34,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swaggerë
 app.use('/home', checkUserId, homeApp); // injecting home app
 app.use('/users', usersApp); // injecting users app
 app.use('/learning', checkUserId, learningApp); // injecting learning app
+app.use('/bookmark', checkUserId, bookmarkApp); // injecting learning app
 
 export default app;

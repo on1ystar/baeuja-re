@@ -564,6 +564,62 @@ Users:
           nickname:
             type: string
             description: 사용자 닉네임
+# -------------------------- bookmark -------------------------- #
+PostBookmark:
+  type: object
+  properties:
+    success:
+      type: boolean
+    isBookmark:
+      type: boolean
+BookmarkSentences:
+  type: object
+  properties:
+    success:
+      type: boolean
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+          contentId:
+            type: number
+          unitIndex:
+            type: number
+          koreanText:
+            type: string
+          translatedText:
+            type: string
+          startTime:
+            type: string
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
+BookmarkWords:
+  type: object
+  properties:
+    success:
+      type: boolean
+    words:
+      type: array
+      items:
+        type: object
+        properties:
+          wordId:
+            type: number
+          korean:
+            type: string
+          translation:
+            type: string
+          importance:
+            type: string
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
 # -------------------------- error -------------------------- #
 Error:
   type: object
