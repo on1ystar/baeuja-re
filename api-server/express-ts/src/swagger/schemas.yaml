@@ -28,6 +28,47 @@ NewContents:
             type: number
           countsOfWords:
             type: number
+Recommendations:
+  type: object
+  properties:
+    success:
+      type: boolean
+    words:
+      type: array
+      items:
+        type: object
+        properties:
+          wordId:
+            type: number
+          korean:
+            type: string
+          translation:
+            type: string
+          importance:
+            type: string
+          sentences:
+            type: array
+            items:
+              type: object
+              properties:
+                sentenceId:
+                  type: number
+                contentId:
+                  type: number
+                unitIndex:
+                  type: number
+                koreanText:
+                  type: string
+                translatedText:
+                  type: string
+                koreanInText:
+                  type: string
+                translationInText:
+                  type: string
+                startTime:
+                  type: string
+                thumbnailUri:
+                  type: string
 # -------------------------- learning -------------------------- #
 LearningContents:
   type: object
