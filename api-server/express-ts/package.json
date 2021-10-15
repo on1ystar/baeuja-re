@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "api-docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml",
-    "build": "npm run api-docs && tsc",
+    "build": "sudo pm2 stop all && npm run api-docs && tsc && npm run pm2:reload",
     "dev:ts": "npm run api-docs && NODE_ENV=test nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
     "dev:js": "npm run api-docs &&  tsc && NODE_ENV=dev nodemon build/server.js",
     "pm2:start": "npm run api-docs && tsc && sudo pm2 start ecosystem.config.js --env production --watch '*.ts'",
