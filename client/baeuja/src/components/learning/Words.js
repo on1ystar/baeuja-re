@@ -11,6 +11,7 @@ import {
   useResponsiveWidth,
   useResponsiveScreenHeight,
 } from 'react-native-responsive-dimensions'; // Responsive layout
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import { Card } from 'react-native-elements'; // React Native Elements
 
 const Words = ({ currentSentence }) => {
@@ -18,32 +19,20 @@ const Words = ({ currentSentence }) => {
   let words = [];
   koreanWords.map((word) => {
     words.push(
-      <View key={word.wordId} style={styles.wordContainer}>
-        <Text style={{ color: '#797979' }}>
-          {word.originalKoreanText} : {word.originalTranslatedText}
-        </Text>
-      </View>,
-      '  '
+      <Text key={word.wordId} style={{ color: '#797979' }}>
+        {word.korean} : {word.translation}
+      </Text>
     );
   });
-  return (
-    <View>
-      <Text>{words}</Text>
-    </View>
-  );
+  return <Text>{words}</Text>;
 };
 
 export default Words;
 
 const styles = StyleSheet.create({
-  allContainer: {
-    flex: 1,
-  },
-  container: { marginRight: 10 },
   wordContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'black',
     maxWidth: responsiveScreenWidth(50),
     minWidth: responsiveScreenWidth(25),
     height: responsiveScreenHeight(2.5),

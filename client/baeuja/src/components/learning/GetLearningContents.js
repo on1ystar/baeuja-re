@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // Library import
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -127,22 +127,23 @@ const styles = StyleSheet.create({
   kpopContainer: {
     flex: 1,
     flexDirection: 'row',
-    marginTop: 16,
-    marginLeft: 22,
+    marginTop: responsiveScreenHeight(2),
+    marginLeft: responsiveScreenWidth(5),
     width: responsiveScreenWidth(100),
     // backgroundColor: '#000000',
   },
   thumbnailImage: {
-    width: 70,
-    height: 70,
+    width: responsiveScreenWidth(18),
+    height: responsiveScreenWidth(18),
     borderRadius: 10,
   },
   titleContainer: {
-    marginLeft: 24,
+    marginLeft: responsiveScreenWidth(5),
   },
   title: {
+    color: '#444444',
     width: responsiveScreenWidth(50),
-    marginTop: 12,
+    marginTop: responsiveScreenHeight(1),
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
@@ -152,10 +153,10 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#999999',
+    color: '#666666',
   },
   infoIconContainer: {
-    marginLeft: 15,
+    marginLeft: responsiveScreenWidth(5),
     justifyContent: 'flex-end',
     alignSelf: 'center',
     // backgroundColor: '#000000',

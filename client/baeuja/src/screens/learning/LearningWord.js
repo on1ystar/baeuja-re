@@ -15,7 +15,9 @@ import {
 } from 'react-native-responsive-dimensions'; // Responsive layout
 import { Card } from 'react-native-elements'; // React Native Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import axios from 'axios'; // axios
 
 // Component import
 import WordTools from '../../components/learning/WordTools';
@@ -25,83 +27,108 @@ const LearningWord = ({
     params: { word },
   },
 }) => {
-  //   useEffect(getWordData, []);
+  // state
+  const [isLoading, setIsLoading] = useState(true);
+  const [wordId, setWordId] = useState(word.wordId);
+  const [words, setWords] = useState({});
+  const [exampleSentences, setExampleSentences] = useState([]);
 
-  const [words, setWords] = useState();
-
-  const getWordData = () => {
+  const loadWord = async () => {
+    console.log(`load Word => word ID : ${wordId}`);
+    // Word 데이터 조회
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
           // login으로 redirect
         }
+
         if (error) throw error;
+
         const {
-          data: { success, words },
-        } = await axios(`https://api.k-peach.io/learning/words/${word.wordId}`, {
+          data: { sentences },
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        // if (tokenExpired) {
-        //   // login으로 redirect
-        // }
+        const {
+          data: { success, word, tokenExpired, errorMessage },
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (tokenExpired) {
+          // login으로 redirect
+        }
+        console.log(`success : ${success}\nword: ${word}\nsentences: ${sentences}`);
 
         if (!success) throw new Error(errorMessage);
 
-        setWords(words);
+        console.log('success getting Word Data');
 
-        console.log('Success getting Words Data');
+        setWords(word);
+        setExampleSentences(sentences);
+        setIsLoading(() => false);
+        console.log(words);
+        console.log(exampleSentences);
       } catch (error) {
         console.log(error);
       }
     });
   };
+
+  // useEffect
+  useEffect(loadWord, []);
+
   // LearningWord 전체 return
   return (
     <View style={styles.allContainer}>
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <View>
-          <Text style={styles.koreanWord}>{word.originalKoreanText}</Text>
-          <Text style={styles.translatedWord}>{word.originalTranslatedText}</Text>
-          <Text style={styles.wordImportance}>importance : A</Text>
-        </View>
-      </Card>
-      <View style={styles.wordToolsContainer}>
-        <WordTools words={words} />
-      </View>
-      <View>
-        <Card
-          containerStyle={{
-            marginTop: responsiveScreenHeight(50),
-            borderWidth: 0,
-            borderRadius: 10,
-            backgroundColor: '#FBFBFB',
-          }}
-        >
-          <View style={{ flexDirection: 'row' }}>
-            <View>
-              <Text style={styles.relatedKoreanSentences}>
-                words[0].relatedSentences[0].koreanText
-              </Text>
-              <Text style={styles.relatedEnglishSentences}>
-                words[0].relatedSentences[0].translatedText
-              </Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <Ionicons
-                  style={styles.goToLearnArrow}
-                  size={30}
-                  name="chevron-forward-outline"
-                ></Ionicons>
-              </TouchableOpacity>
-            </View>
+      {isLoading ? (
+        <Text> </Text>
+      ) : (
+        <View style={styles.allContainer}>
+          <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+            <Text style={styles.koreanWord}>{words.korean}</Text>
+            <Text style={styles.translatedWord}>{words.translation}</Text>
+            <Text style={styles.wordImportance}>importance : {words.importance}</Text>
+          </Card>
+          <View style={styles.wordToolsContainer}>
+            <WordTools words={words} />
           </View>
-        </Card>
-      </View>
+          <View style={{ marginTop: responsiveScreenHeight(5) }}>
+            {exampleSentences.map((sentence) => (
+              <DrawExampleSentences key={sentence.sentenceId} sentence={sentence} />
+            ))}
+          </View>
+        </View>
+      )}
     </View>
+  );
+};
+
+const DrawExampleSentences = ({ sentence }) => {
+  return (
+    <Card
+      containerStyle={{
+        marginTop: responsiveScreenHeight(2),
+        borderWidth: 0,
+        borderRadius: 10,
+        backgroundColor: '#FBFBFB',
+      }}
+    >
+      <View style={{ flexDirection: 'row' }}>
+        <View>
+          <Text style={styles.relatedKoreanSentences}>{sentence.koreanText}</Text>
+          <Text style={styles.relatedEnglishSentences}>{sentence.translatedText}</Text>
+        </View>
+        <TouchableOpacity style={styles.goToLearnArrow}>
+          <Ionicons size={30} name="chevron-forward-outline"></Ionicons>
+        </TouchableOpacity>
+      </View>
+    </Card>
   );
 };
 
@@ -114,11 +141,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   koreanWord: {
+    color: '#666666',
     fontSize: responsiveScreenFontSize(2.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   translatedWord: {
+    color: '#666666',
     fontSize: responsiveScreenFontSize(2.2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
@@ -135,20 +164,22 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(5),
   },
   relatedKoreanSentences: {
+    color: '#666666',
     fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     marginBottom: responsiveScreenHeight(2),
   },
   relatedEnglishSentences: {
+    color: '#666666',
     fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   goToLearnArrow: {
     position: 'absolute',
-    right: responsiveWidth(-10),
-    top: responsiveScreenHeight(1),
+    right: responsiveScreenWidth(-3),
+    top: responsiveScreenHeight(1.25),
   },
 });
 

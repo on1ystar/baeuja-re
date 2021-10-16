@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -18,105 +18,104 @@ import { Divider } from 'react-native-elements'; // Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 // 새로운 콘텐츠 가져오기
-const GetRecommandWords = () => {
-  const navigation = useNavigation();
-  AsyncStorage.getItem('token', async (error, token) => {
-    try {
-      // 토큰이 없는 경우 login으로 redirect
-      if (token === null) {
-        navigation.dispatch(
-          CommonActions.navigate('Stack', {
-            screen: 'Login',
-          })
-        );
+const GetRecommandWords = ({ randomNumber }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [recommendationWords, SetRecommendationWords] = useState();
+  let key = 1;
+
+  const loadRecommendationWords = () => {
+    console.log(`Load New Contents ...`);
+
+    // New Contents 데이터 조회
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        if (error) throw error;
+        const {
+          data: { success, words, tokenExpired, errorMessage },
+        } = await axios.get(`https://api.k-peach.io/home/recommendations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (tokenExpired) {
+          // login으로 redirect
+        }
+        console.log(`success : ${success}\nwords: ${words}`);
+
+        if (!success) throw new Error(errorMessage);
+
+        console.log('Success Getting Recommendation Words');
+
+        SetRecommendationWords(words);
+        setIsLoading(() => false);
+      } catch (error) {
+        console.log(error);
       }
-      if (error) throw error;
+    });
+  };
 
-      const {
-        data: { success, contents, tokenExpired, errorMessage },
-      } = await axios('https://api.k-peach.io/learning/contents', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  useEffect(loadRecommendationWords, [randomNumber]);
 
-      // 토큰이 만료된 경우 login으로 redirect
-      // if (tokenExpired) {
-      // }
-
-      if (!success) throw new Error(errorMessage);
-
-      console.log('success getting contents');
-      // this.setState({ isLoading: false, contents });
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  // GetNewContents return 부분
+  // GetRecommandWords return 부분
   return (
-    <View>
-      <DrawRecommandWords />
-    </View>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      {isLoading ? (
+        <Text> </Text>
+      ) : (
+        recommendationWords.map((word) => <DrawRecommandWords key={word.wordId} word={word} />)
+      )}
+    </ScrollView>
   );
 };
 
 // 새로운 콘텐츠 그리기
-const DrawRecommandWords = () => {
+const DrawRecommandWords = ({ word }) => {
+  const navigation = useNavigation();
+  const contentId = word.sentences[0].contentId;
+  const unitIndex = word.sentences[0].unitIndex;
+
   return (
     <View style={styles.recommandWordsAllContainer}>
       <View style={styles.recommandWordsContainer}>
-        <View style={styles.recommandWordTextContainer}>
-          <Text style={styles.recommandWord}>#첫 눈</Text>
-          <Text style={styles.recommandWordImportance}>Importance B</Text>
-        </View>
-        <View style={styles.recommandWordContainer}>
-          <Image
-            transitionDuration={1000}
-            source={require('../../assets/img/bts.png')}
-            style={styles.thumbnailImage}
-          />
-          <View style={styles.recommandWordKoreanSentenceContainer}>
-            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-              ( {'       '} )에 널 알아보게 됐어
-            </Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Stack', {
+              screen: 'LearningUnit',
+              params: {
+                contentId,
+                unitIndex,
+              },
+            })
+          }
+        >
+          <View style={styles.recommandWordTextContainer}>
+            <Text style={styles.recommandWord}>#{word.korean}</Text>
+            <Text style={styles.recommandWordImportance}>Importance {word.importance}</Text>
           </View>
-          <View style={styles.recommandWordEnglishSentenceContainer}>
-            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-              I recognized you at first sight
-            </Text>
+          <View style={styles.recommandWordContainer}>
+            <Image
+              transitionDuration={1000}
+              source={{
+                uri: word.sentences[0].thumbnailUri,
+              }}
+              style={styles.thumbnailImage}
+            />
+            <View style={styles.recommandWordKoreanSentenceContainer}>
+              <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+                {word.sentences[0].koreanText}
+              </Text>
+            </View>
+            <View style={styles.recommandWordEnglishSentenceContainer}>
+              <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+                {word.sentences[0].translatedText}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.recommandWordSentenceInfo}>BTS - DNA - Unit. 1</Text>
-          </View>
-        </View>
-      </View>
-      {/* 컨텐츠 구분 */}
-      <View style={styles.recommandWordsContainer}>
-        <View style={styles.recommandWordTextContainer}>
-          <Text style={styles.recommandWord}>#생각</Text>
-          <Text style={styles.recommandWordImportance}>Importance A</Text>
-        </View>
-        <View style={styles.recommandWordContainer}>
-          <Image
-            transitionDuration={1000}
-            source={require('../../assets/img/blackpink.jpg')}
-            style={styles.thumbnailImage}
-          />
-          <View style={styles.recommandWordKoreanSentenceContainer}>
-            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-              너 뭔데 자꾸 ( {'       '} )나
-            </Text>
-          </View>
-          <View style={styles.recommandWordEnglishSentenceContainer}>
-            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-              I keep thinking of you
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.recommandWordSentenceInfo}>BLACK PINK - 마지막처럼 - Unit. 1</Text>
-          </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -164,6 +163,7 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(0.5),
   },
   newWordSentence: {
+    color: '#000000',
     width: responsiveScreenWidth(80),
     fontSize: responsiveScreenFontSize(2.2),
     fontFamily: 'NanumSquareOTFB',

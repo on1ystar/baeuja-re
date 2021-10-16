@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   bookmarkedWords: {
+    color: '#000000',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',

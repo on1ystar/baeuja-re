@@ -1,6 +1,15 @@
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Alert,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from 'react-native'; // React Native Component
 import {
   responsiveHeight,
   responsiveWidth,
@@ -32,26 +41,27 @@ import 'react-native-gesture-handler'; // React Native Gesture Handler
 // import RNFS from 'react-native-fs'; // React Native File System
 
 // Component import
-import SpeechEvaluationResult from './SpeechEvaluationResult';
+import WordSpeechEvaluationResult from './WordSpeechEvaluationResult';
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
-const WordTools = ({ currentSentence, words }) => {
+const WordTools = ({ words }) => {
   const [isMoreThanOneTimeRecord, setIsMoreThanOneTimeRecord] = useState(false);
-  const [evaluatedSentence, setEvaluatedSentence] = useState(null);
+  const [evaluatedWord, setEvaluatedWord] = useState(null);
   const [pitchData, setPitchData] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isPlayPerfectVoice, setIsPlayPerfectVoice] = useState(false);
   const [isRecordingUserVoice, setIsRecordingUserVoice] = useState(false);
   const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
+  const [userVoiceScore, setUserVoiceScore] = useState(0);
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
     setIsPlayPerfectVoice(true);
-    const music = new Sound(words[0].perfectVoiceUri, '', (error) => {
+    const music = new Sound(words.perfectVoiceUri, '', (error) => {
       if (error) {
         console.log('play failed');
         return;
@@ -74,11 +84,11 @@ const WordTools = ({ currentSentence, words }) => {
         }
         // AsyncStorage error
         if (error) throw error;
-        console.log(currentSentence.sentenceId);
+        console.log(words.wordId);
         const {
-          data: { success, sentenceHistory },
+          data: { success, wordHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/perfect-voice`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -90,7 +100,7 @@ const WordTools = ({ currentSentence, words }) => {
         //     // login으로 redirect
         //   }
 
-        console.log(`perfectVoiceCounts: ${sentenceHistory.perfectVoiceCounts}`);
+        console.log(`perfectVoiceCounts: ${wordHistory.perfectVoiceCounts}`);
 
         if (!success) throw new Error(errorMessage);
 
@@ -114,7 +124,8 @@ const WordTools = ({ currentSentence, words }) => {
 
   // 음성 녹음 중지
   const onStopRecord = async () => {
-    const DEFAULT_RECOREDED_FILE_NAME = 'sound.m4a';
+    const DEFAULT_RECOREDED_FILE_NAME_iOS = 'sound.m4a';
+    const DEFAULT_RECOREDED_FILE_NAME_Android = 'sound.mp4';
     const recoredUserVoice = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
     if (recoredUserVoice === 'Already stopped') {
@@ -130,14 +141,31 @@ const WordTools = ({ currentSentence, words }) => {
     try {
       const formData = new FormData();
 
-      formData.append(
-        'userVoice', //업로드할 파일의 폼
-        {
-          uri: recoredUserVoice, //파일 경로
-          type: 'audio/m4a', //파일 형식
-          name: DEFAULT_RECOREDED_FILE_NAME, //파일 이름
-        }
-      );
+      if (Platform.OS === 'ios') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/m4a', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_iOS, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      } else if (Platform.OS === 'android') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/mpeg_4', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_Android, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      }
 
       AsyncStorage.getItem('token', async (error, token) => {
         // try {
@@ -149,7 +177,7 @@ const WordTools = ({ currentSentence, words }) => {
 
         await axios
           .post(
-            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/evaluation`,
+            `https://api.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
             formData,
             {
               headers: {
@@ -159,16 +187,18 @@ const WordTools = ({ currentSentence, words }) => {
               data: formData,
             }
           )
-          .then(({ data: { success, evaluatedSentence, pitchData, errorMessage } }) => {
+          .then(({ data: { success, evaluatedWord, pitchData, errorMessage } }) => {
             console.log(
-              `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
+              `score: ${evaluatedWord.score} | evaluatedWord: ${evaluatedWord.sttResult}`
             );
             console.log(`pitchData : ${pitchData.userVoice}`);
 
-            setEvaluatedSentence(evaluatedSentence);
+            setEvaluatedWord(evaluatedWord);
+            setUserVoiceScore(evaluatedWord.score);
             setPitchData(pitchData);
 
             if (!success) throw new Error(errorMessage);
+            console.log(errorMessage);
             console.log('success getting Evaluated Data');
           })
           .catch((error) => {
@@ -180,6 +210,7 @@ const WordTools = ({ currentSentence, words }) => {
         //   }
       });
     } catch (err) {
+      console.log(errorMessage);
       //업로드 취소 error 표시
       if (DocumentPicker.isCancel(err)) {
       } else {
@@ -206,9 +237,9 @@ const WordTools = ({ currentSentence, words }) => {
             throw error;
 
         const {
-          data: { success, sentenceHistory },
+          data: { success, wordHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/user-voice`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -220,11 +251,11 @@ const WordTools = ({ currentSentence, words }) => {
         //     // login으로 redirect
         //   }
 
-        console.log(`userVoiceCounts: ${sentenceHistory.userVoiceCounts}`);
+        console.log(`userVoiceCounts: ${wordHistory.userVoiceCounts}`);
 
         if (!success) throw new Error(errorMessage);
 
-        console.log('success getting sentenceHistory Data');
+        console.log('success getting word History Data');
       } catch (error) {
         console.log(error);
       }
@@ -244,7 +275,7 @@ const WordTools = ({ currentSentence, words }) => {
             }}
             disabled={isPlayPerfectVoice}
           >
-            <Ionicons name="volume-medium" size={30} color="#9388E8"></Ionicons>
+            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -253,7 +284,7 @@ const WordTools = ({ currentSentence, words }) => {
               onPlayPerfectVoice();
             }}
           >
-            <Ionicons name="volume-medium-outline" size={30} color="#BBBBBB"></Ionicons>
+            <Ionicons name="volume-off-outline" size={30} color="#BBBBBB"></Ionicons>
           </TouchableOpacity>
         )}
 
@@ -310,14 +341,20 @@ const WordTools = ({ currentSentence, words }) => {
       {/* 발화 평가 결과 */}
       <View>
         {isMoreThanOneTimeRecord ? (
-          evaluatedSentence !== null && pitchData !== null ? (
-            <View style={{ marginBottom: 20 }}>
-              <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
+          evaluatedWord !== null ? (
+            <View style={{ marginBottom: responsiveScreenHeight(5) }}>
+              <WordSpeechEvaluationResult evaluatedWord={evaluatedWord} />
             </View>
           ) : (
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: responsiveScreenHeight(5),
+              }}
+            >
               <Progress.Circle
-                size={80}
+                size={60}
                 animated={true}
                 color={'#9388E8'}
                 borderWidth={8}

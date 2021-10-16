@@ -112,12 +112,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   bookmarkedKoreanSentences: {
+    color: '#000000',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     marginBottom: responsiveScreenHeight(1),
   },
   bookmarkedSentences: {
+    color: '#000000',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1092263054274",
+    "project_id": "baeuja-329112",
+    "storage_bucket": "baeuja-329112.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092263054274:android:e7edf6f463e854bfb6a45b",
+        "android_client_info": {
+          "package_name": "com.baeuja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092263054274-5mbnfph9orvbohptaeb92s9pl9phturk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdnNPMX-GPZTCFFZuiXpANdMSWMjVOtfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092263054274-5mbnfph9orvbohptaeb92s9pl9phturk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

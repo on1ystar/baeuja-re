@@ -112,7 +112,7 @@ const DrawingUnit = ({ unit }) => {
               </Text>
             </View>
             <Text style={styles.unitWords}>
-              #{unit.words[0].originalKoreanText} #{unit.words[1].originalKoreanText}
+              #{unit.words[0].korean} #{unit.words[1].korean}
             </Text>
           </View>
         </ImageBackground>
@@ -129,11 +129,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   thumbNailContainer: {
-    marginTop: 30,
+    marginTop: responsiveScreenHeight(3),
   },
   thumbNail: {
-    width: 340,
-    height: 150,
+    width: responsiveScreenWidth(83),
+    height: responsiveScreenHeight(18),
   },
   thumaNailHider: {
     backgroundColor: '#000000',
@@ -144,13 +144,13 @@ const styles = StyleSheet.create({
   },
   unitDescriptionContainer: {
     position: 'absolute',
-    top: 60,
+    top: responsiveScreenWidth(15),
     left: 0,
     bottom: 0,
     right: 0,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    marginLeft: 20,
+    marginLeft: responsiveScreenWidth(5),
   },
   unitDescription: {
     fontSize: responsiveFontSize(2.2),
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#43baff',
+    color: '#43BAFF',
     fontWeight: '900',
   },
 });

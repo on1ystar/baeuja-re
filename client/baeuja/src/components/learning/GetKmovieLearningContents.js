@@ -219,34 +219,37 @@ const styles = StyleSheet.create({
   },
   kdramaAllContainer: {
     flexDirection: 'row',
-    marginLeft: 22,
-    marginTop: 10,
+    marginLeft: responsiveScreenWidth(5),
+    marginTop: responsiveScreenHeight(1.5),
   },
   kdramaContainer: {
-    marginRight: 20,
+    marginRight: responsiveScreenWidth(5),
   },
   kdramaTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    marginTop: 10,
+    marginTop: responsiveScreenHeight(1),
   },
   kdramaTitle: {
+    color: '#666666',
     width: responsiveScreenWidth(23),
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   kdramaProgress: {
+    color: '#666666',
     fontSize: responsiveScreenFontSize(1.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   thumbnailImage: {
-    width: 100,
-    height: 120,
+    width: responsiveScreenWidth(25),
+    height: responsiveScreenHeight(13),
     borderRadius: 10,
   },
   infoIconContainer: {
+    color: '#666666',
     justifyContent: 'flex-end',
     alignSelf: 'center',
     // backgroundColor: '#000000',

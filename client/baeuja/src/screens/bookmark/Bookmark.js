@@ -63,25 +63,25 @@ const Bookmark = () => {
           }}
         >
           <TouchableOpacity>
-            <Ionicons size={30} name="options"></Ionicons>
+            <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.timeContainer}>
-        <Ionicons size={25} name="time-outline"></Ionicons>
+        <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
         <Text style={styles.timeText}>2021. 10.</Text>
       </View>
-      <View>
+      <ScrollView>
         {words ? (
-          <View>
+          <ScrollView>
             <GetBookmarkedWords />
-          </View>
+          </ScrollView>
         ) : (
-          <View>
+          <ScrollView>
             <GetBookmarkedSentences />
-          </View>
+          </ScrollView>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     marginLeft: responsiveScreenWidth(5),
   },
   timeText: {
+    color: '#000000',
     marginLeft: responsiveScreenWidth(2),
     fontSize: responsiveFontSize(2.2),
   },

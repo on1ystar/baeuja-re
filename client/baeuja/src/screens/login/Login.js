@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  Platform,
 } from 'react-native'; // React Native Component
 import {
   responsiveHeight,
@@ -28,7 +29,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
-import { GOOGLE_API_IOS_CLIENT_ID } from '@env'; // React Native Dotenv
+import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 class Login extends Component {
@@ -38,6 +39,7 @@ class Login extends Component {
     // AsyncStorage.clear();
     AsyncStorage.getItem('token', async (error, token) => {
       try {
+        console.log(token);
         // token이 있을 경우 홈으로 이동
         if (token) {
           this.props.navigation.dispatch(
@@ -54,16 +56,32 @@ class Login extends Component {
 
   // 구글 로그인 함수
   googleSignIn = async () => {
-    GoogleSignin.configure({
-      iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-    });
+    console.log(Platform.OS);
+    if (Platform.OS === 'ios') {
+      GoogleSignin.configure({
+        iosClientId: GOOGLE_API_IOS_CLIENT_ID,
+        // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
+        // androidClientId: GOOGLE_API_ANDROID_CLIENT_ID,
+        // webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
+        // offlineAccess: true,
+      });
+    } else if (Platform.OS === 'android') {
+      GoogleSignin.configure({
+        webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
+        // iosClientId: GOOGLE_API_IOS_CLIENT_ID,
+        // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
+        // androidClientId: GOOGLE_API_ANDROID_CLIENT_ID,
+        // offlineAccess: true,
+      });
+      console.log(webClientId);
+    }
     try {
       await GoogleSignin.hasPlayServices();
       const {
         user: { email, name },
       } = await GoogleSignin.signIn();
       this.getToken('google', { email, name });
-
+      // 토큰 가져오면 홈 화면으로 이동
       this.props.navigation.dispatch(
         CommonActions.navigate('Tabs', {
           screen: 'Home',
@@ -112,6 +130,7 @@ class Login extends Component {
           },
         };
       }
+
       const {
         data: { success, token, isMember, errorMessage },
       } = await axios(config);
@@ -164,7 +183,7 @@ class Login extends Component {
                   <ImageBackground
                     transitionDuration={1000}
                     source={require('../../assets/icons/google.png')}
-                    style={{ width: 40, height: 43 }}
+                    style={{ width: responsiveScreenWidth(10), height: responsiveScreenWidth(12) }}
                   >
                     <Text style={styles.googleLoginText}>Sign in with Google</Text>
                   </ImageBackground>
@@ -178,7 +197,7 @@ class Login extends Component {
               onPress={() => this.getToken('guest')}
             >
               <Text style={styles.guestLoginText}>Don't want to sign up? Try Guest Mode</Text>
-              <Ionicons size={25} name="chevron-forward-outline" color={'#9388E8'} />
+              <Ionicons size={25} name="chevron-forward-outline" color={'#666666'} />
             </TouchableOpacity>
           </View>
         </View>
@@ -186,16 +205,6 @@ class Login extends Component {
     );
   }
 }
-
-// {/* <View style={styles.guestLoginBtn}>
-//                   <ImageBackground
-//                     transitionDuration={1000}
-//                     source={require('../../assets/icons/captureLogo.png')}
-//                     style={{ width: 40, height: 43, backgroundColor: '#FFFFFF' }}
-//                   >
-//                     <Text style={styles.guestLoginText}>Sign in with Guest</Text>
-//                   </ImageBackground>
-//                 </View> */}
 
 export default Login;
 
@@ -262,7 +271,7 @@ const styles = StyleSheet.create({
   googleLoginText: {
     width: responsiveScreenWidth(40),
     height: responsiveScreenHeight(5),
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
     marginLeft: 45,
@@ -277,10 +286,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   guestLoginText: {
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    color: '#9388E8',
+    color: '#666666',
   },
   guestLoginContainer: {
     flexDirection: 'row',

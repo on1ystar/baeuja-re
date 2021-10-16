@@ -29,7 +29,7 @@ const Script = ({ currentSentence }) => {
 
   // 한국어 문장 만들기
   const drawKoreanSentence = () => {
-    koreanResult = [currentSentence.koreanText.toLowerCase()];
+    koreanResult = [currentSentence.koreanText];
 
     const resultKoreanhWords = currentSentence.words;
 
@@ -39,15 +39,14 @@ const Script = ({ currentSentence }) => {
       let findFlag = false;
       koreanResult.forEach((element) => {
         if (typeof element === 'string') {
-          idx = element.indexOf(word.prevKoreanText);
+          idx = element.indexOf(word.koreanInText);
           if (idx === -1 || findFlag === true) idx = undefined;
           else findFlag = true;
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <TouchableOpacity
-              key={word.wordId}
+            <Text
               onPress={() =>
                 navigation.navigate('Stack', {
                   screen: 'LearningWord',
@@ -56,19 +55,17 @@ const Script = ({ currentSentence }) => {
                   },
                 })
               }
+              key={word.wordId}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                color: '#3EB2FF',
+                textDecorationLine: 'underline',
+              }}
             >
-              <Text
-                style={{
-                  fontSize: responsiveFontSize(2.4),
-                  color: '#3EB2FF',
-                  textDecorationLine: 'underline',
-                }}
-              >
-                {word.prevKoreanText}
-              </Text>
-            </TouchableOpacity>
+              {word.koreanInText}
+            </Text>
           );
-          temp.push(element.slice(idx + word.prevKoreanText.length));
+          temp.push(element.slice(idx + word.koreanInText.length));
         } else {
           temp.push(element);
         }
@@ -91,15 +88,14 @@ const Script = ({ currentSentence }) => {
       englishResult.forEach((element) => {
         if (typeof element === 'string') {
           idx =
-            element.indexOf(word.prevTranslatedText) === -1
+            element.indexOf(word.translationInText) === -1
               ? undefined
-              : element.indexOf(word.prevTranslatedText);
+              : element.indexOf(word.translationInText);
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <TouchableOpacity
-              key={word.wordId}
+            <Text
               onPress={() =>
                 navigation.navigate('Stack', {
                   screen: 'LearningWord',
@@ -108,19 +104,17 @@ const Script = ({ currentSentence }) => {
                   },
                 })
               }
+              key={word.wordId}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                color: '#3EB2FF',
+                textDecorationLine: 'underline',
+              }}
             >
-              <Text
-                style={{
-                  fontSize: responsiveFontSize(2.4),
-                  color: '#3eb2ff',
-                  textDecorationLine: 'underline',
-                }}
-              >
-                {word.prevTranslatedText}
-              </Text>
-            </TouchableOpacity>
+              {word.translationInText}
+            </Text>
           );
-          temp.push(element.slice(idx + word.prevTranslatedText.length));
+          temp.push(element.slice(idx + word.translationInText.length));
         } else {
           temp.push(element);
         }
@@ -132,36 +126,24 @@ const Script = ({ currentSentence }) => {
   };
 
   return (
-    <View>
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity
-          style={styles.bookmarkContainer}
-          onPress={() => {
-            setIsBookmarked(!isBookmarked);
-            console.log(isBookmarked);
-          }}
-        >
-          <Ionicons
-            size={25}
-            color={isBookmarked ? '#FFAD41' : '#AAAAAA'}
-            name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-          ></Ionicons>
-        </TouchableOpacity>
-        <View>
-          <Text style={styles.koreanScript}>
-            🇰🇷 : <Text>{drawKoreanSentence()}</Text>
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.englishScript}>
-            🇺🇸 : <Text> {drawEnglishSentence()}</Text>
-          </Text>
-        </View>
-        <View>
-          <Words currentSentence={currentSentence} />
-        </View>
-      </Card>
-    </View>
+    <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+      <TouchableOpacity
+        style={styles.bookmarkContainer}
+        onPress={() => {
+          setIsBookmarked(!isBookmarked);
+          console.log(isBookmarked);
+        }}
+      >
+        <Ionicons
+          size={25}
+          color={isBookmarked ? '#FFAD41' : '#AAAAAA'}
+          name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
+        ></Ionicons>
+      </TouchableOpacity>
+      <Text style={styles.koreanScript}>{drawKoreanSentence()}</Text>
+      <Text style={styles.englishScript}>{drawEnglishSentence()}</Text>
+      <Words currentSentence={currentSentence} />
+    </Card>
   );
 };
 
@@ -172,7 +154,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginRight: 10,
+    marginRight: responsiveScreenWidth(3),
   },
   bookmarkContainer: {
     zIndex: 1,
@@ -181,17 +163,21 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(-1),
   },
   koreanScript: {
-    fontSize: responsiveFontSize(2.3),
+    fontSize: responsiveFontSize(2.1),
     color: '#555555',
-    marginBottom: 5,
+    marginBottom: responsiveScreenHeight(1),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     textAlignVertical: 'bottom',
     width: responsiveScreenWidth(80),
   },
   englishScript: {
-    fontSize: responsiveFontSize(2.3),
+    fontSize: responsiveFontSize(2.1),
     color: '#555555',
-    marginBottom: 15,
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
   },
 });

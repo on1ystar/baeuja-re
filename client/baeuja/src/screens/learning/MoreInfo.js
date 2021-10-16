@@ -87,7 +87,7 @@ const MoreInfo = ({
           containerStyle={{ borderRadius: 10, marginTop: 25 }}
           style={styles.descriptionContainer}
         >
-          <Text>{description}</Text>
+          <Text style={styles.description}>{description}</Text>
         </Card>
       </ScrollView>
       <View style={styles.Container}>
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
+    color: '#666666',
     fontSize: responsiveFontSize(2.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9388e8',
+    backgroundColor: '#9388E8',
     width: responsiveScreenWidth(80),
     height: responsiveHeight(5),
     borderRadius: 10,
@@ -160,5 +161,8 @@ const styles = StyleSheet.create({
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     fontSize: responsiveFontSize(2.2),
+  },
+  description: {
+    color: '#666666',
   },
 });

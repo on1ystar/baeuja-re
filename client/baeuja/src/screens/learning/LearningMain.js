@@ -9,12 +9,15 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  FlatList,
+  SafeAreaView,
 } from 'react-native'; // React Native Component
 import {
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
   responsiveScreenFontSize,
+  useResponsiveScreenWidth,
 } from 'react-native-responsive-dimensions'; // React Native Responsive Layout
 import { Divider } from 'react-native-elements'; // Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
@@ -31,64 +34,76 @@ class LearningMain extends React.Component {
       <View style={styles.allContainer}>
         <Text style={styles.mainText}>Learning</Text>
         <Divider
-          style={{ width: '100%', marginTop: 10 }}
+          style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
           color="#EEEEEE"
           insetType="middle"
           width={1}
           orientation="horizontal"
         />
-        <View style={styles.kpopTextContainer}>
-          <Text style={styles.titleText}>K-POP</Text>
-          <TouchableOpacity
-            style={styles.moreText}
-            onPress={() =>
-              navigate('Stack', {
-                screen: 'GetKpopLearningContents',
-              })
-            }
-          >
-            <Text>more</Text>
-          </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <ScrollView>
+            <View style={styles.kpopTextContainer}>
+              <Text style={styles.titleText}>K-POP</Text>
+              <TouchableOpacity
+                style={styles.moreText}
+                onPress={() =>
+                  navigate('Stack', {
+                    screen: 'GetKpopLearningContents',
+                  })
+                }
+              >
+                <Text style={{ color: '#666666' }}>more</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: responsiveScreenHeight(44) }}>
+              <ScrollView nestedScrollEnabled={true} style={styles.kpopScrollViewContainer}>
+                <GetLearningContents />
+              </ScrollView>
+            </View>
+            <Divider
+              style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
+              color="#EEEEEE"
+              insetType="middle"
+              width={1}
+              orientation="horizontal"
+            />
+            <Text style={styles.titleText}>K-Drama</Text>
+            <View style={{ height: responsiveScreenHeight(22) }}>
+              <ScrollView
+                nestedScrollEnabled={true}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.kdramaScrollViewContainer}
+              >
+                <View style={styles.kdramaScrollViewHider}>
+                  <GetKdramaLearningContents />
+                </View>
+                <Text style={styles.comingSoon}>Coming Soon...</Text>
+              </ScrollView>
+            </View>
+            <Divider
+              style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
+              color="#EEEEEE"
+              insetType="middle"
+              width={1}
+              orientation="horizontal"
+            />
+            <Text style={styles.titleText}>K-Movie</Text>
+            <View style={{ height: responsiveScreenHeight(22) }}>
+              <ScrollView
+                nestedScrollEnabled={true}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.kmovieScrollViewContainer}
+              >
+                <View style={styles.kmovieScrollViewHider}>
+                  <GetKmovieLearningContents />
+                </View>
+                <Text style={styles.comingSoon}>Coming Soon...</Text>
+              </ScrollView>
+            </View>
+          </ScrollView>
         </View>
-        <ScrollView style={styles.kpopScrollViewContainer}>
-          <GetLearningContents />
-        </ScrollView>
-        <Divider
-          style={{ width: '100%', marginTop: 10 }}
-          color="#EEEEEE"
-          insetType="middle"
-          width={1}
-          orientation="horizontal"
-        />
-        <Text style={styles.titleText}>K-Drama</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.kdramaScrollViewContainer}
-        >
-          <View style={styles.kdramaScrollViewHider}>
-            <GetKdramaLearningContents />
-          </View>
-          <Text style={styles.comingSoon}>Coming Soon...</Text>
-        </ScrollView>
-        <Divider
-          style={{ width: '100%', marginTop: 10 }}
-          color="#EEEEEE"
-          insetType="middle"
-          width={1}
-          orientation="horizontal"
-        />
-        <Text style={styles.titleText}>K-Movie</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.kmovieScrollViewContainer}
-        >
-          <View style={styles.kmovieScrollViewHider}>
-            <GetKmovieLearningContents />
-          </View>
-          <Text style={styles.comingSoon}>Coming Soon...</Text>
-        </ScrollView>
       </View>
     );
   }
@@ -101,7 +116,7 @@ const styles = StyleSheet.create({
   mainText: {
     justifyContent: 'flex-start',
     marginTop: responsiveScreenHeight(7),
-    marginLeft: 22,
+    marginLeft: responsiveScreenWidth(5),
     fontSize: responsiveFontSize(3.2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
@@ -154,13 +169,13 @@ const styles = StyleSheet.create({
   },
   infoButton: {
     position: 'absolute',
-    marginLeft: 290,
+    marginLeft: responsiveScreenWidth(10),
     backgroundColor: 'black',
   },
   titleText: {
     justifyContent: 'flex-start',
-    marginTop: 20,
-    marginLeft: 22,
+    marginTop: responsiveScreenHeight(2),
+    marginLeft: responsiveScreenWidth(5),
     fontSize: responsiveFontSize(2.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',

@@ -1,6 +1,16 @@
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Alert,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native'; // React Native Component
 import {
   responsiveHeight,
   responsiveWidth,
@@ -38,6 +48,7 @@ import SpeechEvaluationResult from './SpeechEvaluationResult';
 import LearningStyles from '../../styles/LearningStyle';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
+let userPermission = 'a';
 
 const Tools = ({ currentSentence }) => {
   const [isMoreThanOneTimeRecord, setIsMoreThanOneTimeRecord] = useState(false);
@@ -47,6 +58,7 @@ const Tools = ({ currentSentence }) => {
   const [isPlayPerfectVoice, setIsPlayPerfectVoice] = useState(false);
   const [isRecordingUserVoice, setIsRecordingUserVoice] = useState(false);
   const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
+  const [userVoiceScore, setUserVoiceScore] = useState(0);
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
@@ -78,7 +90,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/perfect-voice`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -101,20 +113,50 @@ const Tools = ({ currentSentence }) => {
     });
   };
 
+  // 권한 요청 함수
+  const requestPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]).then((result) => {
+        if (
+          result['android.permission.RECORD_AUDIO'] &&
+          result['android.permission.WRITE_EXTERNAL_STORAGE'] &&
+          result['android.permission.READ_EXTERNAL_STORAGE'] === 'granted'
+        ) {
+          userPermission = 'granted';
+          console.log('모든 권한 획득');
+        } else {
+          console.log('권한 거절');
+        }
+      });
+    } else {
+    }
+  };
+
   // 음성 녹음 시작
   const onStartRecord = async () => {
-    console.log('-------------음성 녹음 시작-------------');
+    // 권한 요청 함수 실행
+    if (userPermission == 'granted') {
+      console.log('-------------음성 녹음 시작-------------');
 
-    const recoredUserVoice = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener((e) => {
+      const recoredUserVoice = await audioRecorderPlayer.startRecorder();
+      audioRecorderPlayer.addRecordBackListener((e) => {
+        return;
+      });
+      setIsRecordingUserVoice(!isRecordingUserVoice);
+    } else {
+      requestPermission();
       return;
-    });
-    setIsRecordingUserVoice(!isRecordingUserVoice);
+    }
   };
 
   // 음성 녹음 중지
   const onStopRecord = async () => {
-    const DEFAULT_RECOREDED_FILE_NAME = 'sound.m4a';
+    const DEFAULT_RECOREDED_FILE_NAME_iOS = 'sound.m4a';
+    const DEFAULT_RECOREDED_FILE_NAME_Android = 'sound.mp4';
     const recoredUserVoice = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
     if (recoredUserVoice === 'Already stopped') {
@@ -130,14 +172,31 @@ const Tools = ({ currentSentence }) => {
     try {
       const formData = new FormData();
 
-      formData.append(
-        'userVoice', //업로드할 파일의 폼
-        {
-          uri: recoredUserVoice, //파일 경로
-          type: 'audio/m4a', //파일 형식
-          name: DEFAULT_RECOREDED_FILE_NAME, //파일 이름
-        }
-      );
+      if (Platform.OS === 'ios') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/m4a', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_iOS, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      } else if (Platform.OS === 'android') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/mpeg_4', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_Android, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      }
 
       AsyncStorage.getItem('token', async (error, token) => {
         // try {
@@ -149,7 +208,7 @@ const Tools = ({ currentSentence }) => {
 
         await axios
           .post(
-            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/evaluation`,
+            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
             formData,
             {
               headers: {
@@ -166,9 +225,11 @@ const Tools = ({ currentSentence }) => {
             console.log(`pitchData : ${pitchData.userVoice}`);
 
             setEvaluatedSentence(evaluatedSentence);
+            setUserVoiceScore(evaluatedSentence.score);
             setPitchData(pitchData);
 
             if (!success) throw new Error(errorMessage);
+            console.log(errorMessage);
             console.log('success getting Evaluated Data');
           })
           .catch((error) => {
@@ -180,6 +241,7 @@ const Tools = ({ currentSentence }) => {
         //   }
       });
     } catch (err) {
+      console.log(errorMessage);
       //업로드 취소 error 표시
       if (DocumentPicker.isCancel(err)) {
       } else {
@@ -208,7 +270,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/user-voice`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -311,13 +373,13 @@ const Tools = ({ currentSentence }) => {
       <View>
         {isMoreThanOneTimeRecord ? (
           evaluatedSentence !== null && pitchData !== null ? (
-            <View style={{ marginBottom: 20 }}>
+            <View>
               <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
             </View>
           ) : (
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
               <Progress.Circle
-                size={80}
+                size={60}
                 animated={true}
                 color={'#9388E8'}
                 borderWidth={8}

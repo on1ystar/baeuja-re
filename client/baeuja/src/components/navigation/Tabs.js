@@ -34,7 +34,7 @@ const Tabs = () => (
         },
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name="Bookmark"
       component={Bookmark}
       options={{
@@ -48,7 +48,7 @@ const Tabs = () => (
           );
         },
       }}
-    />
+    /> */}
     <Tab.Screen
       name="Home"
       component={Home}
@@ -58,7 +58,7 @@ const Tabs = () => (
         },
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name="Review"
       component={Review}
       options={{
@@ -79,7 +79,7 @@ const Tabs = () => (
           );
         },
       }}
-    />
+    /> */}
   </Tab.Navigator>
 );
 

@@ -62,6 +62,7 @@ const LearningUnit = ({
   const loadUnit = useCallback(async () => {
     console.log(`load unit => contentId : ${contentId}, unitIndex: ${unitIndex}`);
 
+    // Leraning unit 데이터 조회
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -69,7 +70,7 @@ const LearningUnit = ({
         }
         if (error) throw error;
         const {
-          data: { success, unit, sentences, tokenExpired, errorMessage },
+          data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
           `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
@@ -78,14 +79,27 @@ const LearningUnit = ({
             },
           }
         );
+
+        const {
+          data: { sentences },
+        } = await axios.get(
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`unit: ${unit}\nsentences: ${sentences}`);
+        console.log(`success : ${success}\nunit: ${unit}\nsentences: ${sentences}`);
 
         if (!success) throw new Error(errorMessage);
 
         console.log('success getting learning unit');
+
         setUnit(unit);
         setSentences(sentences);
         setIsLoading(() => false);
@@ -176,8 +190,8 @@ const LearningUnit = ({
               volume={50}
             />
           </View>
-          <View>
-            {/* 스크립트, 단어 그리기 */}
+          {/* 스크립트, 단어 그리기 */}
+          <View style={{ flex: 1 }}>
             {Object.keys(currentSentence).length !== 0 && currentSentence !== undefined ? (
               <Script currentSentence={currentSentence} />
             ) : (
@@ -188,7 +202,8 @@ const LearningUnit = ({
           <View style={LearningStyles.learningButtonContainer}>
             {Object.keys(currentSentence).length !== 0 &&
             currentSentence !== undefined &&
-            isPlaying === false ? (
+            isPlaying === false &&
+            currentSentence.perfectVoiceUri != 'NULL' ? (
               <Tools currentSentence={currentSentence} />
             ) : (
               <Text></Text>
@@ -196,7 +211,6 @@ const LearningUnit = ({
           </View>
         </View>
       )}
-
       {/* 발화 평가 차트 */}
     </ScrollView>
   );

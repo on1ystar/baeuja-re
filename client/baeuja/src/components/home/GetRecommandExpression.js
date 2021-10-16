@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(0.5),
   },
   newWordSentence: {
+    color: '#000000',
     width: responsiveScreenWidth(80),
     fontSize: responsiveScreenFontSize(2.2),
     fontFamily: 'NanumSquareOTFB',

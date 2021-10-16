@@ -8,12 +8,18 @@ import { Divider } from 'react-native-elements'; // React Native Elements
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
+import {
+  responsiveFontSize,
+  responsiveScreenHeight,
+  responsiveScreenWidth,
+} from 'react-native-responsive-dimensions';
 
 const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [perfectVoiceData, setPerfectVoiceData] = useState([]);
   const [userVoiceData, setUserVoiceData] = useState([]);
   let userScore = evaluatedSentence.score;
+  // const [userScore, setUserScore] = useState(evaluatedSentence.score);
 
   const render = () => {
     let tempPerfectVoiceData = [];
@@ -31,6 +37,7 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
     }
     setPerfectVoiceData(tempPerfectVoiceData);
     setUserVoiceData(tempUserVoiceData);
+    // setUserScore(evaluatedSentence.score);
     setIsLoading(false);
   };
   useEffect(render, [pitchData]);
@@ -45,21 +52,21 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
           {/* 발화 평가 등급 */}
           <View style={styles.rankingChart}>
             <Progress.Circle
-              size={150}
+              size={130}
               animated={true}
               color={'#9388E8'}
               progress={userScore * 0.01}
               thickness={10}
               strokeCap={'round'}
               showsText={true}
-              formatText={(progress) => {
-                if (progress * 100 > 85) {
+              formatText={() => {
+                if (userScore > 85) {
                   return 'A+';
-                } else if (progress * 100 > 75) {
+                } else if (userScore > 75) {
                   return 'A';
-                } else if (progress * 100 > 60) {
+                } else if (userScore > 60) {
                   return 'B';
-                } else if (progress * 100 > 45) {
+                } else if (userScore > 45) {
                   return 'C';
                 } else {
                   return 'D';
@@ -70,23 +77,54 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
 
           {/* 발화 평가 피치 그래프 주석 */}
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-            <View>
-              <Text>
-                <Divider
-                  style={{ width: '5%', margin: 20 }}
+            <View
+              style={{
+                width: responsiveScreenWidth(75),
+                justifyContent: 'flex-end',
+                alignItems: 'flex-start',
+              }}
+            >
+              <Text
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  color: '#88E889',
+                  fontSize: responsiveFontSize(2),
+                  fontWeight: '600',
+                }}
+              >
+                You
+              </Text>
+              <Text
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  color: '#9388E8',
+                  fontSize: responsiveFontSize(2),
+                  fontWeight: '600',
+                }}
+              >
+                Voice Actor
+                {/* <Divider
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: responsiveScreenWidth(10),
+                  }}
                   color="#9388E8"
-                  subHeader="Voice Actor"
-                  width={3}
+                  width={responsiveScreenHeight(0.5)}
                   orientation="horizontal"
-                />
-                {'    '}
-                <Divider
-                  style={{ width: '5%', margin: 20 }}
-                  color="#88E889"
-                  subHeader="You"
-                  width={3}
-                  orientation="horizontal"
-                />
+                /> */}
+                {/* <Divider
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: responsiveScreenWidth(10),
+                    }}
+                    color="#88E889"
+                    width={responsiveScreenHeight(0.5)}
+                    orientation="horizontal"
+                  /> */}
               </Text>
             </View>
 
@@ -102,19 +140,23 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
                     : perfectVoiceData[perfectVoiceData.length - 1].x + 0.5,
               }}
               yDomain={{ min: 0, max: 1 }}
-              padding={{ left: 20, top: 10, bottom: 10, right: 10 }}
+              padding={{
+                left: responsiveScreenWidth(5),
+                bottom: responsiveScreenHeight(5),
+                right: responsiveScreenWidth(5),
+              }}
             >
-              <VerticalAxis tickValues={[0, 4, 8, 12, 16, 20]} />
-              <HorizontalAxis tickCount={3} />
+              <VerticalAxis tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1]} />
+              <HorizontalAxis tickCount={5} />
               <Line
                 data={perfectVoiceData}
                 smoothing="cubic-spline"
-                theme={{ stroke: { color: '#9388E8', width: 3 } }}
+                theme={{ stroke: { color: '#9388E8', width: 3.5 } }}
               />
               <Line
                 data={userVoiceData}
                 smoothing="cubic-spline"
-                theme={{ stroke: { color: '#88E889', width: 3 } }}
+                theme={{ stroke: { color: '#88E889', width: 3.5 } }}
               />
             </Chart>
           </View>
