@@ -95,6 +95,30 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     ).data;
     if (!success) throw new Error('fail to ai server rest communication');
 
+    // 소수점 6째 자리 이하 반올림
+    if (pitchData.perfectVoice.hz.length !== 0) {
+      const perfectVoiceHz = JSON.parse(pitchData.perfectVoice.hz).map(
+        (t: number) => Math.round(t * 10 * 6) / (10 * 6)
+      );
+      const userVoiceHz = JSON.parse(pitchData.userVoice.hz).map(
+        (t: number) => Math.round(t * 10 * 6) / (10 * 6)
+      );
+      pitchData.perfectVoice.hz = JSON.stringify(perfectVoiceHz);
+      pitchData.userVoice.hz = JSON.stringify(userVoiceHz);
+    }
+
+    // 소수점 2째 자리 이하 반올림
+    if (pitchData.perfectVoice.time.length !== 0) {
+      const perfectVoiceTime = JSON.parse(pitchData.perfectVoice.time).map(
+        (t: number) => Math.round(t * 100) / 100
+      );
+      const userVoiceTime = JSON.parse(pitchData.userVoice.time).map(
+        (t: number) => Math.round(t * 100) / 100
+      );
+      pitchData.perfectVoice.time = JSON.stringify(perfectVoiceTime);
+      pitchData.userVoice.time = JSON.stringify(userVoiceTime);
+    }
+
     // 발음 평가 결과 DB 저장
     const userSentenceEvaluation: UserSentenceEvaluationToBeSaved = {
       userId,
