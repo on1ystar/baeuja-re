@@ -1,5 +1,13 @@
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -62,25 +70,46 @@ const GetRecommandWords = ({ randomNumber }) => {
 
   // GetRecommandWords return 부분
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <View style={{ marginLeft: responsiveScreenWidth(5) }}>
       {isLoading ? (
         <Text> </Text>
       ) : (
         recommendationWords.map((word) => <DrawRecommandWords key={word.wordId} word={word} />)
       )}
-    </ScrollView>
+    </View>
   );
 };
 
 // 새로운 콘텐츠 그리기
 const DrawRecommandWords = ({ word }) => {
-  const navigation = useNavigation();
-  const contentId = word.sentences[0].contentId;
-  const unitIndex = word.sentences[0].unitIndex;
+  const sameRecommandWord = word.sentences;
 
   return (
     <View style={styles.recommandWordsAllContainer}>
       <View style={styles.recommandWordsContainer}>
+        <View style={styles.recommandWordTextContainer}>
+          <Text style={styles.recommandWord}>#{word.korean}</Text>
+          <Text style={styles.recommandWordImportance}>Importance {word.importance}</Text>
+        </View>
+        <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
+          {sameRecommandWord.map((sentences) => (
+            <DrawSameRecommandWords key={sentences.sentenceId} sentences={sentences} />
+          ))}
+          {/* </TouchableOpacity> */}
+        </ScrollView>
+      </View>
+    </View>
+  );
+};
+
+const DrawSameRecommandWords = ({ sentences }) => {
+  const navigation = useNavigation();
+  const contentId = sentences.contentId;
+  const unitIndex = sentences.unitIndex;
+
+  return (
+    <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
+      <View style={styles.recommandWordContainer}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Stack', {
@@ -92,32 +121,26 @@ const DrawRecommandWords = ({ word }) => {
             })
           }
         >
-          <View style={styles.recommandWordTextContainer}>
-            <Text style={styles.recommandWord}>#{word.korean}</Text>
-            <Text style={styles.recommandWordImportance}>Importance {word.importance}</Text>
+          <Image
+            transitionDuration={1000}
+            source={{
+              uri: sentences.thumbnailUri,
+            }}
+            style={styles.thumbnailImage}
+          />
+          <View style={styles.recommandWordKoreanSentenceContainer}>
+            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+              {sentences.koreanText}
+            </Text>
           </View>
-          <View style={styles.recommandWordContainer}>
-            <Image
-              transitionDuration={1000}
-              source={{
-                uri: word.sentences[0].thumbnailUri,
-              }}
-              style={styles.thumbnailImage}
-            />
-            <View style={styles.recommandWordKoreanSentenceContainer}>
-              <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-                {word.sentences[0].koreanText}
-              </Text>
-            </View>
-            <View style={styles.recommandWordEnglishSentenceContainer}>
-              <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
-                {word.sentences[0].translatedText}
-              </Text>
-            </View>
+          <View style={styles.recommandWordEnglishSentenceContainer}>
+            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+              {sentences.translatedText}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -127,10 +150,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   recommandWordsContainer: {
-    marginRight: responsiveScreenWidth(7),
+    // marginRight: responsiveScreenWidth(7),
   },
   recommandWordTextContainer: {
     flexDirection: 'row',
+    marginTop: responsiveScreenHeight(3),
     width: responsiveScreenWidth(80),
   },
   recommandWord: {
@@ -146,11 +170,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#9388E8',
     position: 'absolute',
-    left: responsiveScreenWidth(57),
+    left: responsiveScreenWidth(30),
     top: responsiveScreenHeight(0.5),
   },
   recommandWordContainer: {
+    // width: responsiveScreenWidth(100),
     marginTop: responsiveScreenHeight(2),
+    marginRight: responsiveScreenWidth(5),
   },
   recommandWordKoreanSentenceContainer: {
     flexDirection: 'row',
@@ -165,7 +191,7 @@ const styles = StyleSheet.create({
   newWordSentence: {
     color: '#000000',
     width: responsiveScreenWidth(80),
-    fontSize: responsiveScreenFontSize(2.2),
+    fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },

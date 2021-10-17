@@ -30,6 +30,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncSt
 import GetNewContents from '../../components/home/GetNewContents';
 import GetRecommandWords from '../../components/home/GetRecommandWords';
 import GetRecommandExpression from '../../components/home/GetRecommandExpression';
+import InfiniteScrollTest from '../../components/home/InfiniteScrollTest';
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -70,14 +71,9 @@ const Home = () => {
         width={1}
         orientation="horizontal"
       />
-      <ScrollView
-        nestedScrollEnabled={true}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.recommendWordConatainer}
-      >
-        <GetRecommandWords randomNumber={randomNumber} />
-      </ScrollView>
+      {/* <ScrollView nestedScrollEnabled={true} style={styles.recommendWordConatainer}> */}
+      <GetRecommandWords randomNumber={randomNumber} />
+      {/* </ScrollView> */}
       <Divider
         style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
         color="#EEEEEE"
@@ -85,14 +81,14 @@ const Home = () => {
         width={1}
         orientation="horizontal"
       />
-      <ScrollView
+      {/* <ScrollView
         nestedScrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         horizontal
         style={styles.recommendExpressionConatainer}
       >
         <GetRecommandExpression />
-      </ScrollView>
+      </ScrollView> */}
     </ScrollView>
   );
 };
