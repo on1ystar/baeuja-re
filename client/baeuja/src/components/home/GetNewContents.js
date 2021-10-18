@@ -20,7 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncSt
 // 새로운 콘텐츠 가져오기
 const GetNewContents = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [newContents, SetNewContents] = useState();
+  const [newContents, SetNewContents] = useState([]);
 
   const loadNewContents = () => {
     console.log(`Load New Contents ...`);
@@ -61,7 +61,11 @@ const GetNewContents = () => {
 
   // GetNewContents return 부분
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView
+      style={{ height: responsiveScreenHeight(30) }}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    >
       {isLoading ? (
         <Text> </Text>
       ) : (

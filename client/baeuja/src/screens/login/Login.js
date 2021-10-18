@@ -32,14 +32,33 @@ import { useNavigation, CommonActions } from '@react-navigation/native'; // Navi
 import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
+// if (Platform.OS === 'ios') {
+//   GoogleSignin.configure({
+//     iosClientId: GOOGLE_API_IOS_CLIENT_ID,
+//     // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
+//     // webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
+//     // offlineAccess: true,
+//   });
+//   console.log('iOS GoogleSignin configure');
+// } else if (Platform.OS === 'android') {
+//   GoogleSignin.configure({
+//     // androidClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
+//     offlineAccess: true,
+//     webClientId: '300096117355-8oj6lm121mq6jkvqo358q9tfpslab53c.apps.googleusercontent.com',
+//     // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
+//   });
+//   console.log('Android GoogleSignin configure');
+// }
+
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
     console.log('Component rendered');
+    console.log(Platform.OS);
     // AsyncStorage.clear();
     AsyncStorage.getItem('token', async (error, token) => {
       try {
-        console.log(token);
+        console.log('Token: ', token);
         // token이 있을 경우 홈으로 이동
         if (token) {
           this.props.navigation.dispatch(
@@ -47,6 +66,7 @@ class Login extends Component {
               screen: 'Home',
             })
           );
+        } else {
         }
       } catch (error) {
         console.log(error);
@@ -56,30 +76,13 @@ class Login extends Component {
 
   // 구글 로그인 함수
   googleSignIn = async () => {
-    console.log(Platform.OS);
-    if (Platform.OS === 'ios') {
-      GoogleSignin.configure({
-        iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-        // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
-        // androidClientId: GOOGLE_API_ANDROID_CLIENT_ID,
-        // webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
-        // offlineAccess: true,
-      });
-    } else if (Platform.OS === 'android') {
-      GoogleSignin.configure({
-        webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
-        // iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-        // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
-        // androidClientId: GOOGLE_API_ANDROID_CLIENT_ID,
-        // offlineAccess: true,
-      });
-      console.log(webClientId);
-    }
     try {
       await GoogleSignin.hasPlayServices();
       const {
         user: { email, name },
       } = await GoogleSignin.signIn();
+      console.log(email, name);
+      console.log('asdas');
       this.getToken('google', { email, name });
       // 토큰 가져오면 홈 화면으로 이동
       this.props.navigation.dispatch(
@@ -89,12 +92,16 @@ class Login extends Component {
       );
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log(error);
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log(error);
         // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log(error);
         // play services not available or outdated
       } else {
+        console.log(error);
         // some other error happened
       }
     }

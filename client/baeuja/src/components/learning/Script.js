@@ -58,7 +58,7 @@ const Script = ({ currentSentence }) => {
               key={word.wordId}
               style={{
                 fontSize: responsiveFontSize(2.1),
-                color: '#3EB2FF',
+                color: '#4278A4',
                 textDecorationLine: 'underline',
               }}
             >
@@ -107,7 +107,7 @@ const Script = ({ currentSentence }) => {
               key={word.wordId}
               style={{
                 fontSize: responsiveFontSize(2.1),
-                color: '#3EB2FF',
+                color: '#4278A4',
                 textDecorationLine: 'underline',
               }}
             >

@@ -28,8 +28,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncSt
 // 새로운 콘텐츠 가져오기
 const GetRecommandWords = ({ randomNumber }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [recommendationWords, SetRecommendationWords] = useState();
-  let key = 1;
+  const [recommendationWords, setRecommendationWords] = useState([]);
+  const [recommendationWordIds, setRecommendationWordIds] = useState([]);
 
   const loadRecommendationWords = () => {
     console.log(`Load New Contents ...`);
@@ -58,8 +58,20 @@ const GetRecommandWords = ({ randomNumber }) => {
 
         console.log('Success Getting Recommendation Words');
 
-        SetRecommendationWords(words);
+        let temp = [];
+        const wordsIdList = words.map((word) => word.wordId);
+        words.forEach((word) => {
+          if (
+            recommendationWordIds.indexOf(word.wordId) === -1 &&
+            words.filter((e) => e.wordId === word.wordId).length === 1
+          ) {
+            temp.push(word);
+          }
+        });
+        setRecommendationWords(recommendationWords.concat(temp));
+        setRecommendationWordIds(recommendationWordIds.concat(temp.map((word) => word.wordId)));
         setIsLoading(() => false);
+        // setRecommendationWords(words);
       } catch (error) {
         console.log(error);
       }
@@ -70,13 +82,25 @@ const GetRecommandWords = ({ randomNumber }) => {
 
   // GetRecommandWords return 부분
   return (
-    <View style={{ marginLeft: responsiveScreenWidth(5) }}>
+    <ScrollView style={{ marginLeft: responsiveScreenWidth(5) }}>
       {isLoading ? (
-        <Text> </Text>
+        <Text> 로 딩 중 입 니 다 ...!.!.!.!</Text>
       ) : (
         recommendationWords.map((word) => <DrawRecommandWords key={word.wordId} word={word} />)
       )}
-    </View>
+    </ScrollView>
+    // <View style={styles.recommandWordsAllContainer}>
+    //   {console.log('Rendering FlatList')}
+    //   <FlatList
+    //     style={{ flex: 1 }}
+    //     data={recommendationWords}
+    //     renderItem={DrawRecommandWords}
+    //     keyExtractor={(word) => word.wordId}
+    //     onEndReached={loadRecommendationWords}
+    //     // windowSize={1}
+    //     // extraData={selectedId}
+    //   />
+    // </View>
   );
 };
 
@@ -85,19 +109,25 @@ const DrawRecommandWords = ({ word }) => {
   const sameRecommandWord = word.sentences;
 
   return (
-    <View style={styles.recommandWordsAllContainer}>
+    <View>
+      {/* {isLoading ? (
+        <Text> </Text>
+      ) : ( */}
       <View style={styles.recommandWordsContainer}>
         <View style={styles.recommandWordTextContainer}>
           <Text style={styles.recommandWord}>#{word.korean}</Text>
-          <Text style={styles.recommandWordImportance}>Importance {word.importance}</Text>
+          <Text style={styles.recommandWordImportance}>Impo {word.importance}</Text>
         </View>
         <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
           {sameRecommandWord.map((sentences) => (
-            <DrawSameRecommandWords key={sentences.sentenceId} sentences={sentences} />
+            <DrawSameRecommandWords
+              key={`${word.wordId}-${sentences.sentenceId}`}
+              sentences={sentences}
+            />
           ))}
-          {/* </TouchableOpacity> */}
         </ScrollView>
       </View>
+      {/* )} */}
     </View>
   );
 };
@@ -139,6 +169,13 @@ const DrawSameRecommandWords = ({ sentences }) => {
             </Text>
           </View>
         </TouchableOpacity>
+        <Divider
+          style={{ width: '107%', marginTop: responsiveScreenHeight(2) }}
+          color="#EEEEEE"
+          insetType="middle"
+          width={4}
+          orientation="horizontal"
+        />
       </View>
     </ScrollView>
   );
@@ -159,19 +196,20 @@ const styles = StyleSheet.create({
   },
   recommandWord: {
     justifyContent: 'flex-start',
-    fontSize: responsiveFontSize(2.3),
+    fontSize: responsiveFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#3095F9',
+    color: '#4278A4',
     // backgroundColor: 'black',
   },
   recommandWordImportance: {
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
-    color: '#9388E8',
+    fontWeight: '600',
+    color: '#999999',
     position: 'absolute',
-    left: responsiveScreenWidth(30),
-    top: responsiveScreenHeight(0.5),
+    fontSize: responsiveFontSize(1.5),
+    left: responsiveScreenWidth(75),
+    top: responsiveScreenHeight(1),
   },
   recommandWordContainer: {
     // width: responsiveScreenWidth(100),
@@ -189,11 +227,11 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(0.5),
   },
   newWordSentence: {
-    color: '#000000',
+    color: '#444444',
     width: responsiveScreenWidth(80),
-    fontSize: responsiveScreenFontSize(2),
+    fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   recommandWordSentenceInfo: {
     fontSize: responsiveScreenFontSize(1.5),
@@ -203,8 +241,8 @@ const styles = StyleSheet.create({
     color: '#9388E8',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(80),
-    height: responsiveScreenHeight(20),
+    width: responsiveScreenWidth(87),
+    height: responsiveScreenHeight(22),
     borderRadius: 10,
   },
   infoIconContainer: {

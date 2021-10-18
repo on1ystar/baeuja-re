@@ -5,7 +5,8 @@ import {
   Text,
   FlatList, // here
 } from 'react-native';
-export default class InfiniteScrollTest extends React.Component {
+
+export default class App extends React.Component {
   state = {
     data: [],
     page: 1, // here

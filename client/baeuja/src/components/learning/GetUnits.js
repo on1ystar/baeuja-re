@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   unitWords: {
     marginTop: 6,
-    fontSize: responsiveFontSize(1.9),
+    fontSize: responsiveFontSize(1.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#43BAFF',

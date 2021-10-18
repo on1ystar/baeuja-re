@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(7),
+    marginTop: responsiveScreenHeight(5),
     marginLeft: responsiveScreenWidth(5),
     fontSize: responsiveFontSize(3.2),
     fontFamily: 'NanumSquareOTFB',

@@ -2,6 +2,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Tab Navigation
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions'; // RN responsive Screen
 
 // Screnn import
 import LearningMain from '../../screens/learning/LearningMain';
@@ -9,7 +10,7 @@ import Bookmark from '../../screens/bookmark/Bookmark';
 import Home from '../../screens/home/Home';
 import Review from '../../screens/review/Review';
 import My from '../../screens/my/My';
-import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
+import HomeTest from '../../screens/home/HomeTest';
 
 const Tab = createBottomTabNavigator();
 

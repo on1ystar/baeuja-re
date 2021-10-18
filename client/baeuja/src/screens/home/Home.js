@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import {
   responsiveHeight,
@@ -36,24 +37,35 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [randomNumber, setRandomNumber] = useState(Math.random()); // 새로고침용 변수
 
-  // 새로고침 2초 기다리기
-  const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 40;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
   };
+  // 새로고침 2초 기다리기
+  // const wait = (timeout) => {
+  //   return new Promise((resolve) => setTimeout(resolve, timeout));
+  // };
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setRandomNumber(randomNumber + 1);
-    wait(2000).then(() => setRefreshing(false));
-  }, [randomNumber]);
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   setRandomNumber(randomNumber + 1);
+  //   wait(2000).then(() => setRefreshing(false));
+  // }, [randomNumber]);
 
   // Home Screen 전체 렌더링
   return (
     <ScrollView
-      refreshControl={
-        <RefreshControl enabled={true} refreshing={refreshing} onRefresh={onRefresh} />
-      }
       style={styles.container}
+      nestedScrollEnabled={true}
+      onScroll={({ nativeEvent }) => {
+        if (isCloseToBottom(nativeEvent)) {
+          setRandomNumber(Math.random());
+        }
+      }}
+      scrollEventThrottle={100}
+      // refreshControl={
+      //   <RefreshControl enabled={true} refreshing={refreshing} onRefresh={onRefresh} />
+      // }
     >
       <View style={styles.newTextConatainer}>
         <Text>
@@ -65,15 +77,13 @@ const Home = () => {
         <GetNewContents />
       </ScrollView>
       <Divider
-        style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
+        style={{ width: '100%', marginTop: responsiveScreenHeight(0) }}
         color="#EEEEEE"
         insetType="middle"
         width={1}
         orientation="horizontal"
       />
-      {/* <ScrollView nestedScrollEnabled={true} style={styles.recommendWordConatainer}> */}
       <GetRecommandWords randomNumber={randomNumber} />
-      {/* </ScrollView> */}
       <Divider
         style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
         color="#EEEEEE"
@@ -81,6 +91,7 @@ const Home = () => {
         width={1}
         orientation="horizontal"
       />
+      {/*추천 문장 그리기 컴포넌트 */}
       {/* <ScrollView
         nestedScrollEnabled={true}
         showsHorizontalScrollIndicator={false}
@@ -98,7 +109,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   newTextConatainer: {
-    marginTop: responsiveScreenHeight(7),
+    marginTop: responsiveScreenHeight(5),
     marginLeft: responsiveScreenWidth(5),
   },
   mainText: {
