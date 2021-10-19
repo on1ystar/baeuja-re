@@ -136,16 +136,17 @@ const styles = StyleSheet.create({
   },
   kdramaTitle: {
     color: '#000000',
-    width: responsiveScreenWidth(30),
+    width: responsiveScreenWidth(35),
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   newContentsInfo: {
-    fontSize: responsiveScreenFontSize(1.5),
+    fontSize: responsiveScreenFontSize(1.4),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#9388E8',
+    marginTop: responsiveScreenHeight(0.5),
   },
   thumbnailImage: {
     width: responsiveScreenWidth(35),

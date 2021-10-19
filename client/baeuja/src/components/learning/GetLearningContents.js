@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#666666',
   },
   infoIconContainer: {

@@ -84,7 +84,7 @@ const GetRecommandWords = ({ randomNumber }) => {
   return (
     <ScrollView style={{ marginLeft: responsiveScreenWidth(5) }}>
       {isLoading ? (
-        <Text> 로 딩 중 입 니 다 ...!.!.!.!</Text>
+        <Text> Loading ...</Text>
       ) : (
         recommendationWords.map((word) => <DrawRecommandWords key={word.wordId} word={word} />)
       )}
@@ -116,7 +116,7 @@ const DrawRecommandWords = ({ word }) => {
       <View style={styles.recommandWordsContainer}>
         <View style={styles.recommandWordTextContainer}>
           <Text style={styles.recommandWord}>#{word.korean}</Text>
-          <Text style={styles.recommandWordImportance}>Impo {word.importance}</Text>
+          <Text style={styles.recommandWordImportance}>importance {word.importance}</Text>
         </View>
         <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
           {sameRecommandWord.map((sentences) => (
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     color: '#999999',
     position: 'absolute',
     fontSize: responsiveFontSize(1.5),
-    left: responsiveScreenWidth(75),
+    left: responsiveScreenWidth(65),
     top: responsiveScreenHeight(1),
   },
   recommandWordContainer: {

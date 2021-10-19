@@ -15,125 +15,32 @@ import {
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
-const GetBookmarkedWords = () => {
+const GetBookmarkedWords = ({ bookmarkedWords }) => {
   return (
     <View>
-      <DrawBookmarkedWords />
+      {bookmarkedWords.map((bookmarkWord) => {
+        <DrawBookmarkedWords key={bookmarkWord.wordId} bookmarkWord={bookmarkWord} />;
+      })}
     </View>
   );
 };
 
-const DrawBookmarkedWords = () => {
+const DrawBookmarkedWords = ({ bookmarkWord }) => {
   return (
     <ScrollView>
       <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
         <TouchableOpacity>
           <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>첫 눈</Text>
-            <Text style={styles.bookmarkedWords}>First sight</Text>
+            <Text style={styles.bookmarkedWords}>{bookmarkWord.korean}</Text>
+            <Text style={styles.bookmarkedWords}>{bookmarkWord.translation}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>허리</Text>
-            <Text style={styles.bookmarkedWords}>Waist</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
-        </TouchableOpacity>
-      </Card>
-      {/*단어 카드 구분 */}
-      <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <TouchableOpacity>
-          <View style={styles.bookmarkedWordsContainer}>
-            <Text style={styles.bookmarkedWords}>생각</Text>
-            <Text style={styles.bookmarkedWords}>Thinking</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkedIconContainer}>
-          <Ionicons color={'#FFAD41'} size={25} name={'bookmark'}></Ionicons>
+          <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
         </TouchableOpacity>
       </Card>
     </ScrollView>

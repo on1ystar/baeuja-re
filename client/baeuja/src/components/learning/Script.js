@@ -15,17 +15,18 @@ import {
 import { Card } from 'react-native-elements'; // React Native Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import axios from 'axios'; // axios
 
 // Component import
 import Words from './Words';
 
-const Script = ({ currentSentence }) => {
+const Script = ({ currentSentence, updateIsBookmark }) => {
   const navigation = useNavigation();
-  const [isBookmarked, setIsBookmarked] = useState(currentSentence.isBookmark);
   let koreanResult = [];
   let englishResult = [];
-
-  console.log('Current Sentence is :', currentSentence);
+  // const [bookmarkValue, setBookmarkValue] = useState(isBookmarked);
 
   // 한국어 문장 만들기
   const drawKoreanSentence = () => {
@@ -37,6 +38,7 @@ const Script = ({ currentSentence }) => {
       let idx;
       let temp = [];
       let findFlag = false;
+      let wordId = word.wordId;
       koreanResult.forEach((element) => {
         if (typeof element === 'string') {
           idx = element.indexOf(word.koreanInText);
@@ -51,7 +53,7 @@ const Script = ({ currentSentence }) => {
                 navigation.navigate('Stack', {
                   screen: 'LearningWord',
                   params: {
-                    word,
+                    wordId,
                   },
                 })
               }
@@ -85,6 +87,7 @@ const Script = ({ currentSentence }) => {
     resultEnglishWords.forEach((word) => {
       let idx;
       let temp = [];
+      let wordId = word.wordId;
       englishResult.forEach((element) => {
         if (typeof element === 'string') {
           idx =
@@ -100,7 +103,7 @@ const Script = ({ currentSentence }) => {
                 navigation.navigate('Stack', {
                   screen: 'LearningWord',
                   params: {
-                    word,
+                    wordId,
                   },
                 })
               }
@@ -125,20 +128,58 @@ const Script = ({ currentSentence }) => {
     return englishResult;
   };
 
+  // 즐겨찾기 추가 함수
+  const addBookmark = () => {
+    AsyncStorage.getItem('token', async (error, token) => {
+      // setBookmarkValue(!bookmarkValue);
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        // AsyncStorage error
+        if (error) throw error;
+        console.log(currentSentence.sentenceId);
+        const {
+          data: { success, isBookmark },
+        } = await axios.post(
+          `https://api.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        //   if (tokenExpired) {
+        //     // login으로 redirect
+        //   }
+
+        updateIsBookmark(currentSentence.sentenceId);
+
+        console.log(`Bookmark Post Success is :${success}`);
+        console.log(`After Post, isBookmark is :${isBookmark}`);
+
+        if (!success) throw new Error(errorMessage);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  // Script 렌더링 부분
   return (
     <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
       <TouchableOpacity
         style={styles.bookmarkContainer}
         onPress={() => {
-          setIsBookmarked(!isBookmarked);
-          console.log(isBookmarked);
+          addBookmark();
         }}
       >
-        <Ionicons
+        <Antdesign
           size={25}
-          color={isBookmarked ? '#FFAD41' : '#AAAAAA'}
-          name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-        ></Ionicons>
+          color={currentSentence.isBookmark ? '#FFAD41' : '#AAAAAA'}
+          name={currentSentence.isBookmark ? 'star' : 'staro'}
+        ></Antdesign>
       </TouchableOpacity>
       <Text style={styles.koreanScript}>{drawKoreanSentence()}</Text>
       <Text style={styles.englishScript}>{drawEnglishSentence()}</Text>

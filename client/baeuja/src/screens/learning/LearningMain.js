@@ -52,7 +52,7 @@ class LearningMain extends React.Component {
                   })
                 }
               >
-                <Text style={{ color: '#666666' }}>more</Text>
+                <Text style={{ color: '#666666', fontWeight: 'bold' }}>more</Text>
               </TouchableOpacity>
             </View>
             <View style={{ height: responsiveScreenHeight(44) }}>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(3.2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#9388E8',
+    color: '#444444',
     // backgroundColor: 'black',
   },
   kpopTextContainer: {

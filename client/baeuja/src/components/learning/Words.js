@@ -21,7 +21,8 @@ const Words = ({ currentSentence }) => {
     words.push(
       <Text key={word.wordId} style={{ color: '#797979' }}>
         {word.korean} : {word.translation}
-      </Text>
+      </Text>,
+      ' '
     );
   });
   return <Text>{words}</Text>;

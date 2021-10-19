@@ -296,101 +296,106 @@ const Tools = ({ currentSentence }) => {
   // 학습 도구 부분 리턴
   return (
     <View>
-      <View style={LearningStyles.learningButtonContainer}>
-        {/* 성우 음성 재생 버튼 */}
-        {isPlayPerfectVoice ? (
-          <TouchableOpacity
-            style={LearningStyles.learningButtonPlay}
-            onPress={() => {
-              onPlayPerfectVoice();
-            }}
-            disabled={isPlayPerfectVoice}
-          >
-            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
-          </TouchableOpacity>
-        ) : (
+      <View>
+        <View style={LearningStyles.learningButtonContainer}>
+          {/* 성우 음성 재생 버튼 */}
+          {isPlayPerfectVoice ? (
+            <TouchableOpacity
+              style={LearningStyles.learningButtonPlay}
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+              disabled={isPlayPerfectVoice}
+            >
+              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={LearningStyles.learningButton}
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+            >
+              <Ionicons name="volume-off-outline" size={30} color="#BBBBBB"></Ionicons>
+            </TouchableOpacity>
+          )}
+
+          {/* 음성 녹음 버튼 */}
           <TouchableOpacity
             style={LearningStyles.learningButton}
             onPress={() => {
-              onPlayPerfectVoice();
+              onStartRecord();
             }}
           >
-            <Ionicons name="volume-off-outline" size={30} color="#BBBBBB"></Ionicons>
+            <Ionicons name="mic-outline" size={30} color="#BBBBBB" />
           </TouchableOpacity>
-        )}
-
-        {/* 음성 녹음 버튼 */}
-        <TouchableOpacity
-          style={LearningStyles.learningButton}
-          onPress={() => {
-            onStartRecord();
-          }}
-        >
-          <Ionicons name="mic-outline" size={30} color="#BBBBBB" />
-        </TouchableOpacity>
-        {/* 음성 중지 버튼으로 바뀌는 부분 */}
-        <TouchableOpacity
-          style={
-            isRecordingUserVoice
-              ? LearningStyles.learningButtonCover
-              : LearningStyles.learningButtonHidden
-          }
-          onPress={() => {
-            onStopRecord();
-          }}
-        >
-          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
-        </TouchableOpacity>
-
-        {/* 유저 음성 재생 버튼 */}
-        {isMoreThanOneTimeRecord ? (
+          {/* 음성 중지 버튼으로 바뀌는 부분 */}
           <TouchableOpacity
             style={
-              isPlayUserVoice ? LearningStyles.learningButtonPlay : LearningStyles.learningButton
+              isRecordingUserVoice
+                ? LearningStyles.learningButtonCover
+                : LearningStyles.learningButtonHidden
             }
-            onPress={() => onStartPlay()}
-            disabled={isPlayUserVoice}
+            onPress={() => {
+              onStopRecord();
+            }}
           >
-            <Ionicons
-              style={{ marginTop: 2 }}
-              name={isPlayUserVoice ? 'ear' : 'ear-outline'}
-              size={27}
-              color={isPlayUserVoice ? '#9388E8' : '#BBBBBB'}
-            />
+            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={LearningStyles.learningButton}
-            onPress={() => onStartPlay()}
-            disabled={true}
-          >
-            <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#BBBBBB" />
-          </TouchableOpacity>
-        )}
-      </View>
 
-      {/* 발화 평가 결과 */}
-      <View>
-        {isMoreThanOneTimeRecord ? (
-          evaluatedSentence !== null && pitchData !== null ? (
-            <View>
-              <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
-            </View>
-          ) : (
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
-              <Progress.Circle
-                size={60}
-                animated={true}
-                color={'#9388E8'}
-                borderWidth={8}
-                strokeCap={'round'}
-                indeterminate={true}
+          {/* 유저 음성 재생 버튼 */}
+          {isMoreThanOneTimeRecord ? (
+            <TouchableOpacity
+              style={
+                isPlayUserVoice ? LearningStyles.learningButtonPlay : LearningStyles.learningButton
+              }
+              onPress={() => onStartPlay()}
+              disabled={isPlayUserVoice}
+            >
+              <Ionicons
+                style={{ marginTop: 2 }}
+                name={isPlayUserVoice ? 'ear' : 'ear-outline'}
+                size={27}
+                color={isPlayUserVoice ? '#9388E8' : '#BBBBBB'}
               />
-            </View>
-          )
-        ) : (
-          <></>
-        )}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={LearningStyles.learningButton}
+              onPress={() => onStartPlay()}
+              disabled={true}
+            >
+              <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#BBBBBB" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* 발화 평가 결과 */}
+        <View>
+          {isMoreThanOneTimeRecord ? (
+            evaluatedSentence !== null && pitchData !== null ? (
+              <View>
+                <SpeechEvaluationResult
+                  evaluatedSentence={evaluatedSentence}
+                  pitchData={pitchData}
+                />
+              </View>
+            ) : (
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+                <Progress.Circle
+                  size={60}
+                  animated={true}
+                  color={'#9388E8'}
+                  borderWidth={8}
+                  strokeCap={'round'}
+                  indeterminate={true}
+                />
+              </View>
+            )
+          ) : (
+            <></>
+          )}
+        </View>
       </View>
     </View>
   );

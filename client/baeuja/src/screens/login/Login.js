@@ -183,8 +183,9 @@ class Login extends Component {
             <Text style={styles.textThree}>BAEUJA</Text>
             <Text style={styles.textFour}>Learning Korean with K-Contents</Text>
           </View>
+          {/* 구글 로그인 버튼 */}
           <View style={styles.loginBtnContainer}>
-            <View>
+            {/* <View>
               <TouchableOpacity onPress={() => this.googleSignIn()}>
                 <View style={styles.googleLoginBtn}>
                   <ImageBackground
@@ -196,15 +197,15 @@ class Login extends Component {
                   </ImageBackground>
                 </View>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           <View>
             <TouchableOpacity
               style={styles.guestLoginContainer}
               onPress={() => this.getToken('guest')}
             >
-              <Text style={styles.guestLoginText}>Don't want to sign up? Try Guest Mode</Text>
-              <Ionicons size={25} name="chevron-forward-outline" color={'#666666'} />
+              <Text style={styles.guestLoginText}>Try BAEUJA with guest</Text>
+              <Ionicons size={25} name="chevron-forward-outline" color={'#4278A4'} />
             </TouchableOpacity>
           </View>
         </View>
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    color: '#666666',
+    color: '#4278A4',
   },
   guestLoginContainer: {
     flexDirection: 'row',

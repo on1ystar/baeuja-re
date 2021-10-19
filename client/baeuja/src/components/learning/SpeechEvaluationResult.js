@@ -74,9 +74,17 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               }}
             />
           </View>
+        </View>
+      )}
+    </View>
+  );
+};
 
-          {/* 발화 평가 피치 그래프 주석 */}
-          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+{
+  /* 발화 평가 피치 그래프 주석 */
+}
+{
+  /* <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
             <View
               style={{
                 width: responsiveScreenWidth(75),
@@ -105,31 +113,16 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
                 }}
               >
                 Voice Actor
-                {/* <Divider
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: responsiveScreenWidth(10),
-                  }}
-                  color="#9388E8"
-                  width={responsiveScreenHeight(0.5)}
-                  orientation="horizontal"
-                /> */}
-                {/* <Divider
-                    style={{
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: responsiveScreenWidth(10),
-                    }}
-                    color="#88E889"
-                    width={responsiveScreenHeight(0.5)}
-                    orientation="horizontal"
-                  /> */}
+                
               </Text>
-            </View>
+            </View> */
+}
 
-            {/* 발화 평가 피치 그래프  */}
-            <Chart
+{
+  /* 발화 평가 피치 그래프  */
+}
+{
+  /* <Chart
               style={{ height: 200, width: '80%', backgroundColor: '#FFFFFF' }}
               xDomain={{
                 min: 0,
@@ -160,11 +153,8 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               />
             </Chart>
           </View>
-        </View>
-      )}
-    </View>
-  );
-};
+        </View> */
+}
 
 const styles = StyleSheet.create({
   container: {

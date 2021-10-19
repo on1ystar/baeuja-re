@@ -15,6 +15,7 @@ import {
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
@@ -23,7 +24,80 @@ import GetBookmarkedWords from '../../components/bookmark/GetBookmarkedWords';
 import GetBookmarkedSentences from '../../components/bookmark/GetBookmarkedSentences';
 
 const Bookmark = () => {
-  const [words, setWords] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [words, setWords] = useState(false);
+  const [bookmarkedSentences, setBookmarkedSentences] = useState([]);
+  const [bookmarkedWords, setBookmarkedWords] = useState([]);
+
+  const loadBookmarkedSentences = () => {
+    // 즐겨찾기 문장 데이터 가져오기
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        if (error) throw error;
+        const {
+          data: { success, sentences, tokenExpired, errorMessage },
+        } = await axios.get(`https://api.k-peach.io/bookmark/sentences`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (tokenExpired) {
+          // login으로 redirect
+        }
+        console.log(`success : ${success}\n sentences: ${sentences}`);
+
+        if (!success) throw new Error(errorMessage);
+
+        console.log('Success Getting Bookmarked Sentences');
+
+        setBookmarkedSentences(sentences);
+        setIsLoading(() => false);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  const loadBookmarkedWords = () => {
+    // 즐겨찾기 문장 데이터 가져오기
+    AsyncStorage.getItem('token', async (error, token) => {
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        if (error) throw error;
+        const {
+          data: { success, words, tokenExpired, errorMessage },
+        } = await axios.get(`https://api.k-peach.io/bookmark/words`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (tokenExpired) {
+          // login으로 redirect
+        }
+        console.log(`success : ${success}\n words: ${words}`);
+
+        if (!success) throw new Error(errorMessage);
+
+        console.log('Success Getting Bookmarked Words');
+
+        setBookmarkedWords(words);
+        setIsLoading(() => false);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  useEffect(loadBookmarkedSentences, []);
+  useEffect(loadBookmarkedWords, []);
+
   return (
     <View style={styles.allContainer}>
       <View style={styles.bookmarkTitleContainer}>
@@ -74,11 +148,11 @@ const Bookmark = () => {
       <ScrollView>
         {words ? (
           <ScrollView>
-            <GetBookmarkedWords />
+            <GetBookmarkedWords bookmarkedWords={bookmarkedWords} />
           </ScrollView>
         ) : (
           <ScrollView>
-            <GetBookmarkedSentences />
+            <GetBookmarkedSentences bookmarkedSentences={bookmarkedSentences} />
           </ScrollView>
         )}
       </ScrollView>

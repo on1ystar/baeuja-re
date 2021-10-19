@@ -69,8 +69,8 @@ const Home = () => {
     >
       <View style={styles.newTextConatainer}>
         <Text>
-          <Ionicons size={30} color={'#FFE500'} name="sunny"></Ionicons>
-          <Text style={styles.mainText}>New</Text> <Text style={{ color: '#000000' }}>(4)</Text>
+          {/* <Ionicons size={30} color={'#FFE500'} name="sunny"></Ionicons> */}
+          <Text style={styles.mainText}>New</Text>
         </Text>
       </View>
       <ScrollView nestedScrollEnabled={true} horizontal showsHorizontalScrollIndicator={false}>
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#9388E8',
+    color: '#444444',
     // backgroundColor: 'black',
   },
   recommendWordConatainer: {

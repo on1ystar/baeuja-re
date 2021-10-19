@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     marginLeft: responsiveScreenWidth(5),
   },
   title: {
-    color: '#999999',
+    color: '#444444',
     width: responsiveScreenWidth(50),
     marginTop: responsiveScreenHeight(1),
     fontSize: responsiveFontSize(2.1),
@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(1),
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
-    color: '#999999',
+    fontWeight: '600',
+    color: '#666666',
   },
   infoIconContainer: {
     marginLeft: responsiveScreenWidth(5),

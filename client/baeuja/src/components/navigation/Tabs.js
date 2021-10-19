@@ -3,6 +3,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Tab Navigation
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions'; // RN responsive Screen
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 
 // Screnn import
 import LearningMain from '../../screens/learning/LearningMain';
@@ -10,7 +11,6 @@ import Bookmark from '../../screens/bookmark/Bookmark';
 import Home from '../../screens/home/Home';
 import Review from '../../screens/review/Review';
 import My from '../../screens/my/My';
-import HomeTest from '../../screens/home/HomeTest';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,21 +35,15 @@ const Tabs = () => (
         },
       }}
     />
-    {/* <Tab.Screen
+    <Tab.Screen
       name="Bookmark"
       component={Bookmark}
       options={{
         tabBarIcon: ({ focused, color, size }) => {
-          return (
-            <Ionicons
-              name={focused ? 'bookmarks' : 'bookmarks-outline'}
-              color={color}
-              size={size}
-            />
-          );
+          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
         },
       }}
-    /> */}
+    />
     <Tab.Screen
       name="Home"
       component={Home}
@@ -69,7 +63,7 @@ const Tabs = () => (
           );
         },
       }}
-    />
+    /> */}
     <Tab.Screen
       name="My"
       component={My}
@@ -80,7 +74,7 @@ const Tabs = () => (
           );
         },
       }}
-    /> */}
+    />
   </Tab.Navigator>
 );
 

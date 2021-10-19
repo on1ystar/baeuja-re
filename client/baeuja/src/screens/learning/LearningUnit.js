@@ -31,6 +31,8 @@ import Icon3 from 'react-native-vector-icons/MaterialIcons'; // MaterialIcons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import RNFS from 'react-native-fs';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navigation
+import { Card } from 'react-native-elements'; // React Native Elements
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 // Component import
 import Script from '../../components/learning/Script';
@@ -50,9 +52,6 @@ const LearningUnit = ({
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEvaluationLoading, setIsEvaluationLoading] = useState(true);
-  const [evaluatedSentence, setEvaluatedSentence] = useState({});
-  const [pitchData, setPitchData] = useState({});
   const [currentSentence, setCurrentSentence] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
@@ -102,6 +101,7 @@ const LearningUnit = ({
 
         setUnit(unit);
         setSentences(sentences);
+        setCurrentSentence(sentences[0]);
         setIsLoading(() => false);
       } catch (error) {
         console.log(error);
@@ -130,6 +130,20 @@ const LearningUnit = ({
     [youtubeRef.current]
   );
 
+  // 북마크 상태 업데이트 함수 (자식 컴포넌트에서 호출됨)
+  const updateIsBookmark = (sentenceId) => {
+    const updateSentences = sentences.map((sentence) => {
+      if (sentence.sentenceId == sentenceId) {
+        sentence.isBookmark = !sentence.isBookmark;
+      }
+      return sentence;
+    });
+
+    setSentences(updateSentences);
+    // sentences에서 sentenceId에 해당하는 sentence 객체 찾아서 isBookmark 값 반대로 바꾸고
+    // 그 수정 된 sentences를 setSentences()로 수정
+  };
+
   // -------------------------------------useEffect----------------------------------------
   useEffect(loadUnit, []);
 
@@ -151,6 +165,7 @@ const LearningUnit = ({
     };
   }, [isPlaying]);
 
+  // 영상 끝났을 때
   useEffect(() => {
     if (isEnded) {
       youtubeRef.current.seekTo(
@@ -192,11 +207,7 @@ const LearningUnit = ({
           </View>
           {/* 스크립트, 단어 그리기 */}
           <View style={{ flex: 1 }}>
-            {Object.keys(currentSentence).length !== 0 && currentSentence !== undefined ? (
-              <Script currentSentence={currentSentence} />
-            ) : (
-              <Text></Text>
-            )}
+            <Script currentSentence={currentSentence} updateIsBookmark={updateIsBookmark} />
           </View>
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
@@ -215,5 +226,38 @@ const LearningUnit = ({
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  allContainer: {
+    flex: 1,
+  },
+  container: {
+    marginRight: responsiveScreenWidth(3),
+  },
+  bookmarkContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    right: responsiveScreenWidth(-3),
+    top: responsiveScreenHeight(-1),
+  },
+  koreanScript: {
+    fontSize: responsiveFontSize(2.1),
+    color: '#555555',
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
+  },
+  englishScript: {
+    fontSize: responsiveFontSize(2.1),
+    color: '#555555',
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
+  },
+});
 
 export default LearningUnit;

@@ -17,7 +17,7 @@ import {
 const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
   const [isLoading, setIsLoading] = useState(true);
   let userScore = evaluatedWord.score;
-  let progress = userScore * 0.01;
+  let progress = userScore * 0.01 + 0.2;
 
   const render = () => {
     setIsLoading(false);
@@ -33,6 +33,7 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
       ) : (
         <View>
           {/* 발화 평가 등급 */}
+
           <View style={styles.rankingChart}>
             {console.log('Word Speech Evaluation Result user Score :', userScore)}
             <Progress.Circle

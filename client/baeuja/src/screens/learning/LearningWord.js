@@ -17,22 +17,24 @@ import { Card } from 'react-native-elements'; // React Native Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 import axios from 'axios'; // axios
 
 // Component import
 import WordTools from '../../components/learning/WordTools';
+import { set } from 'react-native-reanimated';
 
 const LearningWord = ({
   route: {
-    params: { word },
+    params: { wordId },
   },
 }) => {
   // state
   const [isLoading, setIsLoading] = useState(true);
-  const [wordId, setWordId] = useState(word.wordId);
-  const [words, setWords] = useState({});
+  const [word, setWord] = useState({});
   const [exampleSentences, setExampleSentences] = useState([]);
 
+  // word 가져오는 함수
   const loadWord = async () => {
     console.log(`load Word => word ID : ${wordId}`);
     // Word 데이터 조회
@@ -69,11 +71,47 @@ const LearningWord = ({
 
         console.log('success getting Word Data');
 
-        setWords(word);
+        setWord(word);
         setExampleSentences(sentences);
         setIsLoading(() => false);
-        console.log(words);
         console.log(exampleSentences);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  // Bookmark 추가 함수
+  const addBookmark = () => {
+    AsyncStorage.getItem('token', async (error, token) => {
+      // setBookmarkValue(!bookmarkValue);
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        // AsyncStorage error
+        if (error) throw error;
+        console.log(wordId);
+        const {
+          data: { success, isBookmark },
+        } = await axios.post(
+          `https://api.k-peach.io/bookmark/words/${wordId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        //   if (tokenExpired) {
+        //     // login으로 redirect
+        //   }
+
+        const newWord = { ...word, isBookmark: !word.isBookmark };
+        setWord(newWord);
+        console.log(`Bookmark Post Success is :${success}`);
+        console.log(`After Post, Word isBookmark is :${isBookmark}`);
+        if (!success) throw new Error(errorMessage);
       } catch (error) {
         console.log(error);
       }
@@ -91,18 +129,32 @@ const LearningWord = ({
       ) : (
         <View style={styles.allContainer}>
           <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-            <Text style={styles.koreanWord}>{words.korean}</Text>
-            <Text style={styles.translatedWord}>{words.translation}</Text>
-            <Text style={styles.wordImportance}>importance : {words.importance}</Text>
+            <Text style={styles.koreanWord}>{word.korean}</Text>
+            <Text style={styles.translatedWord}>{word.translation}</Text>
+            <Text style={styles.wordImportance}>importance : {word.importance}</Text>
+            <TouchableOpacity
+              style={styles.wordBookmarkIcon}
+              onPress={() => {
+                addBookmark();
+              }}
+            >
+              <Antdesign
+                size={25}
+                color={word.isBookmark ? '#FFAD41' : '#AAAAAA'}
+                name={word.isBookmark ? 'star' : 'staro'}
+              ></Antdesign>
+            </TouchableOpacity>
           </Card>
           <View style={styles.wordToolsContainer}>
-            <WordTools words={words} />
+            <WordTools words={word} />
           </View>
-          <View style={{ marginTop: responsiveScreenHeight(5) }}>
-            {exampleSentences.map((sentence) => (
-              <DrawExampleSentences key={sentence.sentenceId} sentence={sentence} />
-            ))}
-          </View>
+          <ScrollView>
+            <View style={{ marginTop: responsiveScreenHeight(5) }}>
+              {exampleSentences.map((sentence) => (
+                <DrawExampleSentences key={sentence.sentenceId} sentence={sentence} />
+              ))}
+            </View>
+          </ScrollView>
         </View>
       )}
     </View>
@@ -180,6 +232,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: responsiveScreenWidth(-3),
     top: responsiveScreenHeight(1.25),
+  },
+  wordBookmarkIcon: {
+    position: 'absolute',
+    right: responsiveScreenWidth(0),
+    top: responsiveScreenHeight(0),
   },
 });
 
