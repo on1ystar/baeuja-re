@@ -60,6 +60,11 @@ paths:
     $ref: './paths/bookmark/words.yaml'
   /bookmark/words/{wordId}:
     $ref: './paths/bookmark/word.yaml'
+  # /qna:
+  #   $ref: './paths/qna/qnas.yaml'
+  # /qna/{qnaId}:
+  #   $ref: './paths/qna/qna.yaml'
+  # /qna/ posti
 components:
   parameters:
     $ref: './parameters.yaml'

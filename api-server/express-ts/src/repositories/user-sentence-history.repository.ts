@@ -5,8 +5,6 @@
  */
 
 import { PoolClient, QueryResult } from 'pg';
-import format from 'pg-format';
-import { getNowKO } from '../utils/Date';
 import { UserSentenceHistoryPK } from '../entities/user-sentence-history.entity';
 import SentenceRepository from './sentence.repository';
 import { UnitPK } from '../entities/unit.entity';
@@ -29,11 +27,10 @@ export default class UserSentenceHistoryRepository {
     try {
       await client.query(
         `INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) 
-        VALUES($1, $2, $3, $4)`,
+        VALUES($1, $2, default, $3)`,
         [
           userId,
           sentenceId,
-          getNowKO(), // latest_learning_at
           DEFAULT_LEARNING_RATE // learning_rate
         ]
       );
@@ -92,14 +89,10 @@ export default class UserSentenceHistoryRepository {
       const perfectVoiceCounts: number = (
         await client.query(
           `UPDATE user_sentence_history 
-          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = $1
-          WHERE user_id = $2 AND sentence_id = $3
+          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = default
+          WHERE user_id = $1 AND sentence_id = $2
           RETURNING perfect_voice_counts`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            sentenceId
-          ]
+          [userId, sentenceId]
         )
       ).rows[0].perfect_voice_counts;
       console.info(
@@ -123,14 +116,10 @@ export default class UserSentenceHistoryRepository {
       const userVoiceCounts: number = (
         await client.query(
           `UPDATE user_sentence_history 
-          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = $1 
-          WHERE user_id = $2 AND sentence_id = $3 
+          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = default
+          WHERE user_id = $1 AND sentence_id = $2
           RETURNING user_voice_counts`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            sentenceId
-          ]
+          [userId, sentenceId]
         )
       ).rows[0].user_voice_counts;
       console.info(
@@ -159,12 +148,11 @@ export default class UserSentenceHistoryRepository {
       );
       await client.query(
         `UPDATE user_sentence_history 
-          SET latest_learning_at = $1
-          WHERE user_id = $2 
-            AND $3 <= sentence_id 
-            AND sentence_id <= $4`,
+          SET latest_learning_at = default
+          WHERE user_id = $1
+            AND $2 <= sentence_id 
+            AND sentence_id <= $3`,
         [
-          getNowKO(),
           userId,
           sentenceIdList[0].sentenceId,
           sentenceIdList[sentenceIdList.length - 1].sentenceId
@@ -189,17 +177,14 @@ export default class UserSentenceHistoryRepository {
     try {
       const isBookmark: boolean = (
         await client.query(
-          `UPDATE user_sentence_history 
-          SET is_bookmark = NOT is_bookmark, bookmark_at = $1 
-          WHERE user_id = $2 AND sentence_id = $3 
+          `UPDATE user_sentence_history
+          SET is_bookmark = NOT is_bookmark, bookmark_at = default
+          WHERE user_id = $1 AND sentence_id = $2
           RETURNING is_bookmark`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            sentenceId
-          ]
+          [userId, sentenceId]
         )
       ).rows[0].is_bookmark;
+
       console.info("✅ updated user_sentence_history table's is_bookmark");
       return isBookmark;
     } catch (error) {
@@ -240,18 +225,16 @@ export default class UserSentenceHistoryRepository {
     sentencesId: any[]
   ) => {
     try {
-      const ARRAY_INSERT_SQL = format(
+      const valuesList = sentencesId
+        .map(
+          sentenceId =>
+            `(${userId}, ${sentenceId}, default, ${DEFAULT_LEARNING_RATE})`
+        )
+        .join(',');
+      await client.query(
         `INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) 
-        VALUES %L`,
-        sentencesId.map(sentenceId => [
-          userId,
-          sentenceId,
-          getNowKO(),
-          DEFAULT_LEARNING_RATE
-        ])
+      VALUES${valuesList}`
       );
-
-      await client.query(ARRAY_INSERT_SQL);
       console.info("✅ inserted user_sentence_history table's rows");
     } catch (error) {
       console.warn(

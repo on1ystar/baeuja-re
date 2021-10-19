@@ -9,7 +9,6 @@ import {
   UserUnitHistory,
   UserUnitHistoryPK
 } from '../entities/user-unit-history.entity.';
-import { getNowKO } from '../utils/Date';
 import { getSelectColumns } from '../utils/Query';
 
 type UserUnitHistoryToBeSaved = UserUnitHistoryPK;
@@ -23,13 +22,12 @@ export default class UserUnitHistoryRepository {
     try {
       await client.query(
         `INSERT INTO user_unit_history 
-        VALUES($1, $2, $3, $4, $5)`,
+        VALUES($1, $2, $3, $4)`,
         [
           userId, // user_id
           contentId, // content_id
           unitIndex, // unit_index
-          1, // counts (DEFAULT = 1)
-          getNowKO() // latest_learning_at
+          1 // counts (DEFAULT = 1)
         ]
       );
       console.info("✅ inserted user_unit_history table's row");
@@ -47,10 +45,9 @@ export default class UserUnitHistoryRepository {
     try {
       await client.query(
         `UPDATE user_unit_history 
-        SET counts = counts + 1, latest_learning_at = $1
-        WHERE user_id = $2 AND content_id = $3 AND unit_index = $4`,
+        SET counts = counts + 1, latest_learning_at = default
+        WHERE user_id = $1 AND content_id = $2 AND unit_index = $3`,
         [
-          getNowKO(), // latest_learning_at
           userId, // user_id
           contentId, // content_id
           unitIndex // unit_index
