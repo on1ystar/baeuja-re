@@ -6,7 +6,6 @@
 
 import { PoolClient, QueryResult } from 'pg';
 import Unit from '../entities/unit.entity';
-import Word from '../entities/word.entity';
 import { getSelectColumns } from '../utils/Query';
 
 export default class UnitRepository {
