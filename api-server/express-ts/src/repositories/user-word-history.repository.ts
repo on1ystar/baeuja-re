@@ -14,8 +14,8 @@ export default class UserWordHistoryRepository {
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_word_history(user_id, word_id, latest_learning_at, learning_rate) 
-        VALUES($1, $2, default, $3)`,
+        `INSERT INTO user_word_history(user_id, word_id, learning_rate, bookmark_at) 
+        VALUES($1, $2, $3, NULL)`,
         [
           userId,
           wordId,

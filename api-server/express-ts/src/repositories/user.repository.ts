@@ -85,7 +85,7 @@ export default class UserRepository {
             RETURNING user_id, email, nickname`
         )
       ).rows[0];
-      console.info(`✅  updated latest login at`);
+      console.info(`✅ updated userId: ${user_id} latest login at`);
       return { userId: user_id, email, nickname };
     } catch (error) {
       console.warn('❌ Error: user.repository.ts updateLatestLogin function ');

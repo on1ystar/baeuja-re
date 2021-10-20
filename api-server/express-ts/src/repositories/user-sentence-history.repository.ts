@@ -26,8 +26,8 @@ export default class UserSentenceHistoryRepository {
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) 
-        VALUES($1, $2, default, $3)`,
+        `INSERT INTO user_sentence_history(user_id, sentence_id, learning_rate, bookmark_at) 
+        VALUES($1, $2, $3, NULL)`,
         [
           userId,
           sentenceId,

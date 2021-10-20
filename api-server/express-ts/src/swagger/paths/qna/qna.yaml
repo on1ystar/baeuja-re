@@ -1,13 +1,13 @@
 get:
   tags:
-    - users
-  summary: get user's detail
+    - qnas
+  summary: get a qna
   security:
     - bearerAuth: []
   parameters:
-    - name: userId
+    - name: qnaId
       in: path
-      description: 조회할 userId
+      description: 조회할 qnaId
       required: true
       schema:
         type: number
@@ -17,7 +17,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/UserDetail'
+            $ref: '../../openapi.yaml#/components/schemas/Qna'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -38,26 +38,26 @@ get:
             $ref: '../../openapi.yaml#/components/schemas/Error'
 patch:
   tags:
-    - users
-  summary: update user's nickname
+    - qnas
+  summary: update a qna's answer
   security:
     - bearerAuth: []
   parameters:
-    - name: userId
+    - name: qnaId
       in: path
-      description: 변경할 userId
+      description: 답변할 qnaId
       required: true
       schema:
         type: number
   requestBody:
-    description: 변경할 닉네임
+    description: 답변 내용
     required: true
     content:
       application/json:
         schema:
           type: object
           properties:
-            nickname:
+            answer:
               type: string
   responses:
     200-304:
@@ -65,7 +65,20 @@ patch:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/User'
+            AnsweredQna:
+              type: object
+              properties:
+                successs:
+                  type: boolean
+                qna:
+                  type: object
+                  properties:
+                    qnaId:
+                      type: number
+                    answer:
+                      type: string
+                    answeredAt:
+                      type: string
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -86,14 +99,14 @@ patch:
             $ref: '../../openapi.yaml#/components/schemas/Error'
 delete:
   tags:
-    - users
-  summary: delete user
+    - qnas
+  summary: delete a qna
   security:
     - bearerAuth: []
   parameters:
-    - name: userId
+    - name: qnaId
       in: path
-      description: 삭제할 userId
+      description: 삭제할 qnaId
       required: true
       schema:
         type: number
@@ -103,7 +116,16 @@ delete:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/User'
+            DeletedQna:
+              type: object
+              properties:
+                successs:
+                  type: boolean
+                qna:
+                  type: object
+                  properties:
+                    qnaId:
+                      type: number
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:

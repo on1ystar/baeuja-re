@@ -6,7 +6,6 @@ export default class Qna {
     readonly title?: string,
     readonly content?: string,
     readonly answer?: string,
-    readonly attachmentUri?: string,
     readonly createdAt?: string,
     readonly answeredAt?: string
   ) {}
