@@ -620,6 +620,63 @@ BookmarkWords:
             type: string
           bookmarkAt:
             type: string
+# -------------------------- qna -------------------------- #
+Qnas:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qnas:
+      type: array
+      items:
+        type: object
+        properties:
+          qnaId:
+            type: number
+          title:
+            type: string
+          content:
+            type: string
+          answer:
+            type: string
+          createdAt:
+            type: string
+          answeredAt:
+            type: string
+Qna:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qna:
+      type: object
+      properties:
+        qnaId:
+          type: number
+        title:
+          type: string
+        content:
+          type: string
+        answer:
+          type: string
+        createdAt:
+          type: string
+        answeredAt:
+          type: string
+QnaTypes:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qnaTypes:
+      type: array
+      items:
+        type: object
+        properties:
+          qnaTypeId:
+            type: number
+          name:
+            type: string
 # -------------------------- error -------------------------- #
 Error:
   type: object

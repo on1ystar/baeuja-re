@@ -5,7 +5,6 @@
  */
 
 import { PoolClient } from 'pg';
-import { getNowKO } from '../utils/Date';
 import UserSentenceEvaluation from '../entities/user-sentence-evaluation.entity';
 
 export interface UserSentenceEvaluationToBeSaved
@@ -33,7 +32,7 @@ export default class UserSentenceEvaluationRepository {
     try {
       await client.query(
         `INSERT INTO user_sentence_evaluation
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+            VALUES($1,$2,$3,$4,$5,$6,$7)`,
         [
           userId,
           sentenceId,
@@ -41,8 +40,7 @@ export default class UserSentenceEvaluationRepository {
           sttResult,
           Math.round(score),
           userVoiceUri,
-          false, // is_public (DEFAULT = false)
-          getNowKO() // created_at
+          false // is_public (DEFAULT = false)
         ]
       );
       return {

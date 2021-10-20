@@ -5,7 +5,6 @@
  */
 
 import { PoolClient, QueryResult } from 'pg';
-import { getNowKO } from '../utils/Date';
 import { UserContentHistoryPK } from '../entities/user-content-history.entity';
 import UnitRepository from '../repositories/unit.repository';
 
@@ -20,12 +19,11 @@ export default class UserContentHistoryRepository {
     try {
       await client.query(
         `INSERT INTO user_content_history
-        VALUES($1, $2, $3, $4, $5, $6)`,
+        VALUES($1, $2, $3, default, $4, $5)`,
         [
           userId, // userId
           contentId, // contentId
           1, // counts (DEFAULT = 1)
-          getNowKO(), // leatestLearningAt
           '00:00:00', // learningTime (DEFAULT = 00:00:00)
           0 // progressRate (DEFAULT = 0)
         ]
@@ -47,10 +45,9 @@ export default class UserContentHistoryRepository {
     try {
       await client.query(
         `UPDATE user_content_history
-        SET counts = counts + 1, latest_learning_at = $1
-        WHERE user_id = $2 AND content_id = $3 `,
+        SET counts = counts + 1, latest_learning_at = default
+        WHERE user_id = $1 AND content_id = $2`,
         [
-          getNowKO(), // leatestLearningAt
           userId, // userId
           contentId // contentId
         ]
@@ -84,9 +81,9 @@ export default class UserContentHistoryRepository {
       ).toFixed(2);
       await client.query(
         `UPDATE user_content_history
-        SET progress_rate = $1, latest_learning_at = $2
-        WHERE user_id = $3 AND content_id = $4`,
-        [Math.round(progressRate * 100), getNowKO(), userId, contentId]
+        SET progress_rate = $1, latest_learning_at = default
+        WHERE user_id = $2 AND content_id = $3`,
+        [Math.round(progressRate * 100), userId, contentId]
       );
       console.info("✅ updated user_content_history table's progress_rate");
     } catch (error) {

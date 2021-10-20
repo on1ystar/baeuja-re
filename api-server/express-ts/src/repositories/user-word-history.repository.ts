@@ -1,6 +1,5 @@
 import { PoolClient, QueryResult } from 'pg';
 import { UserWordHistoryPK } from '../entities/user-word-history.entity';
-import { getNowKO } from '../utils/Date';
 import { getSelectColumns } from '../utils/Query';
 
 const DEFAULT_LEARNING_RATE = 0;
@@ -15,12 +14,11 @@ export default class UserWordHistoryRepository {
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_word_history(user_id, word_id, latest_learning_at, learning_rate) 
-        VALUES($1, $2, $3, $4)`,
+        `INSERT INTO user_word_history(user_id, word_id, learning_rate, bookmark_at) 
+        VALUES($1, $2, $3, NULL)`,
         [
           userId,
           wordId,
-          getNowKO(), // latest_learning_at
           DEFAULT_LEARNING_RATE // learning_rate
         ]
       );
@@ -77,14 +75,10 @@ export default class UserWordHistoryRepository {
       const counts: number = (
         await client.query(
           `UPDATE user_word_history 
-          SET counts = counts + 1, latest_learning_at = $1
-          WHERE user_id = $2 AND word_id = $3
+          SET counts = counts + 1, latest_learning_at = default
+          WHERE user_id = $1 AND word_id = $2
           RETURNING counts`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            wordId
-          ]
+          [userId, wordId]
         )
       ).rows[0].perfect_voice_counts;
       console.info("✅ updated user_word_history table's counts++");
@@ -106,14 +100,10 @@ export default class UserWordHistoryRepository {
       const perfectVoiceCounts: number = (
         await client.query(
           `UPDATE user_word_history 
-          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = $1
-          WHERE user_id = $2 AND word_id = $3
+          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = default
+          WHERE user_id = $1 AND word_id = $2
           RETURNING perfect_voice_counts`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            wordId
-          ]
+          [userId, wordId]
         )
       ).rows[0].perfect_voice_counts;
       console.info("✅ updated user_word_history table's perfect_voice_counts");
@@ -136,14 +126,10 @@ export default class UserWordHistoryRepository {
       const userVoiceCounts: number = (
         await client.query(
           `UPDATE user_word_history 
-          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = $1 
-          WHERE user_id = $2 AND word_id = $3 
+          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = default
+          WHERE user_id = $1 AND word_id = $2
           RETURNING user_voice_counts`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            wordId
-          ]
+          [userId, wordId]
         )
       ).rows[0].user_voice_counts;
       console.info("✅ updated user_word_history table's user_voice_counts");
@@ -165,14 +151,10 @@ export default class UserWordHistoryRepository {
       const isBookmark: boolean = (
         await client.query(
           `UPDATE user_word_history 
-          SET is_bookmark = NOT is_bookmark, bookmark_at = $1 
-          WHERE user_id = $2 AND word_id = $3 
+          SET is_bookmark = NOT is_bookmark, bookmark_at = default
+          WHERE user_id = $1 AND word_id = $2
           RETURNING is_bookmark`,
-          [
-            getNowKO(), // latest_learning_at
-            userId,
-            wordId
-          ]
+          [userId, wordId]
         )
       ).rows[0].is_bookmark;
       console.info("✅ updated user_word_history table's is_bookmark");

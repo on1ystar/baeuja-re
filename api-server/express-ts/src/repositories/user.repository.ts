@@ -6,7 +6,6 @@
 
 import { PoolClient, QueryResult } from 'pg';
 import User from '../entities/user.entity';
-import { getNowKO } from '../utils/Date';
 import { getSelectColumns } from '../utils/Query';
 
 export interface UserToBeSaved extends User {
@@ -33,17 +32,9 @@ export default class UserRepository {
       const createdUserId: number = (
         await client.query(
           `INSERT INTO users 
-          VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7)
+          VALUES(DEFAULT, $1, $2, $3, default, default, default, $4)
           RETURNING user_id`,
-          [
-            email,
-            nickname,
-            locale,
-            getNowKO(), // created_at
-            getNowKO(), // latest_login
-            getNowKO(), // modified_at
-            roleId
-          ]
+          [email, nickname, locale, roleId]
         )
       ).rows[0].user_id;
       console.info(`✅ created user `);
@@ -66,7 +57,7 @@ export default class UserRepository {
       const { user_id, email, nickname } = (
         await client.query(
           `UPDATE users
-            SET nickname = '${nicknameToUpdate}', modified_at = ${getNowKO()}
+            SET nickname = '${nicknameToUpdate}', modified_at = default
             WHERE user_id = ${userId}
             RETURNING user_id, email, nickname`
         )
@@ -89,12 +80,12 @@ export default class UserRepository {
       const { user_id, email, nickname } = (
         await client.query(
           `UPDATE users
-            SET latest_login = ${getNowKO()}
+            SET latest_login = default
             WHERE user_id = ${userId}
             RETURNING user_id, email, nickname`
         )
       ).rows[0];
-      console.info(`✅  updated latest login at -> ${getNowKO()}`);
+      console.info(`✅ updated userId: ${user_id} latest login at`);
       return { userId: user_id, email, nickname };
     } catch (error) {
       console.warn('❌ Error: user.repository.ts updateLatestLogin function ');

@@ -9,6 +9,7 @@ import { PoolClient } from 'pg';
 import { pool } from '../../db';
 import ContentRepository from '../../repositories/content.repository';
 import SentenceWordRepository from '../../repositories/sentence-word.repository';
+import UserRepository from '../../repositories/user.repository';
 import WordRepository from '../../repositories/word.repository';
 import NewContentsDTO from './dto/new-contents.dto';
 import RecommendationsOfWordDTO from './dto/recommendationsOfWord.dto';
@@ -20,6 +21,7 @@ export const getNewContents = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
+  const userId: number = res.locals.userId;
   const client: PoolClient = await pool.connect();
   try {
     const contents: NewContentsDTO[] =
@@ -28,6 +30,7 @@ export const getNewContents = async (
           Content: ['contentId', 'title', 'artist', 'director', 'thumbnailUri']
         }
       ]);
+    await UserRepository.updateLatestLogin(client, userId);
     return res.status(200).json({ success: true, contents });
   } catch (error) {
     console.log(error);

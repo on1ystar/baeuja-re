@@ -21,6 +21,8 @@ tags:
     description: words in learning app APIs
   - name: bookmark
     description: bookmark app APIs
+  - name: qnas
+    description: qna app APIs
 paths:
   /home/contents:
     $ref: './paths/home/contents.yaml'
@@ -60,6 +62,12 @@ paths:
     $ref: './paths/bookmark/words.yaml'
   /bookmark/words/{wordId}:
     $ref: './paths/bookmark/word.yaml'
+  /qnas/types:
+    $ref: './paths/qna/qna-types.yaml'
+  /qnas:
+    $ref: './paths/qna/qnas.yaml'
+  /qnas/{qnaId}:
+    $ref: './paths/qna/qna.yaml'
 components:
   parameters:
     $ref: './parameters.yaml'

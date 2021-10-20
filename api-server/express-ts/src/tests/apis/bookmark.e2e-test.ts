@@ -90,7 +90,7 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.sentences.length).toBe(2);
-      expect(res.body.sentences[0].sentenceId).toBe(2); // default soryBy = bookmarkat, option = DESC => sentenceId = 2이 sentenceid = 3보다 최근에 즐겨찾기 추가
+      expect(res.body.sentences[0].sentenceId).toBe(3); // default soryBy = bookmarkat, option = DESC => sentenceId = 3이 sentenceid = 2보다 최근에 즐겨찾기 추가
     });
     it('should valid response the bookmark sentences sorted by latest_learning_at ASC', async () => {
       const res = await request(app)
@@ -167,7 +167,7 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.words.length).toBe(2);
-      expect(res.body.words[0].wordId).toBe(2); // default soryBy = bookmarkat, option = DESC => wordId = 2이 wordId = 3보다 최근에 즐겨찾기 추가
+      expect(res.body.words[0].wordId).toBe(3); // default soryBy = bookmarkat, option = DESC => wordId = 3이 wordId = 2보다 최근에 즐겨찾기 추가
     });
     it('should valid response the bookmark words sorted by latest_learning_at ASC', async () => {
       const res = await request(app)
