@@ -80,7 +80,7 @@ export default class QnaRepository {
 
       const queryResult: QueryResult<any> = await client.query(
         `SELECT ${SELECT_COLUMNS} FROM qna
-        WHERE user_id = ${userId}, qna_id = ${qnaId}`
+        WHERE user_id = ${userId} AND qna_id = ${qnaId}`
       );
 
       if (!queryResult.rowCount) throw new Error('qnaId does not exist');
@@ -118,12 +118,14 @@ export default class QnaRepository {
   // delete a qna's answer(문의 답변)
   static delete = async (client: PoolClient, qnaId: number): Promise<void> => {
     try {
-      await client.query(
+      const queryResult: QueryResult<any> = await client.query(
         `DELETE FROM qna
-        WHERE qna_id = ${qnaId}`
+        WHERE qna_id = ${qnaId}
+        RETURNING qna_id`
       );
-
-      console.info(`✅ deleted user id: ${qnaId}`);
+      if (queryResult.rows.length === 0)
+        throw new Error(`qna id: ${qnaId} does not exist`);
+      console.info(`✅ deleted qna id: ${qnaId}`);
     } catch (error) {
       console.warn('❌ Error: qna.repository.ts delete function ');
       throw error;

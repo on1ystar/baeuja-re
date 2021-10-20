@@ -24,9 +24,13 @@ export default class TestSetup {
   initializeTestDB = async (): Promise<void> => {
     const poolClient = await pool.connect();
     try {
-      poolClient.query('DELETE FROM users');
-      poolClient.query('ALTER SEQUENCE "users_user_id_seq" RESTART WITH 1');
-      poolClient.query(
+      await poolClient.query('DELETE FROM qna');
+      await poolClient.query('DELETE FROM users');
+      await poolClient.query(
+        'ALTER SEQUENCE "users_user_id_seq" RESTART WITH 1'
+      );
+      await poolClient.query('ALTER SEQUENCE "qna_qna_id_seq" RESTART WITH 1');
+      await poolClient.query(
         'INSERT INTO users VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7)',
         [
           this.user.email,

@@ -49,7 +49,9 @@ export const postQna = async (req: Request, res: Response) => {
       qnaTypeId: +qna.qnaTypeId
     });
 
-    return res.status(200).json({ success: true, qnaId: createdQnaId });
+    return res
+      .status(201)
+      .json({ success: true, qna: { qnaId: createdQnaId } });
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
@@ -96,7 +98,7 @@ export const answerQna = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .json({ success: true, qna: { qnaId, answer, answeredAt } });
+      .json({ success: true, qna: { qnaId: +qnaId, answer, answeredAt } });
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
@@ -112,7 +114,7 @@ export const remove = async (req: Request, res: Response) => {
   const client: PoolClient = await pool.connect();
   try {
     await QnaRepository.delete(client, +qnaId);
-    return res.status(200).json({ success: true, qna: { qnaId } });
+    return res.status(200).json({ success: true, qna: { qnaId: +qnaId } });
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;

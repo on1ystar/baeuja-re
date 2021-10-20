@@ -65,20 +65,19 @@ patch:
       content:
         application/json:
           schema:
-            AnsweredQna:
-              type: object
-              properties:
-                successs:
-                  type: boolean
-                qna:
-                  type: object
-                  properties:
-                    qnaId:
-                      type: number
-                    answer:
-                      type: string
-                    answeredAt:
-                      type: string
+            type: object
+            properties:
+              successs:
+                type: boolean
+              qna:
+                type: object
+                properties:
+                  qnaId:
+                    type: number
+                  answer:
+                    type: string
+                  answeredAt:
+                    type: string
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
@@ -116,16 +115,15 @@ delete:
       content:
         application/json:
           schema:
-            DeletedQna:
-              type: object
-              properties:
-                successs:
-                  type: boolean
-                qna:
-                  type: object
-                  properties:
-                    qnaId:
-                      type: number
+            type: object
+            properties:
+              successs:
+                type: boolean
+              qna:
+                type: object
+                properties:
+                  qnaId:
+                    type: number
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
