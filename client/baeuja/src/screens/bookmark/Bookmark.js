@@ -24,138 +24,69 @@ import GetBookmarkedWords from '../../components/bookmark/GetBookmarkedWords';
 import GetBookmarkedSentences from '../../components/bookmark/GetBookmarkedSentences';
 
 const Bookmark = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [words, setWords] = useState(false);
-  const [bookmarkedSentences, setBookmarkedSentences] = useState([]);
-  const [bookmarkedWords, setBookmarkedWords] = useState([]);
+  const [selector, setSelector] = useState(false);
 
-  const loadBookmarkedSentences = () => {
-    // 즐겨찾기 문장 데이터 가져오기
-    AsyncStorage.getItem('token', async (error, token) => {
-      try {
-        if (token === null) {
-          // login으로 redirect
-        }
-        if (error) throw error;
-        const {
-          data: { success, sentences, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/bookmark/sentences`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (tokenExpired) {
-          // login으로 redirect
-        }
-        console.log(`success : ${success}\n sentences: ${sentences}`);
-
-        if (!success) throw new Error(errorMessage);
-
-        console.log('Success Getting Bookmarked Sentences');
-
-        setBookmarkedSentences(sentences);
-        setIsLoading(() => false);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
-  const loadBookmarkedWords = () => {
-    // 즐겨찾기 문장 데이터 가져오기
-    AsyncStorage.getItem('token', async (error, token) => {
-      try {
-        if (token === null) {
-          // login으로 redirect
-        }
-        if (error) throw error;
-        const {
-          data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/bookmark/words`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (tokenExpired) {
-          // login으로 redirect
-        }
-        console.log(`success : ${success}\n words: ${words}`);
-
-        if (!success) throw new Error(errorMessage);
-
-        console.log('Success Getting Bookmarked Words');
-
-        setBookmarkedWords(words);
-        setIsLoading(() => false);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
-  useEffect(loadBookmarkedSentences, []);
-  useEffect(loadBookmarkedWords, []);
-
+  //Bookmark Screen Return
   return (
     <View style={styles.allContainer}>
-      <View style={styles.bookmarkTitleContainer}>
-        <Text style={styles.bookmarkTitle}>Bookmark</Text>
-      </View>
-      <View style={styles.selectButtonContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            setWords(true);
-          }}
-        >
-          <View style={words ? styles.wordsButtonSelected : styles.wordsButtonNotSelected}>
-            <Text style={words ? styles.wordsTextSelected : styles.wordsTextNotSelected}>
-              Words
-            </Text>
+      {
+        <View style={styles.allContainer}>
+          <View style={styles.bookmarkTitleContainer}>
+            <Text style={styles.bookmarkTitle}>Bookmark</Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setWords(false);
-          }}
-        >
-          <View style={words ? styles.sentencesButtonNotSelected : styles.sentencesButtonSelected}>
-            <Text style={words ? styles.sentencesTextNotSelected : styles.sentencesTextSelected}>
-              Sentences
-            </Text>
+          <View style={styles.selectButtonContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                setSelector(true);
+                console.log(selector);
+              }}
+            >
+              <View style={selector ? styles.wordsButtonSelected : styles.wordsButtonNotSelected}>
+                <Text style={selector ? styles.wordsTextSelected : styles.wordsTextNotSelected}>
+                  Words
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setSelector(false);
+                console.log(selector);
+              }}
+            >
+              <View
+                style={
+                  selector ? styles.sentencesButtonNotSelected : styles.sentencesButtonSelected
+                }
+              >
+                <Text
+                  style={selector ? styles.sentencesTextNotSelected : styles.sentencesTextSelected}
+                >
+                  Sentences
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: '#EFEFEF',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: responsiveScreenWidth(10),
+                height: responsiveScreenWidth(10),
+              }}
+            >
+              <TouchableOpacity>
+                <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
+              </TouchableOpacity>
+            </View>
           </View>
-        </TouchableOpacity>
-        <View
-          style={{
-            backgroundColor: '#EFEFEF',
-            borderRadius: 10,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: responsiveScreenWidth(10),
-            height: responsiveScreenWidth(10),
-          }}
-        >
-          <TouchableOpacity>
-            <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
-          </TouchableOpacity>
+          <View style={styles.timeContainer}>
+            <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
+            <Text style={styles.timeText}>2021. 10.</Text>
+          </View>
+          <ScrollView>{selector ? <GetBookmarkedWords /> : <GetBookmarkedSentences />}</ScrollView>
         </View>
-      </View>
-      <View style={styles.timeContainer}>
-        <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
-        <Text style={styles.timeText}>2021. 10.</Text>
-      </View>
-      <ScrollView>
-        {words ? (
-          <ScrollView>
-            <GetBookmarkedWords bookmarkedWords={bookmarkedWords} />
-          </ScrollView>
-        ) : (
-          <ScrollView>
-            <GetBookmarkedSentences bookmarkedSentences={bookmarkedSentences} />
-          </ScrollView>
-        )}
-      </ScrollView>
+      }
     </View>
   );
 };
