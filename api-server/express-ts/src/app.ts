@@ -22,7 +22,14 @@ import qnasApp from './apis/qnas';
 
 const app: Application = express();
 const logger = morgan('dev');
-const swaggerSpec = YAML.load(path.join(__dirname, '../build/swagger.yaml'));
+const swaggerSpec = YAML.load(
+  path.join(
+    __dirname,
+    process.env.NODE_ENV === 'prod'
+      ? '../prod/swagger.yaml'
+      : '../dev/swagger.yaml'
+  )
+);
 
 app.use(helmet()); // 보안 모듈
 app.use(logger); // 로그 관리 모듈
@@ -30,6 +37,7 @@ app.use(express.json()); // request body parsing
 app.use(express.urlencoded({ extended: true })); // url query prameter parsing
 app.use(cors()); // cors 모듈
 
+app.get('/', (req, res) => res.end());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // swagger로 작성한 파일 setup
 app.use('/home', checkUserId, homeApp); // injecting home app
 app.use('/users', usersApp); // injecting users app

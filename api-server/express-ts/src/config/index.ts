@@ -59,9 +59,11 @@ const conf: {
     user: process.env.DB_USER,
     pw: process.env.DB_PW,
     name:
-      process.env.NODE_ENV === 'test'
-        ? process.env.DB_TEST_NAME
-        : process.env.DB_NAME,
+      process.env.NODE_ENV !== 'test'
+        ? process.env.NODE_ENV !== 'dev'
+          ? process.env.DB_PROD_NAME
+          : process.env.DB_DEV_NAME
+        : process.env.DB_TEST_NAME,
     port: process.env.DB_PORT
   },
   googleApi: {

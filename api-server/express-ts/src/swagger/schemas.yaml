@@ -116,6 +116,8 @@ LearningContent:
           type: string
         thumbnailUri:
           type: string
+        youtubeUrl:
+          type: string
 LearningUnitsInKPOP:
   type: object
   properties:

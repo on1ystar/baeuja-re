@@ -82,7 +82,8 @@ export const getContentDetail = async (
         'artist',
         'director',
         'description',
-        'thumbnailUri'
+        'thumbnailUri',
+        'youtubeUrl'
       ]
     );
     return res.status(200).json({ success: true, content });
