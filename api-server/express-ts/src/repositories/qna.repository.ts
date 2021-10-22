@@ -6,9 +6,8 @@
 
 import { PoolClient, QueryResult } from 'pg';
 import Qna from '../entities/qna.entity';
+import { getNow } from '../utils/Date';
 import { getSelectColumns } from '../utils/Query';
-
-const defaultTimezone = '00:09';
 
 export interface QnaToBeSaved extends Qna {
   readonly userId: number;
@@ -21,14 +20,15 @@ export default class QnaRepository {
   // qna 생성(사용자 문의 등록)
   static save = async (
     client: PoolClient,
-    { userId, title, content, qnaTypeId }: QnaToBeSaved
+    { userId, title, content, qnaTypeId }: QnaToBeSaved,
+    timezone: string
   ): Promise<number> => {
     try {
       const queryResult: QueryResult<any> = await client.query(
-        `INSERT INTO qna(user_id, title, content, qna_type_id, answered_at)
-        VALUES($1, $2, $3, $4, NULL)
+        `INSERT INTO qna(user_id, title, content, qna_type_id, created_at)
+        VALUES($1, $2, $3, $4, $5)
         RETURNING qna_id`,
-        [userId, title, content, qnaTypeId]
+        [userId, title, content, qnaTypeId, getNow(timezone)]
       );
       return queryResult.rows[0].qna_id;
     } catch (error) {
@@ -96,19 +96,18 @@ export default class QnaRepository {
   static updateAnswer = async (
     client: PoolClient,
     qnaId: number,
-    answer: string
+    answer: string,
+    timezone: string
   ): Promise<string> => {
     try {
-      const queryResult: QueryResult<any> = await client.query(
+      const now: string = getNow(timezone);
+      await client.query(
         `UPDATE qna
-        SET answer = '${answer}', answered_at = default
-        WHERE qna_id = ${qnaId}
-        RETURNING answered_at`
+        SET answer = '${answer}', answered_at = '${now}'
+        WHERE qna_id = ${qnaId}`
       );
-
-      console.log(`✅ updated qna id: ${qnaId}  answer`);
-
-      return queryResult.rows[0].answered_at;
+      console.log(`✅ updated qna id: ${qnaId} answer ${now}`);
+      return now;
     } catch (error) {
       console.warn('❌ Error: qna.repository.ts updateAnswer function ');
       throw error;

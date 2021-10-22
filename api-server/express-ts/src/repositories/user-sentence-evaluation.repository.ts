@@ -6,6 +6,7 @@
 
 import { PoolClient } from 'pg';
 import UserSentenceEvaluation from '../entities/user-sentence-evaluation.entity';
+import { getNow } from '../utils/Date';
 
 export interface UserSentenceEvaluationToBeSaved
   extends UserSentenceEvaluation {
@@ -27,12 +28,13 @@ export default class UserSentenceEvaluationRepository {
       sttResult,
       score,
       userVoiceUri
-    }: UserSentenceEvaluationToBeSaved
+    }: UserSentenceEvaluationToBeSaved,
+    timezone: string
   ): Promise<any> => {
     try {
       await client.query(
         `INSERT INTO user_sentence_evaluation
-            VALUES($1,$2,$3,$4,$5,$6,$7)`,
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
         [
           userId,
           sentenceId,
@@ -40,7 +42,8 @@ export default class UserSentenceEvaluationRepository {
           sttResult,
           Math.round(score),
           userVoiceUri,
-          false // is_public (DEFAULT = false)
+          false, // is_public (DEFAULT = false),
+          getNow(timezone)
         ]
       );
       return {

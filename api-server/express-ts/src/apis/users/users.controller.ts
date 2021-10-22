@@ -117,7 +117,7 @@ export const postUser = async (req: Request, res: Response) => {
     console.info(`Login \t user_id: ${userId}`);
     // jwt token 생성
     const token = jwt.sign(
-      { userId },
+      { userId, locale: userinfo.locale },
       conf.jwtToken.secretKey as string,
       userinfo.email ? conf.jwtToken.option : conf.jwtToken.optionGuest // guest면 만료 기간이 없는 토큰 생성
     );

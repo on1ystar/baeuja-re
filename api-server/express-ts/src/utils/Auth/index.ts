@@ -43,6 +43,7 @@ export const checkUserId = async (
         });
       }
       const userId = decodedToken?.userId;
+      const timezone = decodedToken?.locale;
       try {
         if (!(await UserRepository.isExistById(poolClient, parseInt(userId)))) {
           return res.status(401).json({
@@ -51,6 +52,7 @@ export const checkUserId = async (
           });
         }
         res.locals.userId = userId;
+        res.locals.timezone = timezone;
         next();
       } catch (error) {
         next(error);
