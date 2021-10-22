@@ -26,8 +26,8 @@ const swaggerSpec = YAML.load(
   path.join(
     __dirname,
     process.env.NODE_ENV === 'prod'
-      ? '../prod/swagger.yaml'
-      : '../dev/swagger.yaml'
+    	? '../build/prod/swagger.yaml'
+    	: '../build/dev/swagger.yaml'
   )
 );
 
