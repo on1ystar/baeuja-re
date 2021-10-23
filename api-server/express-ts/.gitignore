@@ -123,4 +123,6 @@ dist
 .vscode
 src/test.ts
 build/
+build-dev/
+build-prod/
 src/db/csv/
