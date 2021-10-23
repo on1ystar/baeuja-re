@@ -6,6 +6,7 @@ info:
   license:
     name: MIT
 servers:
+  - url: https://dev.k-peach.io/
   - url: https://api.k-peach.io/
   - url: http://localhost:3001/
 tags:
