@@ -12,9 +12,9 @@ export class UserContentHistoryPK {
 export default class UserContentHistory extends UserContentHistoryPK {
   constructor(
     readonly counts?: number,
-    readonly latestLearningAt?: string,
     readonly learningTime?: string,
-    readonly progressRate?: number
+    readonly progressRate?: number,
+    readonly latestLearningAt?: string
   ) {
     super();
   }

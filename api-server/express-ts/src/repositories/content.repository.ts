@@ -67,6 +67,7 @@ export default class ContentRepository {
     }
   };
 
+  // Home -> New contents
   // join unit AND sentence AND sentence_word
   static joinUnitAndSentenceAndSentenceWord = async (
     client: PoolClient,
@@ -82,6 +83,7 @@ export default class ContentRepository {
       const SELECT_COLUMNS = getSelectColumns(_columns);
       const GROUP_BY_COLUMNS = getSelectColumnsWithoutAs(_columns);
 
+      // SELECT countsOfUnits, countsOfSentences, countsOfWords GROUP BY updatedAt
       const queryResult: QueryResult<any> = await client.query(
         `SELECT content.modified_at as "updatedAt", ${SELECT_COLUMNS},
           count(DISTINCT unit.unit_index) as "countsOfUnits", count(DISTINCT sentence_word.sentence_id) as "countsOfSentences", count(DISTINCT sentence_word.word_id) as "countsOfWords"

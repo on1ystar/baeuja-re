@@ -1,7 +1,6 @@
 import request from 'supertest';
 import app from '../../../app';
 import { pool } from '../../../db';
-import { getNowKO } from '../../../utils/Date';
 import TestSetup from '../../e2eTestSetup';
 import fs from 'fs';
 
@@ -14,8 +13,8 @@ beforeAll(async () => {
   await testSetup.initializeTestDB();
   token = testSetup.getToken();
   await pool.query(
-    'INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
-    [userId, sentenceId, getNowKO(), 0]
+    'INSERT INTO user_sentence_history(user_id, sentence_id, learning_rate) VALUES($1,$2,$3)',
+    [userId, sentenceId, 0]
   );
 });
 afterAll(async () => {

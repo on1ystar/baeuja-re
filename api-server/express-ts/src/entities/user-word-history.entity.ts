@@ -12,8 +12,8 @@ export default class UserWordHistory extends UserWordHistoryPK {
     readonly averageScore?: number,
     readonly highestScore?: number,
     readonly learningRate?: number,
-    readonly latestLearningAt?: string,
     readonly isBookmark?: boolean,
+    readonly latestLearningAt?: string,
     readonly bookmarkAt?: string
   ) {
     super();

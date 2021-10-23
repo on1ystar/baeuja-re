@@ -4,15 +4,20 @@ import jwt from 'jsonwebtoken';
 import conf from '../../config';
 import TestSetup from '../e2eTestSetup';
 
+const TIMEZONE = 'Asia/Seoul';
 const testSetup = new TestSetup();
 const userId = 1;
 const postUserinfo = {
   google: {
     email: 'test2@test.com',
-    locale: 'ko'
+    platform: 'android',
+    country: 'KR',
+    timezone: TIMEZONE
   },
   guest: {
-    locale: 'ko'
+    platform: 'ios',
+    country: 'KR',
+    timezone: TIMEZONE
   }
 };
 let token: string;
@@ -62,6 +67,7 @@ describe('e2e Testing users app', () => {
         conf.jwtToken.option,
         (decodedError, decodedToken) => {
           expect(decodedToken?.userId).toBe(2);
+          expect(decodedToken?.timezone).toBe(TIMEZONE);
         }
       );
     });

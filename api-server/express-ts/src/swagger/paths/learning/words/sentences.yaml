@@ -1,7 +1,7 @@
 get:
   tags:
     - learning/words
-  summary: (단어 학습의) 예시 문장들
+  summary: (단어 학습 화면의) 예시 문장들
   security:
     - bearerAuth: []
   parameters:

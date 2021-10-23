@@ -14,8 +14,8 @@ export default class UserWordHistoryRepository {
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_word_history(user_id, word_id, learning_rate, bookmark_at) 
-        VALUES($1, $2, $3, NULL)`,
+        `INSERT INTO user_word_history(user_id, word_id, learning_rate) 
+        VALUES($1, $2, $3)`,
         [
           userId,
           wordId,
@@ -151,7 +151,7 @@ export default class UserWordHistoryRepository {
       const isBookmark: boolean = (
         await client.query(
           `UPDATE user_word_history 
-          SET is_bookmark = NOT is_bookmark, bookmark_at = default
+          SET is_bookmark = NOT is_bookmark, bookmark_at = CURRENT_TIMESTAMP(0)
           WHERE user_id = $1 AND word_id = $2
           RETURNING is_bookmark`,
           [userId, wordId]

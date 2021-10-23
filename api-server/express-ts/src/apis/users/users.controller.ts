@@ -54,10 +54,9 @@ export const getUserDetail = async (req: Request, res: Response) => {
       'userId',
       'email',
       'nickname',
-      'locale',
-      'createdAt',
-      'latestLogin',
-      'modifiedAt',
+      'platform',
+      'country',
+      'timezone',
       'roleId'
     ]);
     return res.status(200).json({ success: true, user });
@@ -72,14 +71,20 @@ export const getUserDetail = async (req: Request, res: Response) => {
 
 // POST /users
 export const postUser = async (req: Request, res: Response) => {
+  // platform, country, timezone
   const { userinfo } = req.body;
   const client: PoolClient = await pool.connect();
 
   try {
-    if (userinfo.locale === undefined) {
+    if (
+      (userinfo.platform === undefined,
+      userinfo.country === undefined,
+      userinfo.timezone === undefined)
+    ) {
       return res.status(400).json({
         success: false,
-        errorMessage: 'Require locale property in Request Body { userinfo }'
+        errorMessage:
+          'Require platform && country && timezone properties in Request Body { userinfo }'
       });
     }
 
@@ -106,7 +111,9 @@ export const postUser = async (req: Request, res: Response) => {
         nickname: userinfo.email
           ? 'member' + String(Date.now()).slice(-8)
           : 'guest' + String(Date.now()).slice(-8),
-        locale: userinfo.locale,
+        platform: userinfo.platform,
+        country: userinfo.country,
+        timezone: userinfo.timezone,
         roleId: userinfo.email
           ? (Role.getRoleId('member') as number)
           : (Role.getRoleId('guest') as number)
@@ -117,9 +124,9 @@ export const postUser = async (req: Request, res: Response) => {
     console.info(`Login \t user_id: ${userId}`);
     // jwt token 생성
     const token = jwt.sign(
-      { userId, locale: userinfo.locale },
-      conf.jwtToken.secretKey as string,
-      userinfo.email ? conf.jwtToken.option : conf.jwtToken.optionGuest // guest면 만료 기간이 없는 토큰 생성
+      { userId, timezone: userinfo.timezone }, // payload: {userId, timezone}
+      conf.jwtToken.secretKey as string, // secretOrPrivateKey
+      userinfo.email ? conf.jwtToken.option : conf.jwtToken.optionGuest // options: guest면 만료 기간이 없는 토큰 생성
     );
     res.status(isMember ? 200 : 201).json({ success: true, token, isMember });
   } catch (error) {

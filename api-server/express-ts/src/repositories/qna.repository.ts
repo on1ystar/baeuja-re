@@ -20,15 +20,14 @@ export default class QnaRepository {
   // qna 생성(사용자 문의 등록)
   static save = async (
     client: PoolClient,
-    { userId, title, content, qnaTypeId }: QnaToBeSaved,
-    timezone: string
+    { userId, title, content, qnaTypeId }: QnaToBeSaved
   ): Promise<number> => {
     try {
       const queryResult: QueryResult<any> = await client.query(
-        `INSERT INTO qna(user_id, title, content, qna_type_id, created_at)
-        VALUES($1, $2, $3, $4, $5)
+        `INSERT INTO qna(user_id, qna_type_id, title, content)
+        VALUES($1, $2, $3, $4)
         RETURNING qna_id`,
-        [userId, title, content, qnaTypeId, getNow(timezone)]
+        [userId, qnaTypeId, title, content]
       );
       return queryResult.rows[0].qna_id;
     } catch (error) {
@@ -96,18 +95,18 @@ export default class QnaRepository {
   static updateAnswer = async (
     client: PoolClient,
     qnaId: number,
-    answer: string,
-    timezone: string
-  ): Promise<string> => {
+    answer: string
+  ): Promise<void> => {
     try {
-      const now: string = getNow(timezone);
-      await client.query(
+      const queryResult: QueryResult<any> = await client.query(
         `UPDATE qna
-        SET answer = '${answer}', answered_at = '${now}'
-        WHERE qna_id = ${qnaId}`
+        SET answer = '${answer}', answered_at = CURRENT_TIMESTAMP(0) + '09:00:00'::interval
+        WHERE qna_id = ${qnaId}
+        RETURNING qna_id`
       );
-      console.log(`✅ updated qna id: ${qnaId} answer ${now}`);
-      return now;
+      if (queryResult.rows.length === 0)
+        throw new Error(`qna id: ${qnaId} does not exist`);
+      console.log(`✅ updated qna id: ${qnaId} answer`);
     } catch (error) {
       console.warn('❌ Error: qna.repository.ts updateAnswer function ');
       throw error;

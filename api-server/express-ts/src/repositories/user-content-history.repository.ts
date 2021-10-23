@@ -7,7 +7,6 @@
 import { PoolClient, QueryResult } from 'pg';
 import { UserContentHistoryPK } from '../entities/user-content-history.entity';
 import UnitRepository from '../repositories/unit.repository';
-import { getNow } from '../utils/Date';
 
 export type UserContentHistoryToBeSaved = UserContentHistoryPK;
 
@@ -15,18 +14,16 @@ export default class UserContentHistoryRepository {
   // 콘텐츠 학습 기록 추가
   static save = async (
     client: PoolClient,
-    { userId, contentId }: UserContentHistoryToBeSaved,
-    timezone: string
+    { userId, contentId }: UserContentHistoryToBeSaved
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_content_history
-        VALUES($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO user_content_history(user_id, content_id, counts, learning_time, progress_rate)
+        VALUES($1, $2, $3, $4, $5)`,
         [
           userId, // userId
           contentId, // contentId
           1, // counts (DEFAULT = 1)
-          getNow(timezone), // latest_learning_at
           '00:00:00', // learningTime (DEFAULT = 00:00:00)
           0 // progressRate (DEFAULT = 0)
         ]
@@ -43,13 +40,12 @@ export default class UserContentHistoryRepository {
   // 콘텐츠 학습 횟수 1 증가
   static updateCounts = async (
     client: PoolClient,
-    { userId, contentId }: UserContentHistoryPK,
-    timezone: string
+    { userId, contentId }: UserContentHistoryPK
   ): Promise<void> => {
     try {
       await client.query(
         `UPDATE user_content_history
-        SET counts = counts + 1, latest_learning_at = '${getNow(timezone)}'
+        SET counts = counts + 1, latest_learning_at = default
         WHERE user_id = $1 AND content_id = $2`,
         [
           userId, // userId
@@ -68,8 +64,7 @@ export default class UserContentHistoryRepository {
   // 콘텐츠 진도율(progress_rage) 업데이트
   static updateProgressRate = async (
     client: PoolClient,
-    { userId, contentId }: UserContentHistoryPK,
-    timezone: string
+    { userId, contentId }: UserContentHistoryPK
   ): Promise<void> => {
     try {
       // content에 포함되는 unit_index
@@ -86,7 +81,7 @@ export default class UserContentHistoryRepository {
       ).toFixed(2);
       await client.query(
         `UPDATE user_content_history
-        SET progress_rate = $1, latest_learning_at = '${getNow(timezone)}'
+        SET progress_rate = $1, latest_learning_at = default
         WHERE user_id = $2 AND content_id = $3`,
         [Math.round(progressRate * 100), userId, contentId]
       );
@@ -107,7 +102,7 @@ export default class UserContentHistoryRepository {
     try {
       const queryResult: QueryResult<any> = await client.query(
         `SELECT COUNT(*) FROM user_content_history
-        WHERE user_id = ${userId} AND content_id = ${contentId} `
+        WHERE user_id = ${userId} AND content_id = ${contentId}`
       );
 
       // 존재하지 않음

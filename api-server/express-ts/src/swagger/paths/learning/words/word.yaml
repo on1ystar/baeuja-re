@@ -1,7 +1,7 @@
 get:
   tags:
     - learning/words
-  summary: 터치한 단어 요청 (단어 학습 화면)
+  summary: 터치한 단어(단어 학습 화면)
   security:
     - bearerAuth: []
   parameters:

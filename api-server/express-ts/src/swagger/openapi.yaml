@@ -1,13 +1,13 @@
 openapi: '3.0.0'
 info:
-  version: 1.0.0
-  title: BAEUJA API DOCS for DEV
+  version: 0.2.0
+  title: BAEUJA API DOCS
   description: '`BAEUJA` TEAM의 API 문서입니다'
   license:
     name: MIT
 servers:
   - url: https://api.k-peach.io/
-  - url: http://localhost:4001/
+  - url: http://localhost:3001/
 tags:
   - name: home
     description: home app APIs

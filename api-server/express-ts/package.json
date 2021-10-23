@@ -14,7 +14,7 @@
     "pm2:dev:reload": "sudo pm2 reload baeuja-dev --time --update-env",
     "dev:ts": "npm run api-docs:dev && NODE_ENV=dev nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
     "test:e2e": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
-    "test:file": "nodemon --exec 'ts-node' src/test.ts"
+    "test:file": "NODE_ENV=test nodemon --exec 'ts-node' src/test.ts"
   },
   "author": "on1ystar",
   "devDependencies": {

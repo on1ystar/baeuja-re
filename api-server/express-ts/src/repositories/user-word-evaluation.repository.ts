@@ -30,7 +30,7 @@ export default class UserWordEvaluationRepository {
   ): Promise<any> => {
     try {
       await client.query(
-        `INSERT INTO user_word_evaluation
+        `INSERT INTO user_word_evaluation(user_id, word_id, word_evaluation_counts, stt_result, score, user_voice_uri)
              VALUES($1,$2,$3,$4,$5,$6)`,
         [
           userId,

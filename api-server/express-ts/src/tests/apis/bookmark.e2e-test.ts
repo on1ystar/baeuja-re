@@ -1,7 +1,6 @@
 import request from 'supertest';
 import app from '../../app';
 import { pool } from '../../db';
-import { getNowKO } from '../../utils/Date';
 import TestSetup from '../e2eTestSetup';
 
 const userId = 1;
@@ -15,7 +14,7 @@ beforeAll(async () => {
   token = testSetup.getToken();
   await pool.query(
     'INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
-    [userId, 1, '2021.10.16 00:00:00', 0]
+    [userId, 1, '2021.10.14 00:00:00', 0]
   );
   await pool.query(
     'INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
@@ -23,11 +22,11 @@ beforeAll(async () => {
   );
   await pool.query(
     'INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
-    [userId, 3, '2021.10.14 00:00:00', 0]
+    [userId, 3, '2021.10.16 00:00:00', 0]
   );
   await pool.query(
     'INSERT INTO user_word_history(user_id, word_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
-    [userId, 1, '2021.10.16 00:00:00', 0]
+    [userId, 1, '2021.10.14 00:00:00', 0]
   );
   await pool.query(
     'INSERT INTO user_word_history(user_id, word_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
@@ -35,7 +34,7 @@ beforeAll(async () => {
   );
   await pool.query(
     'INSERT INTO user_word_history(user_id, word_id, latest_learning_at, learning_rate) VALUES($1,$2,$3,$4)',
-    [userId, 3, '2021.10.14 00:00:00', 0]
+    [userId, 3, '2021.10.16 00:00:00', 0]
   );
 });
 afterAll(async () => {
@@ -48,6 +47,12 @@ describe('e2e Testing bookmark app', () => {
     it('should valid response isBookmark = true', async () => {
       const res = await request(app)
         .post(`/bookmark/sentences/${sentenceId}`)
+        .auth(token, { type: 'bearer' });
+      await request(app)
+        .post(`/bookmark/sentences/2`)
+        .auth(token, { type: 'bearer' });
+      await request(app)
+        .post(`/bookmark/sentences/3`)
         .auth(token, { type: 'bearer' });
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -62,24 +67,6 @@ describe('e2e Testing bookmark app', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.isBookmark).toBe(false);
     });
-
-    it('should valid response isBookmark = true', async () => {
-      const res = await request(app)
-        .post(`/bookmark/sentences/2`)
-        .auth(token, { type: 'bearer' });
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(res.body.isBookmark).toBe(true);
-    });
-
-    it('should valid response isBookmark = true', async () => {
-      const res = await request(app)
-        .post(`/bookmark/sentences/3`)
-        .auth(token, { type: 'bearer' });
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(res.body.isBookmark).toBe(true);
-    });
   });
   // 즐겨찾기된 문장 리스트
   describe('GET /bookmark/sentences', () => {
@@ -90,7 +77,6 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.sentences.length).toBe(2);
-      expect(res.body.sentences[0].sentenceId).toBe(3); // default soryBy = bookmarkat, option = DESC => sentenceId = 3이 sentenceid = 2보다 최근에 즐겨찾기 추가
     });
     it('should valid response the bookmark sentences sorted by latest_learning_at ASC', async () => {
       const res = await request(app)
@@ -100,7 +86,7 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.sentences.length).toBe(2);
-      expect(res.body.sentences[0].sentenceId).toBe(3); // sentenceId = 3이 sentenceid = 2보다 이전에 학습
+      expect(res.body.sentences[0].sentenceId).toBe(2); // sentenceId = 2이 sentenceid = 3보다 이전에 학습
     });
     it("should return invalid query string's syntax", async () => {
       const res = await request(app)
@@ -167,7 +153,6 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.words.length).toBe(2);
-      expect(res.body.words[0].wordId).toBe(3); // default soryBy = bookmarkat, option = DESC => wordId = 3이 wordId = 2보다 최근에 즐겨찾기 추가
     });
     it('should valid response the bookmark words sorted by latest_learning_at ASC', async () => {
       const res = await request(app)
@@ -177,7 +162,7 @@ describe('e2e Testing bookmark app', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.words.length).toBe(2);
-      expect(res.body.words[0].wordId).toBe(3); // wordId = 3이 wordId = 2보다 이전에 학습
+      expect(res.body.words[0].wordId).toBe(2); // wordId = 2이 wordId = 3보다 이전에 학습
     });
     it("should return invalid query string's syntax", async () => {
       const res = await request(app)

@@ -4,6 +4,7 @@ import { pool } from '../../db';
 import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
 import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
 
+// GET /bookmark/sentences
 export const getBookmarkSentences = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;
   const { sortBy, option } = req.query;
@@ -48,16 +49,19 @@ export const getBookmarkSentences = async (req: Request, res: Response) => {
   }
 };
 
+// POST /bookmark/sentences/:sentenceId
 export const postBookmarkSentence = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { sentenceId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
     // request params 유효성 검사
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
+
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     const isBookmark: boolean =
       await UserSentenceHistoryRepository.updateIsBookmark(client, {
@@ -74,6 +78,7 @@ export const postBookmarkSentence = async (
   }
 };
 
+// GET /bookmark/words
 export const getBookmarkWords = async (req: Request, res: Response) => {
   const userId: number = res.locals.userId;
   const { sortBy, option } = req.query;
@@ -111,16 +116,19 @@ export const getBookmarkWords = async (req: Request, res: Response) => {
   }
 };
 
+// POST /bookmark/words/:wordId
 export const postBookmarkWord = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { wordId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
     // request params 유효성 검사
     if (isNaN(+wordId)) throw new Error("invalid params's syntax");
+
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     const isBookmark: boolean =
       await UserWordHistoryRepository.updateIsBookmark(client, {

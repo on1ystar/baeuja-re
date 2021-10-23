@@ -1,5 +1,5 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { Request, Response, urlencoded } from 'express';
+import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import conf from '../../../config';
 import { pool } from '../../../db';
@@ -27,14 +27,14 @@ export const getLearningWord = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { wordId } = req.params;
   const client: PoolClient = await pool.connect();
 
   try {
     // request params 유효성 검사
     if (isNaN(+wordId)) throw new Error('invalid syntax of params');
-
+    await client.query(`SET TIME ZONE '${timezone}'`);
     // 학습 단어
     const word: LearningWordDTO = {
       ...(await WordRepository.leftJoinUserWordHistory(
@@ -117,7 +117,7 @@ export const getExampleSentences = async (
 
 // POST /learning/words/:wordId/userWordEvaluation
 export const evaluateUserVoice = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { wordId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -126,6 +126,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     if (isNaN(+wordId)) throw new Error("invalid params's syntax");
 
     await client.query('BEGIN');
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 단어의 발음 평가 기록 횟수
@@ -242,7 +243,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
 
 // POST /learning/words/:wordId/userWordHistory
 export const recordUserWordHistory = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { wordId } = req.params;
   const { column } = req.query;
   const client: PoolClient = await pool.connect();
@@ -252,6 +253,8 @@ export const recordUserWordHistory = async (req: Request, res: Response) => {
     if (isNaN(+wordId)) throw new Error("invalid params's syntax");
     if (column !== 'perfectVoiceCounts' && column !== 'userVoiceCounts')
       throw new Error("invalid query string's syntax");
+
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     const userWordHistoryPK: UserWordHistoryPK = {
       userId,

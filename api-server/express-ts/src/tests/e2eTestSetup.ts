@@ -1,5 +1,4 @@
 import { pool } from '../db';
-import { getNowKO } from '../utils/Date';
 import jwt from 'jsonwebtoken';
 import conf from '../config';
 
@@ -16,7 +15,9 @@ export default class TestSetup {
       userId: 1,
       email: 'test@test.com',
       nickname: 'test1',
-      locale: 'ko',
+      platform: 'android',
+      country: 'KR',
+      timezone: 'Asia/Seoul',
       roleId: 2
     };
   }
@@ -31,14 +32,13 @@ export default class TestSetup {
       );
       await poolClient.query('ALTER SEQUENCE "qna_qna_id_seq" RESTART WITH 1');
       await poolClient.query(
-        'INSERT INTO users VALUES(DEFAULT, $1, $2, $3, $4, $5, $6, $7)',
+        'INSERT INTO users(email, nickname, platform, country, timezone, role_id) VALUES($1, $2, $3, $4, $5, $6)',
         [
           this.user.email,
           this.user.nickname,
-          this.user.locale,
-          getNowKO(),
-          getNowKO(),
-          getNowKO(),
+          this.user.platform,
+          this.user.country,
+          this.user.timezone,
           this.user.roleId
         ]
       );
@@ -54,7 +54,7 @@ export default class TestSetup {
 
   getToken = (): string =>
     jwt.sign(
-      { userId: this.user.userId },
+      { userId: this.user.userId, timezone: this.user.timezone },
       conf.jwtToken.secretKey as string,
       conf.jwtToken.option
     );

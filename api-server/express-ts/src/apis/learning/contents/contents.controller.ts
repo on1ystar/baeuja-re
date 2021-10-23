@@ -30,7 +30,7 @@ import LearningSentenceDTO, {
   WordOfLearningSentenceDTO
 } from './dto/learning-sentences.dto';
 
-// /contents
+// GET /contents
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getContents = async (_req: Request, res: Response) => {
   const userId: number = res.locals.userId;
@@ -62,7 +62,7 @@ export const getContents = async (_req: Request, res: Response) => {
   }
 };
 
-// /contents/:contentId
+// GET /contents/:contentId
 export const getContentDetail = async (
   req: Request,
   res: Response
@@ -97,19 +97,21 @@ export const getContentDetail = async (
   }
 };
 
-// /contents/:contentId/units
+// GET /contents/:contentId/units
 export const getUnits = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>> | undefined> => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
 
   const { contentId } = req.params;
   const client: PoolClient = await pool.connect();
   try {
-    await client.query('BEGIN');
     // request params 유효성 검사
     if (isNaN(+contentId)) throw new Error('invalid syntax of params');
+
+    await client.query('BEGIN');
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     // ----- 학습 기록 저장 -----
     const userContentHistoryPK: UserContentHistoryPK = {
@@ -120,7 +122,7 @@ export const getUnits = async (
       client,
       userContentHistoryPK
     );
-    // 콘텐츠 학습 기록이 없는 경우, 콘텐츠 학습 기록 생성
+    // // 콘텐츠 학습 기록이 없는 경우, 콘텐츠 학습 기록 생성
     if (!isExist)
       await UserContentHistoryRepository.save(client, {
         ...userContentHistoryPK
@@ -128,7 +130,6 @@ export const getUnits = async (
     // 콘텐츠 학습 기록이 존재하는 경우, 콘텐츠 학습 횟수 1 증가
     else
       UserContentHistoryRepository.updateCounts(client, userContentHistoryPK);
-    // ----- 학습 기록 저장 -----
 
     const content: Content = await ContentRepository.findOne(
       client,
@@ -175,7 +176,9 @@ export const getUnits = async (
       Promise.all(unitOfKpopDTOs).then((unitsOfKpop: UnitOfKpopDTO[]) => {
         return res.status(200).json({ success: true, units: unitsOfKpop });
       });
-    } else {
+    }
+    // contents가 K-Drama or K-Movie인 경우
+    else {
       const units = await UnitRepository.leftJoinUserUnitHistory(
         client,
         userId,
@@ -207,7 +210,6 @@ export const getUnits = async (
               ]
             )
           )[0];
-
           return {
             ...unit,
             sentence
@@ -231,18 +233,20 @@ export const getUnits = async (
   }
 };
 
-// /contents/:contentId/units/:unitIndex
+// GET /contents/:contentId/units/:unitIndex
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUnit = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { unitIndex, contentId } = req.params;
   const client: PoolClient = await pool.connect();
 
   try {
-    await client.query('BEGIN');
     // request params 유효성 검사
     if (isNaN(+unitIndex) || isNaN(+contentId))
       throw new Error('invalid syntax of params');
+
+    await client.query('BEGIN');
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     // front 요청에 응답할 unit 인스턴스 생성
     const unit: Unit = await UnitRepository.findOne(
@@ -270,7 +274,7 @@ export const getUnit = async (req: Request, res: Response) => {
         contentId: +contentId
       });
     }
-    // 존재하면 학습 횟수 1 증가
+    // // 존재하면 학습 횟수 1 증가
     else
       await UserUnitHistoryRepository.updateCounts(client, userUnitHistoryPK);
 
@@ -288,12 +292,12 @@ export const getUnit = async (req: Request, res: Response) => {
   }
 };
 
-// /contents/:contentId/units/:unitIndex/sentences
+// GET /contents/:contentId/units/:unitIndex/sentences
 export const getSentences = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { unitIndex, contentId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -301,6 +305,9 @@ export const getSentences = async (
     // request params 유효성 검사
     if (isNaN(+unitIndex) || isNaN(+contentId))
       throw new Error('invalid syntax of params');
+
+    await client.query(`SET TIME ZONE '${timezone}'`);
+
     // front 요청에 응답할 sentences 조회
     const sentences: SentenceOfLearningSentenceDTO[] =
       await SentenceRepository.leftJoinUserSentenceHistory(

@@ -1,7 +1,7 @@
 post:
   tags:
     - learning/words
-  summary: 단어 녹음 및 발음 평가 요청
+  summary: 단어 녹음 및 발화 평가
   security:
     - bearerAuth: []
   parameters:

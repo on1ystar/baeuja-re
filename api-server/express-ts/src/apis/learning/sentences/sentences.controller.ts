@@ -28,7 +28,7 @@ const S3_URL = `https://s3.${conf.s3.region}.amazonaws.com`;
 // /sentences/:sentenceId/userSentenceEvaluation
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const evaluateUserVoice = async (req: Request, res: Response) => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { sentenceId } = req.params;
   const client: PoolClient = await pool.connect();
 
@@ -37,6 +37,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
 
     await client.query('BEGIN');
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     // 사용자 음성 파일 s3 저장
     // 사용자가 요청한 문장의 발음 평가 기록 횟수
@@ -159,7 +160,7 @@ export const recordUserSentenceHistory = async (
   req: Request,
   res: Response
 ) => {
-  const userId: number = res.locals.userId;
+  const { userId, timezone } = res.locals;
   const { sentenceId } = req.params;
   const { column } = req.query;
   const client: PoolClient = await pool.connect();
@@ -169,6 +170,8 @@ export const recordUserSentenceHistory = async (
     if (isNaN(+sentenceId)) throw new Error("invalid params's syntax");
     if (column !== 'perfectVoiceCounts' && column !== 'userVoiceCounts')
       throw new Error("invalid query string's syntax");
+
+    await client.query(`SET TIME ZONE '${timezone}'`);
 
     const userSentenceHistoryPK: UserSentenceHistoryPK = {
       userId,

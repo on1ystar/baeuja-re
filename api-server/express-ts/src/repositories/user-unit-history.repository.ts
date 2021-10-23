@@ -21,7 +21,7 @@ export default class UserUnitHistoryRepository {
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_unit_history 
+        `INSERT INTO user_unit_history(user_id, content_id, unit_index, counts)
         VALUES($1, $2, $3, $4)`,
         [
           userId, // user_id

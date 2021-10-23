@@ -71,7 +71,7 @@ export const getQna = async (req: Request, res: Response) => {
       client,
       userId,
       +qnaId,
-      ['qnaId', 'title', 'content', 'answer', 'createdAt', 'answeredAt']
+      ['qnaId', 'title', 'content', 'qnaTypeId', 'answer']
     );
 
     return res.status(200).json({ success: true, qna });
@@ -90,15 +90,11 @@ export const answerQna = async (req: Request, res: Response) => {
   const { qnaId } = req.params;
   const { answer } = req.body;
   try {
-    const answeredAt: string = await QnaRepository.updateAnswer(
-      client,
-      +qnaId,
-      answer
-    );
+    await QnaRepository.updateAnswer(client, +qnaId, answer);
 
     return res
       .status(200)
-      .json({ success: true, qna: { qnaId: +qnaId, answer, answeredAt } });
+      .json({ success: true, qna: { qnaId: +qnaId, answer } });
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;

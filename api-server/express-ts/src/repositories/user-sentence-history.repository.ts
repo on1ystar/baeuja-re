@@ -9,7 +9,6 @@ import { UserSentenceHistoryPK } from '../entities/user-sentence-history.entity'
 import SentenceRepository from './sentence.repository';
 import { UnitPK } from '../entities/unit.entity';
 import { getSelectColumns } from '../utils/Query';
-import { getNow } from '../utils/Date';
 
 const DEFAULT_LEARNING_RATE = 0;
 
@@ -23,18 +22,16 @@ export default class UserSentenceHistoryRepository {
   // 사용자 문장 학습 기록 생성
   static save = async (
     client: PoolClient,
-    { userId, sentenceId }: UserSentenceHistoryToBeSaved,
-    timezone: string
+    { userId, sentenceId }: UserSentenceHistoryToBeSaved
   ): Promise<void> => {
     try {
       await client.query(
-        `INSERT INTO user_sentence_history(user_id, sentence_id, learning_rate, latest_learning_at) 
-        VALUES($1, $2, $3, $4)`,
+        `INSERT INTO user_sentence_history(user_id, sentence_id, learning_rate) 
+        VALUES($1, $2, $3)`,
         [
           userId,
           sentenceId,
-          DEFAULT_LEARNING_RATE, // learning_rate
-          getNow(timezone)
+          DEFAULT_LEARNING_RATE // learning_rate
         ]
       );
 
@@ -65,6 +62,8 @@ export default class UserSentenceHistoryRepository {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
+      console.log(SELECT_COLUMNS);
+
       const queryResult: QueryResult<any> = await client.query(
         `SELECT ${SELECT_COLUMNS} 
         FROM user_sentence_history
@@ -86,16 +85,13 @@ export default class UserSentenceHistoryRepository {
   // 성우 음성 재생 횟수 1 증가
   static updatePerfectVoiceCounts = async (
     client: PoolClient,
-    { userId, sentenceId }: UserSentenceHistoryPK,
-    timezone: string
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<number> => {
     try {
       const perfectVoiceCounts: number = (
         await client.query(
           `UPDATE user_sentence_history 
-          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = '${getNow(
-            timezone
-          )}'
+          SET perfect_voice_counts = perfect_voice_counts + 1, latest_learning_at = default
           WHERE user_id = $1 AND sentence_id = $2
           RETURNING perfect_voice_counts`,
           [userId, sentenceId]
@@ -116,16 +112,13 @@ export default class UserSentenceHistoryRepository {
   // 사용자 음성 재생 횟수 1 증가
   static updateUserVoiceCounts = async (
     client: PoolClient,
-    { userId, sentenceId }: UserSentenceHistoryPK,
-    timezone: string
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<number> => {
     try {
       const userVoiceCounts: number = (
         await client.query(
           `UPDATE user_sentence_history 
-          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = '${getNow(
-            timezone
-          )}'
+          SET user_voice_counts = user_voice_counts + 1, latest_learning_at = default
           WHERE user_id = $1 AND sentence_id = $2
           RETURNING user_voice_counts`,
           [userId, sentenceId]
@@ -147,8 +140,7 @@ export default class UserSentenceHistoryRepository {
   static updateLatestLearningAtByUnit = async (
     client: PoolClient,
     userId: number,
-    { contentId, unitIndex }: UnitPK,
-    timezone: string
+    { contentId, unitIndex }: UnitPK
   ): Promise<void> => {
     try {
       const sentenceIdList = await SentenceRepository.findAllByUnit(
@@ -158,7 +150,7 @@ export default class UserSentenceHistoryRepository {
       );
       await client.query(
         `UPDATE user_sentence_history 
-          SET latest_learning_at = '${getNow(timezone)}'
+          SET latest_learning_at = default
           WHERE user_id = $1
             AND $2 <= sentence_id 
             AND sentence_id <= $3`,
@@ -182,14 +174,13 @@ export default class UserSentenceHistoryRepository {
   // 즐갸칮기 추가/삭제
   static updateIsBookmark = async (
     client: PoolClient,
-    { userId, sentenceId }: UserSentenceHistoryPK,
-    timezone: string
+    { userId, sentenceId }: UserSentenceHistoryPK
   ): Promise<boolean> => {
     try {
       const isBookmark: boolean = (
         await client.query(
           `UPDATE user_sentence_history
-          SET is_bookmark = NOT is_bookmark, bookmark_at = ${getNow(timezone)}
+          SET is_bookmark = NOT is_bookmark, bookmark_at = CURRENT_TIMESTAMP(0)
           WHERE user_id = $1 AND sentence_id = $2
           RETURNING is_bookmark`,
           [userId, sentenceId]
@@ -233,20 +224,16 @@ export default class UserSentenceHistoryRepository {
   static createList = async (
     client: PoolClient,
     userId: number,
-    sentencesId: any[],
-    timezone: string
+    sentencesId: any[]
   ) => {
     try {
       const valuesList = sentencesId
         .map(
-          sentenceId =>
-            `(${userId}, ${sentenceId}, ${getNow(
-              timezone
-            )}, ${DEFAULT_LEARNING_RATE})`
+          sentenceId => `(${userId}, ${sentenceId}, ${DEFAULT_LEARNING_RATE})`
         )
         .join(',');
       await client.query(
-        `INSERT INTO user_sentence_history(user_id, sentence_id, latest_learning_at, learning_rate) 
+        `INSERT INTO user_sentence_history(user_id, sentence_id, learning_rate) 
       VALUES${valuesList}`
       );
       console.info("✅ inserted user_sentence_history table's rows");

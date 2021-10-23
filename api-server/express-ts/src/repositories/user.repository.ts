@@ -11,7 +11,9 @@ import { getSelectColumns } from '../utils/Query';
 export interface UserToBeSaved extends User {
   readonly email: string;
   readonly nickname: string;
-  readonly locale: string;
+  readonly platform: string;
+  readonly country: string;
+  readonly timezone: string;
   readonly roleId: number;
 }
 
@@ -19,22 +21,26 @@ export default class UserRepository {
   // 유저 생성
   static save = async (
     client: PoolClient,
-    { email, nickname, locale, roleId }: UserToBeSaved
+    { email, nickname, platform, country, timezone, roleId }: UserToBeSaved
   ): Promise<User> => {
     if (
       email === undefined ||
       nickname === undefined ||
-      locale === undefined ||
+      country === undefined ||
+      platform === undefined ||
+      timezone === undefined ||
       roleId === undefined
     )
-      throw new Error('email or nickname or locale or roleId is undefined');
+      throw new Error(
+        'email || nickname || country || platform || timezone || roleId is undefined'
+      );
     try {
       const createdUserId: number = (
         await client.query(
-          `INSERT INTO users 
-          VALUES(DEFAULT, $1, $2, $3, default, default, default, $4)
+          `INSERT INTO users(email, nickname, platform, country, timezone, role_id)
+          VALUES($1, $2, $3, $4, $5, $6)
           RETURNING user_id`,
-          [email, nickname, locale, roleId]
+          [email, nickname, platform, country, timezone, roleId]
         )
       ).rows[0].user_id;
       console.info(`✅ created user `);
