@@ -88,7 +88,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
+          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -177,7 +177,7 @@ const WordTools = ({ words }) => {
 
         await axios
           .post(
-            `https://api.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
+            `https://dev.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
             formData,
             {
               headers: {
@@ -239,7 +239,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
+          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
           {},
           {
             headers: {

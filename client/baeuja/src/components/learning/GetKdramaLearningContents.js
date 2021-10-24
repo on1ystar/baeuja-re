@@ -40,7 +40,7 @@ class GetKdramaLearningContents extends React.Component {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://api.k-peach.io/learning/contents', {
+        } = await axios('https://dev.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -74,7 +74,7 @@ class GetKdramaLearningContents extends React.Component {
         <View style={styles.kdramaContainer}>
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/squidgame.jpg')}
+            source={require('../../assets/img/kdrama.png')}
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>
@@ -103,7 +103,7 @@ class GetKdramaLearningContents extends React.Component {
         <View style={styles.kdramaContainer}>
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/kingdom.jpg')}
+            source={require('../../assets/img/kdrama.png')}
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>
@@ -132,7 +132,7 @@ class GetKdramaLearningContents extends React.Component {
         <View style={styles.kdramaContainer}>
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/itaewonclass.jpeg')}
+            source={require('../../assets/img/kdrama.png')}
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(25),
+    width: responsiveScreenWidth(26),
     height: responsiveScreenHeight(13),
     borderRadius: 10,
   },

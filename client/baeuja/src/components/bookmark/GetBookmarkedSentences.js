@@ -36,7 +36,7 @@ const GetBookmarkedSentences = () => {
         if (error) throw error;
         const {
           data: { success, sentences, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/bookmark/sentences`, {
+        } = await axios.get(`https://dev.k-peach.io/bookmark/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -73,7 +73,7 @@ const GetBookmarkedSentences = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/sentences/${bookmarkedSentence.sentenceId}`,
+          `https://dev.k-peach.io/bookmark/sentences/${bookmarkedSentence.sentenceId}`,
           {},
           {
             headers: {
@@ -95,6 +95,7 @@ const GetBookmarkedSentences = () => {
     });
   };
 
+  // useEffect
   useEffect(loadBookmarkedSentences, [randomNumber]);
 
   // GetBookmarkedSentences Screen 전체 렌더링
@@ -103,31 +104,48 @@ const GetBookmarkedSentences = () => {
       {isLoading ? (
         <Text></Text>
       ) : (
-        bookmarkedSentences.map((bookmarkedSentence) => (
-          <ScrollView key={bookmarkedSentence.sentenceId}>
-            <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-              <TouchableOpacity>
-                <View style={styles.bookmarkedSentencesContainer}>
-                  <Text style={styles.bookmarkedKoreanSentences}>
-                    {bookmarkedSentence.koreanText}
-                  </Text>
-                  <Text style={styles.bookmarkedSentences}>
-                    {bookmarkedSentence.translatedText}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.bookmarkedIconContainer}
-                onPress={() => {
-                  addBookmark({ bookmarkedSentence });
-                  setRandomNumber(Math.random());
-                }}
+        bookmarkedSentences.map((bookmarkedSentence) => {
+          const navigation = useNavigation();
+          const contentId = bookmarkedSentence.contentId;
+          const unitIndex = bookmarkedSentence.unitIndex;
+          return (
+            <ScrollView key={bookmarkedSentence.sentenceId}>
+              <Card
+                containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}
               >
-                <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
-              </TouchableOpacity>
-            </Card>
-          </ScrollView>
-        ))
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Stack', {
+                      screen: 'LearningUnit',
+                      params: {
+                        contentId,
+                        unitIndex,
+                      },
+                    })
+                  }
+                >
+                  <View style={styles.bookmarkedSentencesContainer}>
+                    <Text style={styles.bookmarkedKoreanSentences}>
+                      {bookmarkedSentence.koreanText}
+                    </Text>
+                    <Text style={styles.bookmarkedSentences}>
+                      {bookmarkedSentence.translatedText}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.bookmarkedIconContainer}
+                  onPress={() => {
+                    addBookmark({ bookmarkedSentence });
+                    setRandomNumber(Math.random());
+                  }}
+                >
+                  <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
+                </TouchableOpacity>
+              </Card>
+            </ScrollView>
+          );
+        })
       )}
     </View>
   );

@@ -134,8 +134,8 @@ android {
         applicationId "com.baeuja"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.1"
+        versionCode 3
+        versionName "0.2"
         multiDexEnabled true // mergeLibDex 오류 때문에 추가
         minSdkVersion 24 // mergeLibDex 오류 때문에 추가
         dexOptions { jumboMode true } //mergeLibDex 에러 때문에 추가

@@ -36,15 +36,6 @@ const Tabs = () => (
       }}
     />
     <Tab.Screen
-      name="Bookmark"
-      component={Bookmark}
-      options={{
-        tabBarIcon: ({ focused, color, size }) => {
-          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
-        },
-      }}
-    />
-    <Tab.Screen
       name="Home"
       component={Home}
       options={{
@@ -53,6 +44,16 @@ const Tabs = () => (
         },
       }}
     />
+    <Tab.Screen
+      name="Bookmark"
+      component={Bookmark}
+      options={{
+        tabBarIcon: ({ focused, color, size }) => {
+          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
+        },
+      }}
+    />
+
     {/* <Tab.Screen
       name="Review"
       component={Review}

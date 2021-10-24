@@ -12,6 +12,9 @@ import LearningWord from '../../screens/learning/LearningWord';
 import LearningUnits from '../../screens/learning/LearningUnits';
 import LearningUnit from '../../screens/learning/LearningUnit';
 import MoreInfo from '../../screens/learning/MoreInfo';
+import Qna from '../../screens/my/Qna';
+import sendQna from '../qna/sendQna';
+import qnaInput from '../qna/qnaInput';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -32,6 +35,9 @@ const Stack = () => (
     <NativeStack.Screen name="LearningWord" component={LearningWord} />
     <NativeStack.Screen options={{ flex: 1 }} name="LearningUnits" component={LearningUnits} />
     <NativeStack.Screen name="LearningUnit" component={LearningUnit} />
+    <NativeStack.Screen name="Qna" component={Qna} />
+    <NativeStack.Screen name="sendQna" component={sendQna} />
+    <NativeStack.Screen name="qnaInput" component={qnaInput} />
   </NativeStack.Navigator>
 );
 

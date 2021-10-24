@@ -20,6 +20,7 @@ import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 const GetBookmarkedWords = () => {
+  const navigation = useNavigation();
   const [bookmarkedWords, setBookmarkedWords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomNumber, setRandomNumber] = useState(Math.random());
@@ -35,7 +36,7 @@ const GetBookmarkedWords = () => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/bookmark/words`, {
+        } = await axios.get(`https://dev.k-peach.io/bookmark/words`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -72,7 +73,7 @@ const GetBookmarkedWords = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
+          `https://dev.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
           {},
           {
             headers: {
@@ -94,6 +95,7 @@ const GetBookmarkedWords = () => {
     });
   };
 
+  // useEffect
   useEffect(loadBookmarkedWords, [randomNumber]);
 
   return (
@@ -101,27 +103,41 @@ const GetBookmarkedWords = () => {
       {isLoading ? (
         <Text></Text>
       ) : (
-        bookmarkedWords.map((bookmarkedWord) => (
-          <ScrollView style={styles.allContainer} key={bookmarkedWord.wordId}>
-            <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-              <TouchableOpacity>
-                <View style={styles.bookmarkedWordsContainer}>
-                  <Text style={styles.bookmarkedWords}>{bookmarkedWord.korean}</Text>
-                  <Text style={styles.bookmarkedWords}>{bookmarkedWord.translation}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.bookmarkedIconContainer}
-                onPress={() => {
-                  addBookmark({ bookmarkedWord });
-                  setRandomNumber(Math.random());
-                }}
+        bookmarkedWords.map((bookmarkedWord) => {
+          const wordId = bookmarkedWord.wordId;
+          return (
+            <ScrollView style={styles.allContainer} key={bookmarkedWord.wordId}>
+              <Card
+                containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}
               >
-                <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
-              </TouchableOpacity>
-            </Card>
-          </ScrollView>
-        ))
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Stack', {
+                      screen: 'LearningWord',
+                      params: {
+                        wordId,
+                      },
+                    })
+                  }
+                >
+                  <View style={styles.bookmarkedWordsContainer}>
+                    <Text style={styles.bookmarkedWords}>{bookmarkedWord.korean}</Text>
+                    <Text style={styles.bookmarkedWords}>{bookmarkedWord.translation}</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.bookmarkedIconContainer}
+                  onPress={() => {
+                    addBookmark({ bookmarkedWord });
+                    setRandomNumber(Math.random());
+                  }}
+                >
+                  <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
+                </TouchableOpacity>
+              </Card>
+            </ScrollView>
+          );
+        })
       )}
     </View>
   );

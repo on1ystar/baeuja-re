@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // Library import
-import React from 'react';
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
@@ -17,19 +17,14 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import { ProgressBar } from '@react-native-community/progress-bar-android'; // RN Progress bar android
 
-class GetLearningContents extends React.Component {
-  state = {
-    count: 0,
-    isLoading: true,
-    contents: [],
-  };
-  componentDidMount() {
-    this.getContents();
-    console.log('Component rendered');
-  }
+const GetLearningContents = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [contents, setContents] = useState([]);
 
-  getContents = () => {
+  // Contents Data 가져오기
+  const getContents = () => {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -38,7 +33,7 @@ class GetLearningContents extends React.Component {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://api.k-peach.io/learning/contents', {
+        } = await axios('https://dev.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,27 +45,28 @@ class GetLearningContents extends React.Component {
 
         if (!success) throw new Error(errorMessage);
 
+        setContents(contents);
+        setIsLoading(false);
         console.log('success getting contents');
-        this.setState({ isLoading: false, contents });
       } catch (error) {
         console.log(error);
       }
     });
   };
 
-  render() {
-    const { contents, isLoading } = this.state;
-    return (
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-        {isLoading ? (
-          <Text> </Text>
-        ) : (
-          contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
-        )}
-      </View>
-    );
-  }
-}
+  // useEffect
+  useEffect(getContents, []);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      {isLoading ? (
+        <Text> </Text>
+      ) : (
+        contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
+      )}
+    </View>
+  );
+};
 
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
@@ -78,11 +74,16 @@ const DrawingContent = ({ content }) => {
   return (
     <View style={styles.allContainer}>
       <View style={styles.kpopContainer}>
-        <Image
+        {/* <Image
           transitionDuration={1000}
           source={{
             uri: content.thumbnailUri,
           }}
+          style={styles.thumbnailImage}
+        /> */}
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/img/kpop.png')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>
@@ -101,6 +102,27 @@ const DrawingContent = ({ content }) => {
             </Text>
             <Text style={styles.artist}>{content.artist}</Text>
           </TouchableOpacity>
+          <View style={styles.progressContainer}>
+            <Text
+              style={{
+                color: '#000000',
+                fontSize: responsiveScreenFontSize(1.3),
+              }}
+            >
+              Progress
+            </Text>
+            <ProgressBar
+              style={{
+                position: 'absolute',
+                top: responsiveScreenHeight(1.5),
+                width: responsiveScreenWidth(40),
+              }}
+              styleAttr="Horizontal"
+              indeterminate={false}
+              color={'#9388E8'}
+              progress={content.progressRate * 0.01}
+            />
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -133,8 +155,8 @@ const styles = StyleSheet.create({
     // backgroundColor: '#000000',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(18),
-    height: responsiveScreenWidth(18),
+    width: responsiveScreenWidth(15),
+    height: responsiveScreenWidth(15),
     borderRadius: 10,
   },
   titleContainer: {
@@ -143,13 +165,11 @@ const styles = StyleSheet.create({
   title: {
     color: '#444444',
     width: responsiveScreenWidth(50),
-    marginTop: responsiveScreenHeight(1),
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   artist: {
-    marginTop: 10,
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
@@ -164,6 +184,10 @@ const styles = StyleSheet.create({
   infoIcon: {
     color: '#aaaaaa',
     fontSize: responsiveFontSize(3),
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

@@ -48,7 +48,7 @@ const LearningWord = ({
 
         const {
           data: { sentences },
-        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}/sentences`, {
+        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,7 +56,7 @@ const LearningWord = ({
 
         const {
           data: { success, word, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}`, {
+        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,7 +95,7 @@ const LearningWord = ({
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/words/${wordId}`,
+          `https://dev.k-peach.io/bookmark/words/${wordId}`,
           {},
           {
             headers: {
@@ -162,6 +162,9 @@ const LearningWord = ({
 };
 
 const DrawExampleSentences = ({ sentence }) => {
+  const navigation = useNavigation();
+  const contentId = sentence.contentId;
+  const unitIndex = sentence.unitIndex;
   return (
     <Card
       containerStyle={{
@@ -176,8 +179,19 @@ const DrawExampleSentences = ({ sentence }) => {
           <Text style={styles.relatedKoreanSentences}>{sentence.koreanText}</Text>
           <Text style={styles.relatedEnglishSentences}>{sentence.translatedText}</Text>
         </View>
-        <TouchableOpacity style={styles.goToLearnArrow}>
-          <Ionicons size={30} name="chevron-forward-outline"></Ionicons>
+        <TouchableOpacity
+          style={styles.goToLearnArrow}
+          onPress={() =>
+            navigation.navigate('Stack', {
+              screen: 'LearningUnit',
+              params: {
+                contentId,
+                unitIndex,
+              },
+            })
+          }
+        >
+          <Ionicons size={30} color={'#444444'} name="chevron-forward-outline"></Ionicons>
         </TouchableOpacity>
       </View>
     </Card>

@@ -34,7 +34,7 @@ const GetNewContents = () => {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/home/contents`, {
+        } = await axios.get(`https://dev.k-peach.io/home/contents`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,11 +95,16 @@ const DrawNewContents = ({ newcontents }) => {
             })
           }
         >
-          <Image
+          {/* <Image
             transitionDuration={1000}
             source={{
               uri: newcontents.thumbnailUri,
             }}
+            style={styles.thumbnailImage}
+          /> */}
+          <Image
+            transitionDuration={1000}
+            source={require('../../assets/img/kpop.png')}
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>
@@ -149,8 +154,8 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(0.5),
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(35),
-    height: responsiveScreenHeight(20),
+    width: responsiveScreenWidth(36),
+    height: responsiveScreenHeight(18),
     borderRadius: 10,
   },
   infoIconContainer: {

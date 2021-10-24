@@ -90,7 +90,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
+          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -208,7 +208,7 @@ const Tools = ({ currentSentence }) => {
 
         await axios
           .post(
-            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
+            `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
             formData,
             {
               headers: {
@@ -270,7 +270,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
+          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
           {},
           {
             headers: {

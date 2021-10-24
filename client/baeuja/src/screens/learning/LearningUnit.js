@@ -71,7 +71,7 @@ const LearningUnit = ({
         const {
           data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
-          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
+          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ const LearningUnit = ({
         const {
           data: { sentences },
         } = await axios.get(
-          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

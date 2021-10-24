@@ -43,7 +43,7 @@ const GetRecommandWords = ({ randomNumber }) => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/home/recommendations`, {
+        } = await axios.get(`https://dev.k-peach.io/home/recommendations`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -151,13 +151,19 @@ const DrawSameRecommandWords = ({ sentences }) => {
             })
           }
         >
-          <Image
+          {/* <Image
             transitionDuration={1000}
             source={{
               uri: sentences.thumbnailUri,
             }}
             style={styles.thumbnailImage}
+          /> */}
+          <Image
+            transitionDuration={1000}
+            source={require('../../assets/img/kpopunit.png')}
+            style={styles.thumbnailImage}
           />
+
           <View style={styles.recommandWordKoreanSentenceContainer}>
             <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.koreanText}

@@ -38,7 +38,7 @@ class GetKpopLearningContents extends React.Component {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://api.k-peach.io/learning/contents', {
+        } = await axios('https://dev.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -78,11 +78,16 @@ const DrawingContent = ({ content }) => {
   return (
     <View style={styles.allContainer}>
       <View style={styles.kpopContainer}>
-        <Image
+        {/* <Image
           transitionDuration={1000}
           source={{
             uri: content.thumbnailUri,
           }}
+          style={styles.thumbnailImage}
+        /> */}
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/img/kpop.png')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>

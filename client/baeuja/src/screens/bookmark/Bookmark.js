@@ -80,10 +80,11 @@ const Bookmark = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.timeContainer}>
+          {/* 정렬 기능 구현시 사용 */}
+          {/* <View style={styles.timeContainer}>
             <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
             <Text style={styles.timeText}>2021. 10.</Text>
-          </View>
+          </View> */}
           <ScrollView>{selector ? <GetBookmarkedWords /> : <GetBookmarkedSentences />}</ScrollView>
         </View>
       }

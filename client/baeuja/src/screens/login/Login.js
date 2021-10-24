@@ -31,6 +31,7 @@ import {
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
 import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import DeviceInfo from 'react-native-device-info';
 
 // if (Platform.OS === 'ios') {
 //   GoogleSignin.configure({
@@ -59,6 +60,7 @@ class Login extends Component {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         console.log('Token: ', token);
+
         // token이 있을 경우 홈으로 이동
         if (token) {
           this.props.navigation.dispatch(
@@ -110,16 +112,19 @@ class Login extends Component {
   // 토큰 가져오는 함수
   getToken = async (authMethod, userinfo) => {
     let config = {};
-    const locale = RNLocalize.getCountry();
+    // const locale = RNLocalize.getCountry();
+    const timezone = RNLocalize.getTimeZone();
+    const country = RNLocalize.getCountry();
+    const platform = Platform.OS;
 
-    const url = `https://api.k-peach.io/users`;
+    const url = `https://dev.k-peach.io/users`;
     try {
       if (authMethod === 'google') {
         config = {
           method: 'post',
           url,
           data: {
-            userinfo: { ...userinfo, locale },
+            userinfo: { ...userinfo, timezone, country, platform },
           },
         };
       } else {
@@ -132,7 +137,9 @@ class Login extends Component {
           url,
           data: {
             userinfo: {
-              locale,
+              timezone,
+              country,
+              platform,
             },
           },
         };
