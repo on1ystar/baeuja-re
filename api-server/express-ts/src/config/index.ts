@@ -51,7 +51,12 @@ const conf: {
   },
   s3: {
     region: process.env.S3_REGION,
-    bucketData: process.env.S3_BUCKET_DATA,
+    bucketData:
+      process.env.NODE_ENV !== 'test'
+        ? process.env.NODE_ENV !== 'dev'
+          ? process.env.S3_BUCKET_DATA
+          : process.env.S3_BUCKET_DEV
+        : process.env.S3_BUCKET_TEST,
     bucketDataCdn: process.env.S3_BUCKET_DATA_CDN
   },
   db: {
