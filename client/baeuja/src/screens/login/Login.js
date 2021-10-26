@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import {
   StyleSheet,
-  Button,
   View,
   Text,
   Image,
@@ -11,45 +10,27 @@ import {
   Platform,
 } from 'react-native'; // React Native Component
 import {
-  responsiveHeight,
-  responsiveWidth,
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
-  responsiveScreenFontSize,
-  useResponsiveHeight,
-  useResponsiveWidth,
 } from 'react-native-responsive-dimensions'; // Responsive Layout
 import axios from 'axios'; // axios
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import * as RNLocalize from 'react-native-localize'; // Localize
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin'; // Google Signin
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
 import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
-import DeviceInfo from 'react-native-device-info';
 
-// if (Platform.OS === 'ios') {
-//   GoogleSignin.configure({
-//     iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-//     // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
-//     // webClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
-//     // offlineAccess: true,
-//   });
-//   console.log('iOS GoogleSignin configure');
-// } else if (Platform.OS === 'android') {
-//   GoogleSignin.configure({
-//     // androidClientId: '1017810687753-j21l5i7dnq7lpu5nnvd0g50g1hk5e7ti.apps.googleusercontent.com',
-//     offlineAccess: true,
-//     webClientId: '300096117355-8oj6lm121mq6jkvqo358q9tfpslab53c.apps.googleusercontent.com',
-//     // scopes: ['https://www.googleapis.com/auth/drive.photos.readonly'],
-//   });
-//   console.log('Android GoogleSignin configure');
-// }
+if (Platform.OS === 'ios') {
+  GoogleSignin.configure({
+    iosClientId: GOOGLE_API_IOS_CLIENT_ID,
+  });
+  console.log('iOS GoogleSignin configure');
+} else if (Platform.OS === 'android') {
+  GoogleSignin.configure({});
+  console.log('Android GoogleSignin configure');
+}
 
 class Login extends Component {
   componentDidMount() {
@@ -81,11 +62,11 @@ class Login extends Component {
     try {
       await GoogleSignin.hasPlayServices();
       const {
-        user: { email, name },
+        user: { email },
       } = await GoogleSignin.signIn();
-      console.log(email, name);
-      console.log('asdas');
-      this.getToken('google', { email, name });
+      const userinfo = await GoogleSignin.signIn();
+      console.log(email);
+      this.getToken('google', { email });
       // 토큰 가져오면 홈 화면으로 이동
       this.props.navigation.dispatch(
         CommonActions.navigate('Tabs', {
@@ -192,7 +173,7 @@ class Login extends Component {
           </View>
           {/* 구글 로그인 버튼 */}
           <View style={styles.loginBtnContainer}>
-            {/* <View>
+            <View>
               <TouchableOpacity onPress={() => this.googleSignIn()}>
                 <View style={styles.googleLoginBtn}>
                   <ImageBackground
@@ -204,7 +185,7 @@ class Login extends Component {
                   </ImageBackground>
                 </View>
               </TouchableOpacity>
-            </View> */}
+            </View>
           </View>
           <View>
             <TouchableOpacity

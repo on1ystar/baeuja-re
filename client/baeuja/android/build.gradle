@@ -9,7 +9,7 @@ buildscript {
         targetSdkVersion = 30
         ndkVersion = "21.4.7075529"
         kotlinVersion = '1.5.0'
-        googlePlayServicesAuthVersion = "19.2.0" // 구글 로그인 때문에 추가
+        googlePlayServicesAuthVersion = "16.0.1" // 10.26 수정
     }
     repositories {
         google()
@@ -17,8 +17,8 @@ buildscript {
         
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
-        classpath 'com.google.gms:google-services:4.3.10' // 구글 로그인 때문에 추가
+        classpath 'com.android.tools.build:gradle:4.2.2' //  10.26 수정
+        classpath 'com.google.gms:google-services:4.1.0' //  10.26 수정
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
