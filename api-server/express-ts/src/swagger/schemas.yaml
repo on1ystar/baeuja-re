@@ -118,7 +118,7 @@ LearningContent:
           type: string
         youtubeUrl:
           type: string
-LearningUnitsInKPOP:
+LearningUnits:
   type: object
   properties:
     success:
@@ -141,55 +141,12 @@ LearningUnitsInKPOP:
           wordsCounts:
             type: number
             description: 학습할 수 있는 단어 개수
+          counts:
+            type: number
+            description: 유닛을 학습한 횟수
           latestLearningAt:
             type: string
             description: 최근 학습 시간(안했으면 null)
-          words:
-            type: array
-            items:
-              type: object
-              properties:
-                wordId:
-                  type: number
-                korean:
-                  type: string
-LearningUnitsInOthers:
-  type: object
-  properties:
-    success:
-      type: boolean
-      example: true
-    units:
-      type: array
-      items:
-        type: object
-        properties:
-          unitIndex:
-            type: number
-          contentId:
-            type: number
-          thumbnailUri:
-            type: string
-          latestLearningAt:
-            type: string
-            description: 최근 학습 시간(안했으면 null)
-          sentence:
-            type: object
-            properties:
-              sentenceId:
-                type: number
-              koreanText:
-                type: string
-              translatedText:
-                type: string
-              isConversation:
-                type: boolean
-              isFamousLine:
-                type: boolean
-              isBookmark:
-                type: boolean
-              learningRate:
-                type: number
 LearningUnit:
   type: object
   properties:
@@ -238,6 +195,10 @@ LearningSentences:
           perfectVoiceUri:
             type: string
             example: https://cdn.k-peach.io/perfect-voice/test.wav
+          isConversation:
+            type: boolean
+          isFamousLine:
+            type: boolean
           startTime:
             type: string
             example: 0:18
@@ -246,7 +207,6 @@ LearningSentences:
             example: 0:21
           isBookmark:
             type: boolean
-            example: false
           words:
             type: array
             items:

@@ -98,4 +98,52 @@ export default class UnitRepository {
       throw error;
     }
   };
+
+  // 유닛 별 학습 문장 개수
+  static getSentencesCounts = async (
+    client: PoolClient,
+    contentId: number
+  ): Promise<any[]> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT unit.unit_index, count(*) FROM unit
+        JOIN sentence
+        ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index AND sentence.perfect_voice_uri != 'NULL'
+        WHERE unit.content_id = $1
+        GROUP BY unit.unit_index
+        ORDER BY unit.unit_index`,
+        [contentId]
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+      return queryResult.rows;
+    } catch (error) {
+      console.warn('❌ Error: unit.repository.ts getSentencesCounts function ');
+      throw error;
+    }
+  };
+
+  // 유닛 별 학습 단어 개수
+  static getWordsCounts = async (
+    client: PoolClient,
+    contentId: number
+  ): Promise<any[]> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT unit.unit_index, count(*) FROM unit
+        JOIN sentence
+        ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index
+        JOIN sentence_word
+        ON sentence.sentence_id = sentence_word.sentence_id
+        WHERE unit.content_id = $1
+        GROUP BY unit.unit_index
+        ORDER BY unit.unit_index`,
+        [contentId]
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+      return queryResult.rows;
+    } catch (error) {
+      console.warn('❌ Error: unit.repository.ts getWordsCounts function ');
+      throw error;
+    }
+  };
 }

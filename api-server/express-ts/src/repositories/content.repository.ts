@@ -54,7 +54,7 @@ export default class ContentRepository {
         FROM content 
         LEFT JOIN user_content_history 
         ON content.content_id = user_content_history.content_id AND user_id = ${userId}
-        ORDER BY content.content_id ASC`
+        ORDER BY user_content_history.latest_learning_at DESC`
       );
       if (!queryResult.rowCount) throw new Error('contentId does not exist');
 

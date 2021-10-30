@@ -12,18 +12,12 @@ get:
       schema:
         type: number
   responses:
-    200-304-K-POP:
-      description: 요청 성공 (K-POPcontent 터치 시)
+    200-304P:
+      description: 요청 성공
       content:
         application/json:
           schema:
-            $ref: '../../../openapi.yaml#/components/schemas/LearningUnitsInKPOP'
-    200-304-Others:
-      description: 요청 성공 (K-DRAMA or K-MOVIE content 터치 시)
-      content:
-        application/json:
-          schema:
-            $ref: '../../../openapi.yaml#/components/schemas/LearningUnitsInOthers'
+            $ref: '../../../openapi.yaml#/components/schemas/LearningUnits'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:

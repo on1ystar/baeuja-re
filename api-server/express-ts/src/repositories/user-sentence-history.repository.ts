@@ -62,8 +62,6 @@ export default class UserSentenceHistoryRepository {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
-      console.log(SELECT_COLUMNS);
-
       const queryResult: QueryResult<any> = await client.query(
         `SELECT ${SELECT_COLUMNS} 
         FROM user_sentence_history

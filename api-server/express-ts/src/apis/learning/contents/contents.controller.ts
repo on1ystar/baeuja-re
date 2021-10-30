@@ -10,14 +10,7 @@ import { pool } from '../../../db';
 import Content from '../../../entities/content.entity';
 import { UserContentHistoryPK } from '../../../entities/user-content-history.entity';
 import { UserUnitHistoryPK } from '../../../entities/user-unit-history.entity.';
-import Word from '../../../entities/word.entity';
 import Unit from '../../../entities/unit.entity';
-import UnitOfKpopDTO, {
-  UnitJoinedUserUnitHistory
-} from './dto/unit-of-k-pop.dto';
-import UnitOfOthersDTO, {
-  SentenceJoinedUserSentenceHistory
-} from './dto/unit-of-others.dto';
 import LearningContentDTO from './dto/learning-content.dto';
 import ContentRepository from '../../../repositories/content.repository';
 import UserContentHistoryRepository from '../../../repositories/user-content-history.repository';
@@ -131,98 +124,37 @@ export const getUnits = async (
     else
       UserContentHistoryRepository.updateCounts(client, userContentHistoryPK);
 
-    const content: Content = await ContentRepository.findOne(
+    await client.query(`SET TIMEZONE='UTC'`);
+
+    // 학습 유닛 리스트
+    let units: any[] = await UnitRepository.leftJoinUserUnitHistory(
       client,
+      userId,
       +contentId,
-      ['classification']
+      [
+        { Unit: ['contentId', 'unitIndex', 'thumbnailUri'] },
+        { UserUnitHistory: ['counts', 'latestLearningAt'] }
+      ]
     );
-    // 콘텐츠가 K-POP인 경우
-    if (content.classification?.toUpperCase() === 'K-POP') {
-      const units: UnitJoinedUserUnitHistory[] =
-        await UnitRepository.leftJoinUserUnitHistory(
-          client,
-          userId,
-          +contentId,
-          [
-            { Unit: ['contentId', 'unitIndex', 'thumbnailUri'] },
-            { UserUnitHistory: ['latestLearningAt'] }
-          ]
-        );
-      const unitOfKpopDTOs: Promise<UnitOfKpopDTO>[] = units.map(async unit => {
-        const sentencesCounts: number = (
-          await SentenceRepository.findAllByUnit(
-            client,
-            { contentId: unit.contentId, unitIndex: unit.unitIndex },
-            ['sentenceId']
-          )
-        ).length;
-        const words: Word[] = await SentenceRepository.joinWord(
-          client,
-          unit.contentId,
-          unit.unitIndex,
-          [{ Word: ['wordId', 'korean'] }]
-        );
-        const wordsCounts: number = words.length;
-        return {
-          ...unit,
-          sentencesCounts,
-          wordsCounts,
-          words
-        };
-      });
+    // 학습 유닛 별 학습 문장 개수 리스트
+    const sentencesCountsObjects: any[] =
+      await UnitRepository.getSentencesCounts(client, +contentId);
+    // 학습 유닛 별 학습 단어 개수 리스트
+    const wordsCountsObjects: any[] = await UnitRepository.getWordsCounts(
+      client,
+      +contentId
+    );
+    units = units.map((unit, index) => {
+      return {
+        ...unit,
+        sentencesCounts: +sentencesCountsObjects[index].count,
+        wordsCounts: +wordsCountsObjects[index].count
+      };
+    });
 
-      await client.query('COMMIT');
+    await client.query('COMMIT');
 
-      Promise.all(unitOfKpopDTOs).then((unitsOfKpop: UnitOfKpopDTO[]) => {
-        return res.status(200).json({ success: true, units: unitsOfKpop });
-      });
-    }
-    // contents가 K-Drama or K-Movie인 경우
-    else {
-      const units = await UnitRepository.leftJoinUserUnitHistory(
-        client,
-        userId,
-        +contentId,
-        [
-          { Unit: ['contentId', 'unitIndex', 'thumbnailUri'] },
-          { UserUnitHistory: ['latestLearningAt'] }
-        ]
-      );
-      const unitOfOthersDTOs: Promise<UnitOfOthersDTO>[] = units.map(
-        async unit => {
-          const sentence: SentenceJoinedUserSentenceHistory = (
-            await SentenceRepository.leftJoinUserSentenceHistory(
-              client,
-              userId,
-              +contentId,
-              unit.unitIndex,
-              [
-                {
-                  Sentence: [
-                    'sentenceId',
-                    'koreanText',
-                    'translatedText',
-                    'isConversation',
-                    'isFamousLine'
-                  ]
-                },
-                { UserSentenceHistory: ['learningRate'] }
-              ]
-            )
-          )[0];
-          return {
-            ...unit,
-            sentence
-          };
-        }
-      );
-
-      await client.query('COMMIT');
-
-      Promise.all(unitOfOthersDTOs).then((unitsOfOthers: UnitOfOthersDTO[]) => {
-        return res.status(200).json({ success: true, units: unitsOfOthers });
-      });
-    }
+    return res.status(200).json({ success: true, units });
   } catch (error) {
     await client.query('ROLLBACK');
     console.warn(error);
@@ -322,6 +254,8 @@ export const getSentences = async (
               'koreanText',
               'translatedText',
               'perfectVoiceUri',
+              'isConversation',
+              'isFamousLine',
               'startTime',
               'endTime'
             ]
