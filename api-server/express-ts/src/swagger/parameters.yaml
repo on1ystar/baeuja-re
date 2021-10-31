@@ -1,0 +1,5 @@
+- in: header
+  name: Authorization
+  schema:
+    type: string
+  required: true

@@ -1,0 +1,44 @@
+get:
+  tags:
+    - learning/contents
+  summary: learning unit 데이터
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: contentId
+      in: path
+      description: 터치한 unit의 content Id
+      required: true
+      schema:
+        type: number
+    - name: unitIndex
+      in: path
+      description: 터치한 unit의 unit index
+      required: true
+      schema:
+        type: number
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/LearningUnit'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Access token이 없거나 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'

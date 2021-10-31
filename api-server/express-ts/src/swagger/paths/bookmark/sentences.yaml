@@ -1,0 +1,44 @@
+get:
+  tags:
+    - bookmark
+  summary: 즐겨찾기된 문장 리스트
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: sortBy
+      in: query
+      description: 정렬 파라미터 (bookmarkAt(default)  = 즐겨찾기 추가 날짜 순 | latestLearningAt = 최근 학습 날짜 순)
+      schema:
+        type: string
+        expample: bookmarkAt(default)| latestLearningAt
+    - name: option
+      in: query
+      description: 정렬 옵션 (DESC(default) = 내림차순 | ASC = 오름차순 )
+      schema:
+        type: string
+        expample: DESC | ASC
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/BookmarkSentences'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Access token이 없거나 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'

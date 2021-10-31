@@ -1,0 +1,84 @@
+get:
+  tags:
+    - users
+  summary: get users list
+  security:
+    - bearerAuth: []
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Users'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+post:
+  tags:
+    - users
+  summary: login for getting token
+  requestBody:
+    description: 유저 정보
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            userinfo:
+              type: object
+              required: [locale]
+              properties:
+                email:
+                  type: string
+                  description: 구글 로그인일 경우 이메일 필요 | 게스트 로그인일 경우 필요 없음
+                platform:
+                  type: string
+                  description: 사용자 디바이스 기기 OS
+                country:
+                  type: string
+                  description: 사용자 국가
+                timezone:
+                  type: string
+                  description: 사용자 timezone
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/LoginedResult'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'

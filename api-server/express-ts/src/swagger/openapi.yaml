@@ -1,0 +1,78 @@
+openapi: '3.0.0'
+info:
+  version: 0.2.0
+  title: BAEUJA API DOCS
+  description: '`BAEUJA` TEAM의 API 문서입니다'
+  license:
+    name: MIT
+servers:
+  - url: https://dev.k-peach.io/
+  - url: https://api.k-peach.io/
+  - url: http://localhost:3001/
+tags:
+  - name: home
+    description: home app APIs
+  - name: users
+    description: users app APIs
+  - name: learning/contents
+    description: contents in learning app APIs
+  - name: learning/sentences
+    description: sentences in learning app APIs
+  - name: learning/words
+    description: words in learning app APIs
+  - name: bookmark
+    description: bookmark app APIs
+  - name: qnas
+    description: qna app APIs
+paths:
+  /home/contents:
+    $ref: './paths/home/contents.yaml'
+  /home/recommendations:
+    $ref: './paths/home/recommendations.yaml'
+  /learning/contents:
+    $ref: './paths/learning/contents.yaml'
+  /learning/contents/{contentId}:
+    $ref: './paths/learning/contents/content.yaml'
+  /learning/contents/{contentId}/units:
+    $ref: './paths/learning/contents/units.yaml'
+  /learning/contents/{contentId}/units/{unitIndex}:
+    $ref: './paths/learning/contents/unit.yaml'
+  /learning/contents/{contentId}/units/{unitIndex}/sentences:
+    $ref: './paths/learning/contents/sentences.yaml'
+  /learning/sentences/{sentenceId}/userSentenceHistory:
+    $ref: './paths/learning/sentences/userSentenceHistory.yaml'
+  /learning/sentences/{sentenceId}/userSentenceEvaluation:
+    $ref: './paths/learning/sentences/userSentenceEvaluation.yaml'
+  /learning/words/{wordId}:
+    $ref: './paths/learning/words/word.yaml'
+  /learning/words/{wordId}/sentences:
+    $ref: './paths/learning/words/sentences.yaml'
+  /learning/words/{wordId}/userWordHistory:
+    $ref: './paths/learning/words/userWordHistory.yaml'
+  /learning/words/{wordId}/userWordEvaluation:
+    $ref: './paths/learning/words/userWordEvaluation.yaml'
+  /users:
+    $ref: './paths/users/users.yaml'
+  /users/{userId}:
+    $ref: './paths/users/user.yaml'
+  /bookmark/sentences:
+    $ref: './paths/bookmark/sentences.yaml'
+  /bookmark/sentences/{sentenceId}:
+    $ref: './paths/bookmark/sentence.yaml'
+  /bookmark/words:
+    $ref: './paths/bookmark/words.yaml'
+  /bookmark/words/{wordId}:
+    $ref: './paths/bookmark/word.yaml'
+  /qnas/types:
+    $ref: './paths/qna/qna-types.yaml'
+  /qnas:
+    $ref: './paths/qna/qnas.yaml'
+  /qnas/{qnaId}:
+    $ref: './paths/qna/qna.yaml'
+components:
+  parameters:
+    $ref: './parameters.yaml'
+  schemas:
+    $ref: './schemas.yaml'
+  securitySchemes:
+    $ref: './securitySchemas.yaml'

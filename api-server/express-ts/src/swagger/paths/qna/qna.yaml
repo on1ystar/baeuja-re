@@ -1,0 +1,144 @@
+get:
+  tags:
+    - qnas
+  summary: get a qna
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: qnaId
+      in: path
+      description: 조회할 qnaId
+      required: true
+      schema:
+        type: number
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Qna'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+patch:
+  tags:
+    - qnas
+  summary: update a qna's answer
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: qnaId
+      in: path
+      description: 답변할 qnaId
+      required: true
+      schema:
+        type: number
+  requestBody:
+    description: 답변 내용
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            answer:
+              type: string
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              successs:
+                type: boolean
+              qna:
+                type: object
+                properties:
+                  qnaId:
+                    type: number
+                  answer:
+                    type: string
+                  answeredAt:
+                    type: string
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+delete:
+  tags:
+    - qnas
+  summary: delete a qna
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: qnaId
+      in: path
+      description: 삭제할 qnaId
+      required: true
+      schema:
+        type: number
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              successs:
+                type: boolean
+              qna:
+                type: object
+                properties:
+                  qnaId:
+                    type: number
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
