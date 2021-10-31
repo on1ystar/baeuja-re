@@ -1,0 +1,45 @@
+post:
+  tags:
+    - learning/words
+  summary: 단어 학습 기록(perfectVoiceCounts | userVoiceCounts) 카운트 1 증가
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: wordId
+      in: path
+      description: 터치한 word Id
+      required: true
+      schema:
+        type: number
+    - name: column
+      in: query
+      description: 저장할 학습 기록 종류
+      required: true
+      schema:
+        type: string
+        expample: perfectVoiceCounts | userVoiceCounts
+  responses:
+    200-304(perfectVoiceCounts):
+      description: column = perfectVoiceCounts 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/LearningWordPerfectVoiceCounts'
+    200-304(userVoiceCounts):
+      description: column = userVoiceCounts 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/LearningWordUserVoiceCounts'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Access token이 없거나 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../../openapi.yaml#/components/schemas/Error'

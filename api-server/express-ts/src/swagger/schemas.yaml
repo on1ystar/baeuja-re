@@ -1,0 +1,650 @@
+# -------------------------- home -------------------------- #
+NewContents:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    contents:
+      type: array
+      items:
+        type: object
+        properties:
+          updatedAt:
+            type: string
+          contentId:
+            type: number
+          title:
+            type: string
+          artist:
+            type: string
+          director:
+            type: string
+          thumbnailUri:
+            type: string
+          countsOfUnits:
+            type: number
+          countsOfSentences:
+            type: number
+          countsOfWords:
+            type: number
+Recommendations:
+  type: object
+  properties:
+    success:
+      type: boolean
+    words:
+      type: array
+      items:
+        type: object
+        properties:
+          wordId:
+            type: number
+          korean:
+            type: string
+          translation:
+            type: string
+          importance:
+            type: string
+          sentences:
+            type: array
+            items:
+              type: object
+              properties:
+                sentenceId:
+                  type: number
+                contentId:
+                  type: number
+                unitIndex:
+                  type: number
+                koreanText:
+                  type: string
+                translatedText:
+                  type: string
+                koreanInText:
+                  type: string
+                translationInText:
+                  type: string
+                startTime:
+                  type: string
+                thumbnailUri:
+                  type: string
+# -------------------------- learning -------------------------- #
+LearningContents:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    contents:
+      type: array
+      items:
+        type: object
+        properties:
+          contentId:
+            type: number
+          classification:
+            type: string
+          title:
+            type: string
+          artist:
+            type: string
+          director:
+            type: string
+          thumbnailUri:
+            type: string
+          progressRate:
+            type: number
+LearningContent:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    content:
+      type: object
+      properties:
+        contentId:
+          type: number
+        title:
+          type: string
+        artist:
+          type: string
+        director:
+          type: string
+        description:
+          type: string
+        thumbnailUri:
+          type: string
+        youtubeUrl:
+          type: string
+LearningUnits:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    units:
+      type: array
+      items:
+        type: object
+        properties:
+          unitIndex:
+            type: number
+          contentId:
+            type: number
+          thumbnailUri:
+            type: string
+          sentencesCounts:
+            type: number
+            description: 학습할 수 있는 문장 개수
+          wordsCounts:
+            type: number
+            description: 학습할 수 있는 단어 개수
+          counts:
+            type: number
+            description: 유닛을 학습한 횟수
+          latestLearningAt:
+            type: string
+            description: 최근 학습 시간(안했으면 null)
+LearningUnit:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    unit:
+      type: object
+      description: 유튜브 영상을 위한 unit 객체
+      properties:
+        unitIndex:
+          type: number
+          example: 1
+        contentId:
+          type: number
+          example: 5
+        youtubeUrl:
+          type: string
+          example: https://www.youtube.com/watch?v=9bZkp7q19f0
+        startTime:
+          type: string
+          example: 0:18
+        endTime:
+          type: string
+          example: 0:32
+LearningSentences:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+            example: 1
+          koreanText:
+            type: string
+            example: 낮에는 따사로운 인간적인 여자
+          translatedText:
+            type: string
+            example: A warm, humane woman during the day.
+          perfectVoiceUri:
+            type: string
+            example: https://cdn.k-peach.io/perfect-voice/test.wav
+          isConversation:
+            type: boolean
+          isFamousLine:
+            type: boolean
+          startTime:
+            type: string
+            example: 0:18
+          endTime:
+            type: string
+            example: 0:21
+          isBookmark:
+            type: boolean
+          words:
+            type: array
+            items:
+              type: object
+              properties:
+                wordId:
+                  type: number
+                  example: 1
+                koreanInText:
+                  type: string
+                  example: 낮
+                translationInText:
+                  type: string
+                  example: day
+                korean:
+                  type: string
+                  example: 낮
+                translation:
+                  type: string
+                  example: day
+LearningSentencesContainingWord:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+            example: 1
+          contentId:
+            type: number
+            example: 1
+          unitIndex:
+            type: number
+            example: 1
+          koreanText:
+            type: string
+            example: 낮에는 따사로운 인간적인 여자
+          translatedText:
+            type: string
+            example: A warm, humane woman during the day.
+          koreanInText:
+            type: string
+            example: 낮
+          translationInText:
+            type: string
+            example: day
+LearningSentencePerfectVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentenceHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        sentenceId:
+          type: number
+        perfectVoiceCounts:
+          type: number
+          description: 성우 음성 재생 횟수
+LearningSentenceUserVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    sentenceHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        sentenceId:
+          type: number
+        userVoiceCounts:
+          type: number
+          description: 사용자 음성 재생 횟수
+LearningSentenceEvaluation:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    evaluatedSentence:
+      type: object
+      properties:
+        sentenceEvaluationCounts:
+          type: number
+          description: 이 문장에 대한 발음 평가 횟수
+        userId:
+          type: number
+        sentenceId:
+          type: number
+        score:
+          type: number
+        sttResult:
+          type: string
+        userVoiceUri:
+          type: string
+          description: 저장된 사용자 음성 경로
+    pitchData:
+      type: object
+      properties:
+        perfectVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+        userVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+Word:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    word:
+      type: object
+      properties:
+        wordId:
+          type: number
+        korean:
+          type: string
+        translation:
+          type: string
+        perfectVoiceUri:
+          type: string
+        importance:
+          type: string
+        isBookmark:
+          type: boolean
+LearningWordEvaluation:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    evaluategWord:
+      type: object
+      properties:
+        wordEvaluationCounts:
+          type: number
+          description: 같은 단어에 대한 발음 평가 횟수
+        userId:
+          type: number
+        wordId:
+          type: number
+        score:
+          type: number
+        sttResult:
+          type: string
+        userVoiceUri:
+          type: string
+          description: 저장된 사용자 음성 경로
+    pitchData:
+      type: object
+      properties:
+        perfectVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+        userVoice:
+          type: object
+          properties:
+            time:
+              type: array
+              items:
+                type: number
+            hz:
+              type: array
+              items:
+                type: number
+LearningWordPerfectVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    wordHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        wordId:
+          type: number
+        perfectVoiceCounts:
+          type: number
+          description: 성우 음성 재생 횟수
+LearningWordUserVoiceCounts:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    wordHistory:
+      type: object
+      properties:
+        userId:
+          type: number
+        wordId:
+          type: number
+        userVoiceCounts:
+          type: number
+          description: 사용자 음성 재생 횟수
+# -------------------------- login -------------------------- #
+LoginedResult:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    token:
+      type: string
+      description: JWT TOKEN for auth
+    isMember:
+      type: boolean
+      description: true -> member(이미 가입한 회원) | false -> new member or guest
+# -------------------------- user -------------------------- #
+User:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    user:
+      type: object
+      properties:
+        userId:
+          type: number
+          description: user id
+        email:
+          type: string
+          description: 사용자 이메일
+        nickname:
+          type: string
+          description: 사용자 닉네임
+UserDetail:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    user:
+      type: object
+      properties:
+        userId:
+          type: number
+          description: user id
+        email:
+          type: string
+          description: 사용자 이메일
+        nickname:
+          type: string
+          description: 사용자 닉네임
+        locale:
+          type: string
+          description: 사용자 국가
+        createdAt:
+          type: string
+          description: 생성 시기
+        latestLogin:
+          type: string
+          description: 최근 로그인 시간
+        modifiedAt:
+          type: string
+          description: 변경 시간
+        role_id:
+          type: number
+          description: '1: admin | 2: member | 3: guest'
+Users:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    users:
+      type: array
+      description: users list
+      items:
+        type: object
+        properties:
+          userId:
+            type: number
+            description: user id
+          email:
+            type: string
+            description: 사용자 이메일
+          nickname:
+            type: string
+            description: 사용자 닉네임
+# -------------------------- bookmark -------------------------- #
+PostBookmark:
+  type: object
+  properties:
+    success:
+      type: boolean
+    isBookmark:
+      type: boolean
+BookmarkSentences:
+  type: object
+  properties:
+    success:
+      type: boolean
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+          contentId:
+            type: number
+          unitIndex:
+            type: number
+          koreanText:
+            type: string
+          translatedText:
+            type: string
+          startTime:
+            type: string
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
+BookmarkWords:
+  type: object
+  properties:
+    success:
+      type: boolean
+    words:
+      type: array
+      items:
+        type: object
+        properties:
+          wordId:
+            type: number
+          korean:
+            type: string
+          translation:
+            type: string
+          importance:
+            type: string
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
+# -------------------------- qna -------------------------- #
+Qnas:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qnas:
+      type: array
+      items:
+        type: object
+        properties:
+          qnaId:
+            type: number
+          title:
+            type: string
+          content:
+            type: string
+          answer:
+            type: string
+          createdAt:
+            type: string
+          answeredAt:
+            type: string
+Qna:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qna:
+      type: object
+      properties:
+        qnaId:
+          type: number
+        title:
+          type: string
+        content:
+          type: string
+        answer:
+          type: string
+        createdAt:
+          type: string
+        answeredAt:
+          type: string
+QnaTypes:
+  type: object
+  properties:
+    success:
+      type: boolean
+    qnaTypes:
+      type: array
+      items:
+        type: object
+        properties:
+          qnaTypeId:
+            type: number
+          name:
+            type: string
+# -------------------------- error -------------------------- #
+Error:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    errorMessage:
+      type: string

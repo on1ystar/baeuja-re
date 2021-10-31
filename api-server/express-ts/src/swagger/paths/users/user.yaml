@@ -1,0 +1,124 @@
+get:
+  tags:
+    - users
+  summary: get user's detail
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: userId
+      in: path
+      description: 조회할 userId
+      required: true
+      schema:
+        type: number
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/UserDetail'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+patch:
+  tags:
+    - users
+  summary: update user's nickname
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: userId
+      in: path
+      description: 변경할 userId
+      required: true
+      schema:
+        type: number
+  requestBody:
+    description: 변경할 닉네임
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            nickname:
+              type: string
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/User'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+delete:
+  tags:
+    - users
+  summary: delete user
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: userId
+      in: path
+      description: 삭제할 userId
+      required: true
+      schema:
+        type: number
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/User'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Authorization header가 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'

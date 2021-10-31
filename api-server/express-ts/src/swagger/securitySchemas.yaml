@@ -1,0 +1,23 @@
+oAuth2AuthCode:
+  type: oauth2
+  description: For more information, see https://api.slack.com/docs/oauth
+  flows:
+    authorizationCode:
+      authorizationUrl: https://slack.com/oauth/authorize
+      tokenUrl: https://slack.com/api/oauth.access
+      scopes:
+        users:read: Read user information
+        users:write: Modify user information
+        im:read: Read messages
+        im:write: Write messages
+        im:history: Access the message archive
+        search:read: Search messages, files, and so on
+bearerAuth: # arbitrary name for the security scheme
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: '코드에서는 __HTTP Authorization header__를 다음과 같이 추가해야 함 <br> `Authorization: Bearer <token>`'
+basicAuth: # arbitrary name for the security scheme
+  type: http
+  scheme: basic
+  description: '코드에서는 __HTTP Authorization header__를 다음과 같이 추가해야 함 <br> `Authorization: Basic <token>`'
