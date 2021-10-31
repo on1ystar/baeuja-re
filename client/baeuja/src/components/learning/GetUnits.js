@@ -43,7 +43,7 @@ class GetUnits extends React.Component {
         if (error) throw error;
         const {
           data: { success, units, tokenExpired, errorMessage },
-        } = await axios(`https://api.k-peach.io/learning/contents/${contentId}/units`, {
+        } = await axios(`https://dev.k-peach.io/learning/contents/${contentId}/units`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
