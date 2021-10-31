@@ -21,13 +21,13 @@ import GetUnits from '../../components/learning/GetUnits';
 
 const LearningUnits = ({
   route: {
-    params: { contentId },
+    params: { contentId, contentTitle },
   },
 }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.allContainer}>
-        <GetUnits contentId={contentId} />
+        <GetUnits contentId={contentId} contentTitle={contentTitle} />
       </View>
     </ScrollView>
   );

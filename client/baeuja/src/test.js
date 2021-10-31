@@ -1,5 +1,3 @@
-const t = [10, 20, 30];
-
-console.log(t.indexOf(3) === -1);
-
-if (t.indexOf(3)) console.log('12312313123');
+let a = '2021-10-30T14:42:21.000Z';
+a = a.split('T');
+console.log(a[0]);

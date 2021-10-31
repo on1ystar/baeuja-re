@@ -36,7 +36,7 @@ const GetBookmarkedWords = () => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/bookmark/words`, {
+        } = await axios.get(`https://api.k-peach.io/bookmark/words`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -73,7 +73,7 @@ const GetBookmarkedWords = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
+          `https://api.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
           {},
           {
             headers: {

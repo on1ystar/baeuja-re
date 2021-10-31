@@ -81,20 +81,6 @@ const My = ({ navigation: { navigate } }) => {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={{ flex: 1 }}>
-        <View style={styles.qnaTextContainer}>
-          <TouchableOpacity>
-            <Text style={styles.titleText}>Test</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{ flex: 1 }}>
-        <View style={styles.qnaTextContainer}>
-          <TouchableOpacity>
-            <Text style={styles.titleText}>Test</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 };
@@ -107,9 +93,9 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(5),
+    marginTop: responsiveScreenHeight(3),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3.2),
+    fontSize: responsiveFontSize(3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#444444',

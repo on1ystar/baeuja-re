@@ -2,7 +2,16 @@
 
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Alert,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native'; // React Native Component
 import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe'; // Youtube Player
 import {
   responsiveHeight,
@@ -33,6 +42,7 @@ import RNFS from 'react-native-fs';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navigation
 import { Card } from 'react-native-elements'; // React Native Elements
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { useNavigation } from '@react-navigation/native'; // Navigation
 
 // Component import
 import Script from '../../components/learning/Script';
@@ -48,6 +58,8 @@ const LearningUnit = ({
     params: { contentId, unitIndex },
   },
 }) => {
+  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
+
   // state
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);
@@ -71,7 +83,7 @@ const LearningUnit = ({
         const {
           data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -82,7 +94,7 @@ const LearningUnit = ({
         const {
           data: { sentences },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -178,6 +190,8 @@ const LearningUnit = ({
 
   // -------------------------------------return----------------------------------------
   // Learning 화면 전체 그리기
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={LearningStyles.container}>
       {/* 유튜브 플레이어 */}
@@ -209,6 +223,21 @@ const LearningUnit = ({
           <View style={{ flex: 1 }}>
             <Script currentSentence={currentSentence} updateIsBookmark={updateIsBookmark} />
           </View>
+          <TouchableOpacity
+            style={{
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              marginRight: responsiveScreenWidth(10),
+              marginTop: responsiveScreenHeight(2),
+            }}
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'Help',
+              })
+            }
+          >
+            <Text style={{ color: '#AAAAAA' }}>help?</Text>
+          </TouchableOpacity>
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
             {Object.keys(currentSentence).length !== 0 &&

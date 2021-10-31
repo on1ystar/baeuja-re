@@ -52,7 +52,7 @@ const MoreInfo = ({
             success,
             content: { thumbnailUri, title, artist, director, description, youtubeUrl },
           },
-        } = await axios(`https://dev.k-peach.io/learning/contents/${contentId}`, {
+        } = await axios(`https://api.k-peach.io/learning/contents/${contentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,7 +79,7 @@ const MoreInfo = ({
 
   return (
     <SafeAreaView style={styles.allContainer}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1, marginBottom: responsiveScreenHeight(10) }}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>
             {artist} - {title}
@@ -95,7 +95,7 @@ const MoreInfo = ({
           /> */}
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/kpop.png')}
+            source={require('../../assets/img/1_b.png')}
             style={styles.thumbnailImage}
           />
         </View>

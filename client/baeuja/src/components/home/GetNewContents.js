@@ -34,7 +34,7 @@ const GetNewContents = () => {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/contents`, {
+        } = await axios.get(`https://api.k-peach.io/home/contents`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -67,7 +67,10 @@ const GetNewContents = () => {
       showsHorizontalScrollIndicator={false}
     >
       {isLoading ? (
-        <Text> </Text>
+        <Text style={{ marginLeft: responsiveScreenWidth(5), color: '#444444' }}>
+          {' '}
+          Loading... Please wait...{' '}
+        </Text>
       ) : (
         newContents.map((newcontents) => (
           <DrawNewContents key={newcontents.contentId} newcontents={newcontents} />
@@ -104,7 +107,7 @@ const DrawNewContents = ({ newcontents }) => {
           /> */}
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/kpop.png')}
+            source={require('../../assets/img/albumJacketBig.jpg')}
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>

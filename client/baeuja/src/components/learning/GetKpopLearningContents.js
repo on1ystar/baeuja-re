@@ -1,7 +1,15 @@
 /* eslint-disable react/prop-types */
 // Library import
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -17,6 +25,7 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import { ProgressBar } from '@react-native-community/progress-bar-android'; // RN Progress bar android
 
 class GetKpopLearningContents extends React.Component {
   state = {
@@ -38,7 +47,7 @@ class GetKpopLearningContents extends React.Component {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://dev.k-peach.io/learning/contents', {
+        } = await axios('https://api.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +85,7 @@ const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
   return (
-    <View style={styles.allContainer}>
+    <SafeAreaView style={styles.allContainer}>
       <View style={styles.kpopContainer}>
         {/* <Image
           transitionDuration={1000}
@@ -87,7 +96,7 @@ const DrawingContent = ({ content }) => {
         /> */}
         <Image
           transitionDuration={1000}
-          source={require('../../assets/img/kpop.png')}
+          source={require('../../assets/img/albumJacket.jpg')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>
@@ -106,6 +115,27 @@ const DrawingContent = ({ content }) => {
             </Text>
             <Text style={styles.artist}>{content.artist}</Text>
           </TouchableOpacity>
+          <View style={styles.progressContainer}>
+            <Text
+              style={{
+                color: '#000000',
+                fontSize: responsiveScreenFontSize(1.3),
+              }}
+            >
+              Progress
+            </Text>
+            <ProgressBar
+              style={{
+                position: 'absolute',
+                top: responsiveScreenHeight(1.5),
+                width: responsiveScreenWidth(40),
+              }}
+              styleAttr="Horizontal"
+              indeterminate={false}
+              color={'#9388E8'}
+              progress={content.progressRate * 0.01}
+            />
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -121,13 +151,14 @@ const DrawingContent = ({ content }) => {
           <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    marginBottom: responsiveScreenHeight(1.4),
   },
   kpopContainer: {
     flex: 1,
@@ -143,6 +174,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     marginLeft: responsiveScreenWidth(5),
+    height: responsiveHeight(8),
   },
   title: {
     color: '#444444',

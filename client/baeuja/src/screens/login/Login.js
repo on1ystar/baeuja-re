@@ -22,19 +22,40 @@ import { useNavigation, CommonActions } from '@react-navigation/native'; // Navi
 import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
+// // 토큰 있는지 검사해서 홈으로 이동시키기
+// AsyncStorage.getItem('token', async (error, token) => {
+//   try {
+//     console.log('Token: ', token);
+
+//     // token이 있을 경우 홈으로 이동
+//     if (token) {
+//       this.props.navigation.dispatch(
+//         CommonActions.navigate('Tabs', {
+//           screen: 'Home',
+//         })
+//       );
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
 if (Platform.OS === 'ios') {
   GoogleSignin.configure({
     iosClientId: GOOGLE_API_IOS_CLIENT_ID,
   });
   console.log('iOS GoogleSignin configure');
 } else if (Platform.OS === 'android') {
-  GoogleSignin.configure({});
+  GoogleSignin.configure({
+    webClientId: GOOGLE_API_ANDROID_CLIENT_ID,
+  });
   console.log('Android GoogleSignin configure');
 }
 
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
+
     console.log('Component rendered');
     console.log(Platform.OS);
     // AsyncStorage.clear();
@@ -45,10 +66,14 @@ class Login extends Component {
         // token이 있을 경우 홈으로 이동
         if (token) {
           this.props.navigation.dispatch(
-            CommonActions.navigate('Tabs', {
-              screen: 'Home',
-            })
+            CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] })
           );
+
+          // this.props.navigation.dispatch(
+          //   CommonActions.navigate('Tabs', {
+          //     screen: 'Home',
+          //   })
+          // );
         } else {
         }
       } catch (error) {
@@ -64,15 +89,8 @@ class Login extends Component {
       const {
         user: { email },
       } = await GoogleSignin.signIn();
-      const userinfo = await GoogleSignin.signIn();
       console.log(email);
       this.getToken('google', { email });
-      // 토큰 가져오면 홈 화면으로 이동
-      this.props.navigation.dispatch(
-        CommonActions.navigate('Tabs', {
-          screen: 'Home',
-        })
-      );
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log(error);
@@ -98,7 +116,7 @@ class Login extends Component {
     const country = RNLocalize.getCountry();
     const platform = Platform.OS;
 
-    const url = `https://dev.k-peach.io/users`;
+    const url = `https://api.k-peach.io/users`;
     try {
       if (authMethod === 'google') {
         config = {
@@ -131,16 +149,24 @@ class Login extends Component {
       } = await axios(config);
 
       if (!success) {
+        AsyncStorage.removeItem('token');
         throw new Error(errorMessage);
       }
 
       this.saveToken(token);
 
-      this.props.navigation.dispatch(
-        CommonActions.navigate('Tabs', {
-          screen: 'Home',
-        })
-      );
+      this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] }));
+
+      // navigation.dispatch(CommonActions.reset('Tabs', { screen: 'Home' }));
+      // const resetAction = StackActions.reset({
+      //   index: 0,
+      //   actions: [NavigationActions.navigate('Tabs', { screen: 'Home' })],
+      // });
+      // this.props.navigation.dispatch(resetAction);
+
+      // this.props.navigation.reset('Tabs', {
+      //   screen: 'Home',
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -179,7 +205,10 @@ class Login extends Component {
                   <ImageBackground
                     transitionDuration={1000}
                     source={require('../../assets/icons/google.png')}
-                    style={{ width: responsiveScreenWidth(10), height: responsiveScreenWidth(12) }}
+                    style={{
+                      width: responsiveScreenWidth(10),
+                      height: responsiveScreenWidth(11),
+                    }}
                   >
                     <Text style={styles.googleLoginText}>Sign in with Google</Text>
                   </ImageBackground>
@@ -260,9 +289,9 @@ const styles = StyleSheet.create({
   googleLoginBtn: {
     width: responsiveScreenWidth(50),
     height: responsiveScreenHeight(5),
+    marginBottom: responsiveScreenHeight(4),
     backgroundColor: '#3f81EC',
     borderRadius: 10,
-    marginBottom: 30,
   },
   googleLoginText: {
     width: responsiveScreenWidth(40),
@@ -270,8 +299,8 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    marginLeft: 45,
-    marginTop: 12,
+    marginLeft: responsiveScreenWidth(11.5),
+    marginTop: responsiveScreenHeight(1.5),
     color: '#FFFFFF',
   },
   guestLoginBtn: {

@@ -15,6 +15,7 @@ import MoreInfo from '../../screens/learning/MoreInfo';
 import Qna from '../../screens/my/Qna';
 import sendQna from '../qna/sendQna';
 import qnaInput from '../qna/qnaInput';
+import Help from '../../screens/learning/Help';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -30,7 +31,10 @@ const Stack = () => (
     }}
   >
     <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
-    <NativeStack.Screen options={{ presentation: 'modal' }} name="MoreInfo" component={MoreInfo} />
+    <NativeStack.Group screenOptions={{ presentation: 'modal' }}>
+      <NativeStack.Screen name="MoreInfo" component={MoreInfo} />
+      <NativeStack.Screen name="Help" component={Help} />
+    </NativeStack.Group>
     <NativeStack.Screen name="GetKpopLearningContents" component={GetKpopLearningContents} />
     <NativeStack.Screen name="LearningWord" component={LearningWord} />
     <NativeStack.Screen options={{ flex: 1 }} name="LearningUnits" component={LearningUnits} />

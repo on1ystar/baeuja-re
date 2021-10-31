@@ -43,7 +43,7 @@ class LearningMain extends React.Component {
         <View style={{ flex: 1 }}>
           <ScrollView>
             <View style={styles.kpopTextContainer}>
-              <Text style={styles.titleText}>K-POP</Text>
+              <Text style={styles.titleText}>K-Pop</Text>
               <TouchableOpacity
                 style={styles.moreText}
                 onPress={() =>
@@ -112,12 +112,13 @@ class LearningMain extends React.Component {
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    marginBottom: responsiveScreenHeight(7),
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(5),
+    marginTop: responsiveScreenHeight(3),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3.2),
+    fontSize: responsiveFontSize(3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#444444',
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginTop: responsiveScreenHeight(2),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(2.8),
+    fontSize: responsiveFontSize(2.6),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#555555',

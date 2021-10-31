@@ -43,7 +43,7 @@ const GetRecommandWords = ({ randomNumber }) => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/recommendations`, {
+        } = await axios.get(`https://api.k-peach.io/home/recommendations`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +84,7 @@ const GetRecommandWords = ({ randomNumber }) => {
   return (
     <ScrollView style={{ marginLeft: responsiveScreenWidth(5) }}>
       {isLoading ? (
-        <Text> Loading ...</Text>
+        <Text style={{ color: '#444444' }}> Loading... Please wait...</Text>
       ) : (
         recommendationWords.map((word) => <DrawRecommandWords key={word.wordId} word={word} />)
       )}
@@ -106,8 +106,9 @@ const GetRecommandWords = ({ randomNumber }) => {
 
 // 새로운 콘텐츠 그리기
 const DrawRecommandWords = ({ word }) => {
+  const navigation = useNavigation();
   const sameRecommandWord = word.sentences;
-
+  const wordId = word.wordId;
   return (
     <View>
       {/* {isLoading ? (
@@ -115,7 +116,18 @@ const DrawRecommandWords = ({ word }) => {
       ) : ( */}
       <View style={styles.recommandWordsContainer}>
         <View style={styles.recommandWordTextContainer}>
-          <Text style={styles.recommandWord}>#{word.korean}</Text>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'LearningWord',
+                params: {
+                  wordId,
+                },
+              })
+            }
+          >
+            <Text style={styles.recommandWord}>#{word.korean}</Text>
+          </TouchableOpacity>
           <Text style={styles.recommandWordImportance}>importance {word.importance}</Text>
         </View>
         <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
@@ -123,6 +135,7 @@ const DrawRecommandWords = ({ word }) => {
             <DrawSameRecommandWords
               key={`${word.wordId}-${sentences.sentenceId}`}
               sentences={sentences}
+              word={word}
             />
           ))}
         </ScrollView>
@@ -132,7 +145,7 @@ const DrawRecommandWords = ({ word }) => {
   );
 };
 
-const DrawSameRecommandWords = ({ sentences }) => {
+const DrawSameRecommandWords = ({ sentences, word }) => {
   const navigation = useNavigation();
   const contentId = sentences.contentId;
   const unitIndex = sentences.unitIndex;
@@ -158,11 +171,11 @@ const DrawSameRecommandWords = ({ sentences }) => {
             }}
             style={styles.thumbnailImage}
           /> */}
-          <Image
+          {/* <Image
             transitionDuration={1000}
             source={require('../../assets/img/kpopunit.png')}
             style={styles.thumbnailImage}
-          />
+          /> */}
 
           <View style={styles.recommandWordKoreanSentenceContainer}>
             <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">

@@ -67,12 +67,14 @@ const Home = () => {
       //   <RefreshControl enabled={true} refreshing={refreshing} onRefresh={onRefresh} />
       // }
     >
-      <View style={styles.newTextConatainer}>
-        <Text>
-          {/* <Ionicons size={30} color={'#FFE500'} name="sunny"></Ionicons> */}
-          <Text style={styles.mainText}>New</Text>
-        </Text>
-      </View>
+      <Text style={styles.mainText}>New</Text>
+      <Divider
+        style={{ width: responsiveScreenWidth(100), marginTop: responsiveScreenHeight(1) }}
+        color="#EEEEEE"
+        insetType="middle"
+        width={1}
+        orientation="horizontal"
+      />
       <ScrollView nestedScrollEnabled={true} horizontal showsHorizontalScrollIndicator={false}>
         <GetNewContents />
       </ScrollView>
@@ -107,16 +109,13 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  newTextConatainer: {
-    marginTop: responsiveScreenHeight(5),
-    marginLeft: responsiveScreenWidth(5),
+    marginBottom: responsiveScreenHeight(10),
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(7),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(2.7),
+    marginTop: responsiveScreenHeight(3),
+    fontSize: responsiveFontSize(3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#444444',

@@ -80,7 +80,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
 
   // 영어 문장 만들기
   const drawEnglishSentence = () => {
-    englishResult = [currentSentence.translatedText.toLowerCase()];
+    englishResult = [currentSentence.translatedText];
 
     const resultEnglishWords = currentSentence.words;
 
@@ -91,9 +91,9 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
       englishResult.forEach((element) => {
         if (typeof element === 'string') {
           idx =
-            element.indexOf(word.translationInText) === -1
+            element.toLowerCase().indexOf(word.translationInText.toLowerCase()) === -1
               ? undefined
-              : element.indexOf(word.translationInText);
+              : element.toLowerCase().indexOf(word.translationInText.toLowerCase());
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
@@ -142,7 +142,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
+          `https://api.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
           {},
           {
             headers: {

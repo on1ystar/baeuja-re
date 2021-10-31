@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 // Library import
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { Divider } from 'react-native-elements'; // Elements
 import {
   responsiveHeight,
   responsiveWidth,
@@ -17,6 +18,7 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { color } from 'react-native-elements/dist/helpers';
 
 class GetUnits extends React.Component {
   state = {
@@ -41,7 +43,7 @@ class GetUnits extends React.Component {
         if (error) throw error;
         const {
           data: { success, units, tokenExpired, errorMessage },
-        } = await axios(`https://dev.k-peach.io/learning/contents/${contentId}/units`, {
+        } = await axios(`https://api.k-peach.io/learning/contents/${contentId}/units`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -63,27 +65,47 @@ class GetUnits extends React.Component {
 
   render() {
     const { units, isLoading } = this.state;
+    const contentTitle = this.props.contentTitle;
+
     return (
-      <View>
-        {isLoading ? (
-          <Text> </Text>
-        ) : (
-          units.map((unit) => <DrawingUnit key={unit.unitIndex} unit={unit} />)
-        )}
+      <View style={styles.allContainer}>
+        <View style={styles.thumbNailContainer}>
+          {isLoading ? (
+            <Text> </Text>
+          ) : (
+            units.map((unit) => (
+              <DrawingUnit key={unit.unitIndex} unit={unit} contentTitle={contentTitle} />
+            ))
+          )}
+        </View>
       </View>
     );
   }
 }
 
-const DrawingUnit = ({ unit }) => {
+const DrawingUnit = ({ unit, contentTitle }) => {
   const navigation = useNavigation();
   const contentId = unit.contentId;
   const unitIndex = unit.unitIndex;
 
+  let unitLearningCount;
+  if (unit.counts == null) {
+    unitLearningCount = 'Not learned';
+  } else {
+    unitLearningCount = unit.counts;
+  }
+
+  let latestLearningAt;
+  if (unit.latestLearningAt == null) {
+    latestLearningAt = 'Not learned yet';
+  } else {
+    latestLearningAt = unit.latestLearningAt.split('T');
+    latestLearningAt = latestLearningAt[0];
+  }
+
   return (
-    <View style={styles.allContainer}>
+    <View style={styles.thumbNail}>
       <TouchableOpacity
-        style={styles.thumbNailContainer}
         onPress={() =>
           navigation.navigate('Stack', {
             screen: 'LearningUnit',
@@ -101,26 +123,51 @@ const DrawingUnit = ({ unit }) => {
           style={styles.thumbNail}
           imageStyle={{ borderRadius: 10 }}
         > */}
-        <ImageBackground
+        {/* <ImageBackground
           source={require('../../assets/img/kpopunit.png')}
           style={styles.thumbNail}
           imageStyle={{ borderRadius: 10 }}
-        >
-          <View style={styles.thumaNailHider}></View>
-          <View style={styles.unitDescriptionContainer}>
-            <Text style={styles.unitDescription}>Unit.{unit.unitIndex}</Text>
-            <View>
-              <Text style={styles.unitDescription}>
-                <Ionicons style={styles.schoolIcon} name="school"></Ionicons>
-                {'  '}
-                {unit.sentencesCounts} Sentences, {unit.wordsCounts} Words
-              </Text>
-            </View>
-            <Text style={styles.unitWords}>
-              #{unit.words[0].korean} #{unit.words[1].korean}
+        > */}
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/img/musicUnitThumbnail.jpg')}
+          style={styles.thumbnailImage}
+        />
+        <View style={styles.unitDescriptionContainer}>
+          <Text
+            style={{
+              fontSize: responsiveFontSize(1.9),
+              width: responsiveScreenWidth(40),
+              color: '#9388E8',
+            }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {contentTitle}
+          </Text>
+          <Text style={styles.unitIndex}>Unit.{unit.unitIndex}</Text>
+          <Divider
+            style={{ width: '80%', marginTop: responsiveScreenHeight(1) }}
+            color="#DDDDDD"
+            insetType="middle"
+            width={1}
+            orientation="horizontal"
+          />
+          <View>
+            <Text style={styles.unitDescription}>
+              <Ionicons style={styles.schoolIcon} name="school"></Ionicons>
+              {'  '}
+              {unit.sentencesCounts} sentences{'\n'}
+              <Ionicons style={styles.schoolIcon} name="school"></Ionicons>
+              {'  '}
+              {unit.wordsCounts} words
             </Text>
           </View>
-        </ImageBackground>
+          <View style={{ marginTop: responsiveScreenHeight(0.5) }}>
+            <Text style={styles.unitLearningCount}>learning counts : {unitLearningCount}</Text>
+            <Text style={styles.unitLatestLearningAt}>latest learned : {latestLearningAt}</Text>
+          </View>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -133,47 +180,78 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  thumbNailContainer: {
-    marginTop: responsiveScreenHeight(3),
-  },
-  thumbNail: {
-    width: responsiveScreenWidth(83),
+  thumbnailImage: {
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    width: responsiveScreenWidth(30),
     height: responsiveScreenHeight(18),
   },
-  thumaNailHider: {
-    backgroundColor: '#000000',
-    width: '100%',
-    height: '100%',
-    opacity: 0.1,
+  thumbNailContainer: {
+    flex: 1,
+    marginTop: responsiveScreenHeight(3),
+    paddingBottom: responsiveScreenHeight(3),
+    marginBottom: responsiveScreenHeight(3),
+  },
+  thumbNail: {
     borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    marginBottom: responsiveScreenHeight(3),
+    width: responsiveScreenWidth(83),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.43,
+    shadowRadius: 9.51,
+    elevation: 15,
   },
   unitDescriptionContainer: {
     position: 'absolute',
-    top: responsiveScreenWidth(15),
-    left: 0,
+    top: responsiveScreenWidth(0),
+    left: responsiveScreenWidth(30),
     bottom: 0,
     right: 0,
     justifyContent: 'center',
     alignItems: 'flex-start',
     marginLeft: responsiveScreenWidth(5),
   },
-  unitDescription: {
-    fontSize: responsiveFontSize(2.2),
+  unitIndex: {
+    fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#9388E8',
     fontWeight: '900',
-    marginTop: 3,
+    marginTop: responsiveScreenHeight(1),
+  },
+  unitDescription: {
+    fontSize: responsiveFontSize(1.6),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#AAAAAA',
+    fontWeight: '900',
+    marginTop: responsiveScreenHeight(1),
   },
   schoolIcon: {
-    fontSize: responsiveFontSize(2.2),
+    fontSize: responsiveFontSize(1.7),
   },
   unitWords: {
-    marginTop: 6,
+    marginTop: responsiveScreenHeight(1.5),
     fontSize: responsiveFontSize(1.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     color: '#43BAFF',
     fontWeight: '900',
+  },
+  unitLearningCount: {
+    paddingTop: responsiveScreenHeight(0.5),
+    color: '#AAAAAA',
+    fontSize: responsiveFontSize(1.2),
+    fontFamily: 'NanumSquareOTFB',
+  },
+  unitLatestLearningAt: {
+    color: '#AAAAAA',
+    fontSize: responsiveFontSize(1.2),
+    fontFamily: 'NanumSquareOTFB',
   },
 });

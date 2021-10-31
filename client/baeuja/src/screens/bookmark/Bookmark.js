@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
-import { Card } from 'react-native-elements'; // React Native Elements
+import { Card, Divider } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 // Component import
@@ -31,9 +31,14 @@ const Bookmark = () => {
     <View style={styles.allContainer}>
       {
         <View style={styles.allContainer}>
-          <View style={styles.bookmarkTitleContainer}>
-            <Text style={styles.bookmarkTitle}>Bookmark</Text>
-          </View>
+          <Text style={styles.bookmarkTitle}>Bookmark</Text>
+          <Divider
+            style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
+            color="#EEEEEE"
+            insetType="middle"
+            width={1}
+            orientation="horizontal"
+          />
           <View style={styles.selectButtonContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -65,7 +70,8 @@ const Bookmark = () => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <View
+            {/* 정렬 기능 구현시 사용 */}
+            {/* <View
               style={{
                 backgroundColor: '#EFEFEF',
                 borderRadius: 10,
@@ -78,7 +84,7 @@ const Bookmark = () => {
               <TouchableOpacity>
                 <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           {/* 정렬 기능 구현시 사용 */}
           {/* <View style={styles.timeContainer}>
@@ -96,15 +102,13 @@ const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
   },
-  bookmarkTitleContainer: {
-    marginTop: responsiveScreenHeight(7),
-    marginLeft: responsiveScreenWidth(5),
-  },
   bookmarkTitle: {
+    marginTop: responsiveScreenHeight(3),
+    marginLeft: responsiveScreenWidth(5),
     fontSize: responsiveScreenFontSize(3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#9388E8',
+    color: '#444444',
   },
   selectButtonContainer: {
     flexDirection: 'row',

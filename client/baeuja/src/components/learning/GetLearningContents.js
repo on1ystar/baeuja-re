@@ -33,7 +33,7 @@ const GetLearningContents = () => {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://dev.k-peach.io/learning/contents', {
+        } = await axios('https://api.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -58,7 +58,7 @@ const GetLearningContents = () => {
   useEffect(getContents, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF', marginBottom: responsiveScreenHeight(1) }}>
       {isLoading ? (
         <Text> </Text>
       ) : (
@@ -71,6 +71,7 @@ const GetLearningContents = () => {
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
+  const contentTitle = content.title;
   return (
     <View style={styles.allContainer}>
       <View style={styles.kpopContainer}>
@@ -83,7 +84,7 @@ const DrawingContent = ({ content }) => {
         /> */}
         <Image
           transitionDuration={1000}
-          source={require('../../assets/img/kpop.png')}
+          source={require('../../assets/img/albumJacket.jpg')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>
@@ -93,6 +94,7 @@ const DrawingContent = ({ content }) => {
                 screen: 'LearningUnits',
                 params: {
                   contentId,
+                  contentTitle,
                 },
               })
             }
@@ -160,11 +162,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   titleContainer: {
+    width: responsiveScreenWidth(54.5),
+    height: responsiveHeight(8),
     marginLeft: responsiveScreenWidth(5),
   },
   title: {
     color: '#444444',
-    width: responsiveScreenWidth(50),
+    width: responsiveScreenWidth(54.5),
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',

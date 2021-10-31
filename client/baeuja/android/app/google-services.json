@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "300096117355-5vamcb16mjgr47dl2m4to7urrbg533l0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baeuja",
+            "certificate_hash": "9f1d2f94029ddb1fd7d6df16630d5f1fd39b0b91"
+          }
+        },
+        {
           "client_id": "300096117355-8oj6lm121mq6jkvqo358q9tfpslab53c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.baeuja",
             "certificate_hash": "9382bedde68edb248af069400ab6789fef9aedfe"
+          }
+        },
+        {
+          "client_id": "300096117355-r0gf9b9a0s1ih6vkktgmk8tcfav9bn9l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baeuja",
+            "certificate_hash": "1d209c69e19d4df06449a143c323c5b1fbfa1323"
           }
         },
         {

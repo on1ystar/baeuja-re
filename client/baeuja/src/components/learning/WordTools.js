@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  PermissionsAndroid,
 } from 'react-native'; // React Native Component
 import {
   responsiveHeight,
@@ -47,9 +48,10 @@ import WordSpeechEvaluationResult from './WordSpeechEvaluationResult';
 import LearningStyles from '../../styles/LearningStyle';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
+let userPermission = 'a';
 
 const WordTools = ({ words }) => {
-  const [isMoreThanOneTimeRecord, setIsMoreThanOneTimeRecord] = useState(false);
+  const [isResponsedEvaluationResult, setIsResponsedEvaluationResult] = useState(false);
   const [evaluatedWord, setEvaluatedWord] = useState(null);
   const [pitchData, setPitchData] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -57,10 +59,12 @@ const WordTools = ({ words }) => {
   const [isRecordingUserVoice, setIsRecordingUserVoice] = useState(false);
   const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
   const [userVoiceScore, setUserVoiceScore] = useState(0);
+  const [buttonControl, setButtonControl] = useState(false);
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
     setIsPlayPerfectVoice(true);
+    setButtonControl(true);
     const music = new Sound(words.perfectVoiceUri, '', (error) => {
       if (error) {
         console.log('play failed');
@@ -71,6 +75,7 @@ const WordTools = ({ words }) => {
         music.setVolume(150);
         if (success) {
           setIsPlayPerfectVoice(false);
+          setButtonControl(false);
           console.log('성우 음성 재생 종료');
         }
       });
@@ -88,7 +93,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -111,19 +116,73 @@ const WordTools = ({ words }) => {
     });
   };
 
+  // 권한 요청 함수
+  const requestPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]).then((result) => {
+        if (
+          result['android.permission.RECORD_AUDIO'] &&
+          result['android.permission.WRITE_EXTERNAL_STORAGE'] &&
+          result['android.permission.READ_EXTERNAL_STORAGE'] === 'granted'
+        ) {
+          userPermission = 'granted';
+          savePermission(userPermission);
+          console.log('모든 권한 획득');
+        } else {
+          console.log('권한 거절');
+        }
+      });
+    } else {
+    }
+  };
+
+  // 권한 저장 함수
+  const savePermission = (permission) => {
+    AsyncStorage.setItem('permission', permission, () => {
+      console.log('saved permission: ', permission);
+    });
+  };
+
   // 음성 녹음 시작
   const onStartRecord = async () => {
-    console.log('-------------음성 녹음 시작-------------');
+    // permission 있는지 확인
+    AsyncStorage.getItem('permission', async (error, permission) => {
+      try {
+        console.log('permission: ', permission);
 
-    const recoredUserVoice = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener((e) => {
-      return;
+        // permission 있을 경우 음성 녹음
+        if (permission) {
+          setButtonControl(true);
+          console.log('-------------음성 녹음 시작-------------');
+          setIsResponsedEvaluationResult(false);
+          setPitchData(null);
+          setEvaluatedWord(null);
+          setIsRecordingUserVoice(true);
+
+          const recoredUserVoice = await audioRecorderPlayer.startRecorder();
+          audioRecorderPlayer.addRecordBackListener(async (e) => {
+            // e.currentPosition;
+            if (e.currentPosition / 1000 > 15) {
+              await onStopRecord();
+            }
+            return;
+          });
+        } else {
+          requestPermission();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     });
-    setIsRecordingUserVoice(!isRecordingUserVoice);
   };
 
   // 음성 녹음 중지
   const onStopRecord = async () => {
+    setButtonControl(false);
     const DEFAULT_RECOREDED_FILE_NAME_iOS = 'sound.m4a';
     const DEFAULT_RECOREDED_FILE_NAME_Android = 'sound.mp4';
     const recoredUserVoice = await audioRecorderPlayer.stopRecorder();
@@ -133,8 +192,8 @@ const WordTools = ({ words }) => {
       console.log('Already stopped');
       return;
     }
-    setIsRecordingUserVoice(!isRecordingUserVoice);
-    setIsMoreThanOneTimeRecord(true);
+    setIsRecordingUserVoice(false);
+    setIsResponsedEvaluationResult(true);
     console.log(recoredUserVoice);
     console.log('-------------음성 녹음 중지 완료------------');
 
@@ -177,7 +236,7 @@ const WordTools = ({ words }) => {
 
         await axios
           .post(
-            `https://dev.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
+            `https://api.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
             formData,
             {
               headers: {
@@ -197,11 +256,13 @@ const WordTools = ({ words }) => {
             setUserVoiceScore(evaluatedWord.score);
             setPitchData(pitchData);
 
-            if (!success) throw new Error(errorMessage);
-            console.log(errorMessage);
+            // if (!success) throw new Error(errorMessage);
             console.log('success getting Evaluated Data');
           })
           .catch((error) => {
+            // console.log(errorMessage);
+            setIsResponsedEvaluationResult(false);
+            alert('Please record again 🙏');
             console.log(error);
           });
 
@@ -222,10 +283,14 @@ const WordTools = ({ words }) => {
   // 유저 음성 재생
   const onStartPlay = async () => {
     console.log('-------------유저 음성 재생-------------');
+    setButtonControl(true);
     setIsPlayUserVoice(true);
     const msg = await audioRecorderPlayer.startPlayer();
     audioRecorderPlayer.addPlayBackListener((e) => {
-      if (e.duration === e.currentPosition) setIsPlayUserVoice(false);
+      if (e.duration === e.currentPosition) {
+        setIsPlayUserVoice(false);
+        setButtonControl(false);
+      }
     });
     AsyncStorage.getItem('token', async (error, token) => {
       try {
@@ -239,7 +304,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -265,107 +330,121 @@ const WordTools = ({ words }) => {
   // 학습 도구 부분 리턴
   return (
     <View>
-      <View style={LearningStyles.learningButtonContainer}>
-        {/* 성우 음성 재생 버튼 */}
-        {isPlayPerfectVoice ? (
-          <TouchableOpacity
-            style={LearningStyles.learningButtonPlay}
-            onPress={() => {
-              onPlayPerfectVoice();
-            }}
-            disabled={isPlayPerfectVoice}
-          >
-            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={LearningStyles.learningButton}
-            onPress={() => {
-              onPlayPerfectVoice();
-            }}
-          >
-            <Ionicons name="volume-off-outline" size={30} color="#BBBBBB"></Ionicons>
-          </TouchableOpacity>
-        )}
+      <View>
+        <View style={LearningStyles.learningButtonContainer}>
+          {/* 성우 음성 재생 버튼 */}
+          {isPlayPerfectVoice ? (
+            <TouchableOpacity
+              style={LearningStyles.learningButtonPlay}
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+              disabled={isPlayPerfectVoice || buttonControl}
+            >
+              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={
+                buttonControl
+                  ? LearningStyles.learningButtondisable
+                  : LearningStyles.learningButtonEnable
+              }
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+              disabled={buttonControl}
+            >
+              <Ionicons
+                name="volume-off-outline"
+                size={30}
+                color={buttonControl ? '#DDDDDD' : '#555555'}
+              ></Ionicons>
+            </TouchableOpacity>
+          )}
 
-        {/* 음성 녹음 버튼 */}
-        <TouchableOpacity
-          style={LearningStyles.learningButton}
-          onPress={() => {
-            onStartRecord();
-          }}
-        >
-          <Ionicons name="mic-outline" size={30} color="#BBBBBB" />
-        </TouchableOpacity>
-        {/* 음성 중지 버튼으로 바뀌는 부분 */}
-        <TouchableOpacity
-          style={
-            isRecordingUserVoice
-              ? LearningStyles.learningButtonCover
-              : LearningStyles.learningButtonHidden
-          }
-          onPress={() => {
-            onStopRecord();
-          }}
-        >
-          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
-        </TouchableOpacity>
-
-        {/* 유저 음성 재생 버튼 */}
-        {isMoreThanOneTimeRecord ? (
+          {/* 음성 녹음 버튼 */}
           <TouchableOpacity
             style={
-              isPlayUserVoice ? LearningStyles.learningButtonPlay : LearningStyles.learningButton
+              buttonControl
+                ? LearningStyles.learningButtondisable
+                : LearningStyles.learningButtonEnable
             }
-            onPress={() => onStartPlay()}
-            disabled={isPlayUserVoice}
+            onPress={() => {
+              onStartRecord();
+            }}
+            disabled={buttonControl}
           >
-            <Ionicons
-              style={{ marginTop: 2 }}
-              name={isPlayUserVoice ? 'ear' : 'ear-outline'}
-              size={27}
-              color={isPlayUserVoice ? '#9388E8' : '#BBBBBB'}
-            />
+            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
           </TouchableOpacity>
-        ) : (
+          {/* 음성 중지 버튼으로 바뀌는 부분 */}
           <TouchableOpacity
-            style={LearningStyles.learningButton}
-            onPress={() => onStartPlay()}
-            disabled={true}
+            style={
+              isRecordingUserVoice
+                ? LearningStyles.learningButtonCover
+                : LearningStyles.learningButtonHidden
+            }
+            onPress={() => {
+              onStopRecord();
+            }}
           >
-            <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#BBBBBB" />
+            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
           </TouchableOpacity>
-        )}
-      </View>
 
-      {/* 발화 평가 결과 */}
-      <View>
-        {isMoreThanOneTimeRecord ? (
-          evaluatedWord !== null ? (
-            <View style={{ marginBottom: responsiveScreenHeight(5) }}>
-              <WordSpeechEvaluationResult evaluatedWord={evaluatedWord} />
-            </View>
-          ) : (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: responsiveScreenHeight(5),
-              }}
+          {/* 유저 음성 재생 버튼 */}
+          {isResponsedEvaluationResult ? (
+            <TouchableOpacity
+              style={
+                buttonControl
+                  ? isPlayUserVoice
+                    ? LearningStyles.learningButtonPlay
+                    : LearningStyles.learningButtondisable
+                  : LearningStyles.learningButtonEnable
+              }
+              onPress={() => onStartPlay()}
+              disabled={buttonControl}
             >
-              <Progress.Circle
-                size={60}
-                animated={true}
-                color={'#9388E8'}
-                borderWidth={8}
-                strokeCap={'round'}
-                indeterminate={true}
+              <Ionicons
+                style={{ marginTop: 2 }}
+                name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
+                size={27}
+                color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
               />
-            </View>
-          )
-        ) : (
-          <></>
-        )}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={LearningStyles.learningButtondisable}
+              onPress={() => onStartPlay()}
+              disabled={true}
+            >
+              <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#DDDDDD" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* 발화 평가 결과 */}
+        <View>
+          {isResponsedEvaluationResult ? (
+            evaluatedWord !== null && pitchData !== null ? (
+              <View>
+                <WordSpeechEvaluationResult evaluatedWord={evaluatedWord} pitchData={pitchData} />
+              </View>
+            ) : (
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+                <Progress.Circle
+                  size={60}
+                  animated={true}
+                  color={'#9388E8'}
+                  borderWidth={8}
+                  strokeCap={'round'}
+                  indeterminate={true}
+                />
+              </View>
+            )
+          ) : (
+            <></>
+          )}
+        </View>
       </View>
     </View>
   );

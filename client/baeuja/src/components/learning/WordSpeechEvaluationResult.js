@@ -17,7 +17,12 @@ import {
 const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
   const [isLoading, setIsLoading] = useState(true);
   let userScore = evaluatedWord.score;
-  let progress = userScore * 0.01 + 0.2;
+  let progress;
+  if (userScore == 0) {
+    progress = 0;
+  } else {
+    progress = userScore * 0.01 + 0.2;
+  }
 
   const render = () => {
     setIsLoading(false);

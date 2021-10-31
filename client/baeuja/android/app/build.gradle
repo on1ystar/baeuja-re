@@ -135,8 +135,8 @@ android {
         applicationId "com.baeuja"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "0.2"
+        versionCode 6
+        versionName "0.3.2"
         multiDexEnabled true // mergeLibDex 오류 때문에 추가
         minSdkVersion 24 // mergeLibDex 오류 때문에 추가
         dexOptions { jumboMode true } //mergeLibDex 에러 때문에 추가
@@ -144,7 +144,6 @@ android {
             // abiFilters "armeabi-v7a", "x86" // 배포 빌드 최적화 때문에 추가
         }
     }
-
 
     lintOptions {
       checkReleaseBuilds false
@@ -206,8 +205,8 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             shrinkResources true // 배포 빌드 최적화 때문에 추가
-            // signingConfig signingConfigs.release // 나중에 배포할 때 주석 제거
-            signingConfig signingConfigs.debug  // 이새기 뭔가 있음 (나중에 배포할 때 주석 추천)
+            signingConfig signingConfigs.release // 나중에 배포할 때 주석 제거
+            // signingConfig signingConfigs.debug  // 이새기 뭔가 있음 (나중에 배포할 때 주석 추천)
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

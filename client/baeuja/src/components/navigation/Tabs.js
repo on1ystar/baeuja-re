@@ -18,9 +18,19 @@ const Tabs = () => (
   <Tab.Navigator
     initialRouteName="Home"
     screenOptions={{
+      tabBarStyle: {
+        height: responsiveScreenHeight(8),
+        paddingTop: responsiveScreenHeight(1),
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        position: 'absolute',
+      },
       tabBarActiveTintColor: '#9388E8',
       tabBarInactiveTintColor: '#CCCCCC',
       headerShown: false,
+      tabBarLabelStyle: {
+        marginBottom: responsiveScreenHeight(2),
+      },
     }}
     sceneContainerStyle={{
       backgroundColor: '#FFFFFF',
@@ -65,7 +75,7 @@ const Tabs = () => (
         },
       }}
     /> */}
-    <Tab.Screen
+    {/* <Tab.Screen
       name="My"
       component={My}
       options={{
@@ -75,7 +85,7 @@ const Tabs = () => (
           );
         },
       }}
-    />
+    /> */}
   </Tab.Navigator>
 );
 
