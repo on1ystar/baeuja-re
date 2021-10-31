@@ -1,6 +1,15 @@
 // Library import
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  SafeAreaView,
+  Linking,
+} from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -29,6 +38,7 @@ const MoreInfo = ({
   const [artist, setArtist] = useState(null);
   const [director, setDirector] = useState(null);
   const [description, setDescription] = useState(null);
+  const [youtubeUrl, setYoutubeUrl] = useState(null);
 
   useEffect(() => {
     AsyncStorage.getItem('token', async (error, token) => {
@@ -40,7 +50,7 @@ const MoreInfo = ({
         const {
           data: {
             success,
-            content: { thumbnailUri, title, artist, director, description },
+            content: { thumbnailUri, title, artist, director, description, youtubeUrl },
           },
         } = await axios(`https://api.k-peach.io/learning/contents/${contentId}`, {
           headers: {
@@ -58,6 +68,7 @@ const MoreInfo = ({
         setTitle(title);
         setArtist(artist);
         setDescription(description);
+        setYoutubeUrl(youtubeUrl);
 
         if (!success) throw new Error(errorMessage);
       } catch (error) {
@@ -67,27 +78,50 @@ const MoreInfo = ({
   }, []);
 
   return (
-    <ScrollView style={styles.allContainer}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>
-          {artist} - {title}
-        </Text>
-      </View>
-      <View style={styles.thumbnailImageContainer}>
-        <Image
-          style={styles.thumbnailImage}
-          transitionDuration={1000}
-          source={{
-            uri: thumbnailUri,
-          }}
-        />
-      </View>
-      <Card
-        containerStyle={{ borderRadius: 10, marginTop: 25 }}
-        style={styles.descriptionContainer}
-      >
-        <Text>{description}</Text>
-      </Card>
+    <SafeAreaView style={styles.allContainer}>
+      <ScrollView style={{ flex: 1, marginBottom: responsiveScreenHeight(10) }}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>
+            {artist} - {title}
+          </Text>
+        </View>
+        <View style={styles.thumbnailImageContainer}>
+          {/* <Image
+            style={styles.thumbnailImage}
+            transitionDuration={1000}
+            source={{
+              uri: thumbnailUri,
+            }}
+          /> */}
+          <Image
+            transitionDuration={1000}
+            source={require('../../assets/img/1_b.png')}
+            style={styles.thumbnailImage}
+          />
+        </View>
+        <View>
+          {/* 유튜브 링크 오픈 아이콘 */}
+          <TouchableOpacity
+            onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${youtubeUrl}`)}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: responsiveScreenHeight(2),
+            }}
+          >
+            <Text style={{ color: '#444444', fontSize: responsiveFontSize(1.2) }}>
+              Watch full video on youtube
+            </Text>
+            <Ionicons size={30} color={'#C4302B'} name="logo-youtube"></Ionicons>
+          </TouchableOpacity>
+        </View>
+        <Card
+          containerStyle={{ borderRadius: 10, marginTop: responsiveScreenHeight(2) }}
+          style={styles.descriptionContainer}
+        >
+          <Text style={styles.description}>{description}</Text>
+        </Card>
+      </ScrollView>
       <View style={styles.Container}>
         <TouchableOpacity
           onPress={() =>
@@ -103,7 +137,7 @@ const MoreInfo = ({
           <Text style={styles.goToLearn}>Go to Learn</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -112,10 +146,16 @@ export default MoreInfo;
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   Container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    // backgroundColor: '#FFFFFF',
+    width: responsiveScreenWidth(100),
+    bottom: responsiveScreenHeight(0),
   },
   thumbnailImageContainer: {
     marginTop: 25,
@@ -133,6 +173,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
+    color: '#666666',
     fontSize: responsiveFontSize(2.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
@@ -142,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9388e8',
+    backgroundColor: '#9388E8',
     width: responsiveScreenWidth(80),
     height: responsiveHeight(5),
     borderRadius: 10,
@@ -152,5 +193,8 @@ const styles = StyleSheet.create({
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
     fontSize: responsiveFontSize(2.2),
+  },
+  description: {
+    color: '#666666',
   },
 });

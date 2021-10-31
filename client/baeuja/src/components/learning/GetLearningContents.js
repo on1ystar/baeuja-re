@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // Library import
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -17,19 +17,14 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import { ProgressBar } from '@react-native-community/progress-bar-android'; // RN Progress bar android
 
-class GetLearningContents extends React.Component {
-  state = {
-    count: 0,
-    isLoading: true,
-    contents: [],
-  };
-  componentDidMount() {
-    this.getContents();
-    console.log('Component rendered');
-  }
+const GetLearningContents = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [contents, setContents] = useState([]);
 
-  getContents = () => {
+  // Contents Data 가져오기
+  const getContents = () => {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -50,39 +45,46 @@ class GetLearningContents extends React.Component {
 
         if (!success) throw new Error(errorMessage);
 
+        setContents(contents);
+        setIsLoading(false);
         console.log('success getting contents');
-        this.setState({ isLoading: false, contents });
       } catch (error) {
         console.log(error);
       }
     });
   };
 
-  render() {
-    const { contents, isLoading } = this.state;
-    return (
-      <View>
-        {isLoading ? (
-          <Text> </Text>
-        ) : (
-          contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
-        )}
-      </View>
-    );
-  }
-}
+  // useEffect
+  useEffect(getContents, []);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF', marginBottom: responsiveScreenHeight(1) }}>
+      {isLoading ? (
+        <Text> </Text>
+      ) : (
+        contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
+      )}
+    </View>
+  );
+};
 
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
+  const contentTitle = content.title;
   return (
-    <View>
+    <View style={styles.allContainer}>
       <View style={styles.kpopContainer}>
-        <Image
+        {/* <Image
           transitionDuration={1000}
           source={{
             uri: content.thumbnailUri,
           }}
+          style={styles.thumbnailImage}
+        /> */}
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/img/albumJacket.jpg')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>
@@ -92,6 +94,7 @@ const DrawingContent = ({ content }) => {
                 screen: 'LearningUnits',
                 params: {
                   contentId,
+                  contentTitle,
                 },
               })
             }
@@ -101,6 +104,27 @@ const DrawingContent = ({ content }) => {
             </Text>
             <Text style={styles.artist}>{content.artist}</Text>
           </TouchableOpacity>
+          <View style={styles.progressContainer}>
+            <Text
+              style={{
+                color: '#000000',
+                fontSize: responsiveScreenFontSize(1.3),
+              }}
+            >
+              Progress
+            </Text>
+            <ProgressBar
+              style={{
+                position: 'absolute',
+                top: responsiveScreenHeight(1.5),
+                width: responsiveScreenWidth(40),
+              }}
+              styleAttr="Horizontal"
+              indeterminate={false}
+              color={'#9388E8'}
+              progress={content.progressRate * 0.01}
+            />
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -113,7 +137,7 @@ const DrawingContent = ({ content }) => {
           }}
           style={styles.infoIconContainer}
         >
-          <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
+          <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
         </TouchableOpacity>
       </View>
     </View>
@@ -127,35 +151,36 @@ const styles = StyleSheet.create({
   kpopContainer: {
     flex: 1,
     flexDirection: 'row',
-    marginTop: 16,
-    marginLeft: 22,
+    marginTop: responsiveScreenHeight(2),
+    marginLeft: responsiveScreenWidth(5),
     width: responsiveScreenWidth(100),
     // backgroundColor: '#000000',
   },
   thumbnailImage: {
-    width: 84,
-    height: 84,
+    width: responsiveScreenWidth(15),
+    height: responsiveScreenWidth(15),
     borderRadius: 10,
   },
   titleContainer: {
-    marginLeft: 24,
+    width: responsiveScreenWidth(54.5),
+    height: responsiveHeight(8),
+    marginLeft: responsiveScreenWidth(5),
   },
   title: {
-    width: responsiveScreenWidth(50),
-    marginTop: 12,
+    color: '#444444',
+    width: responsiveScreenWidth(54.5),
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   artist: {
-    marginTop: 10,
     fontSize: responsiveFontSize(1.9),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
-    color: '#999999',
+    fontWeight: '600',
+    color: '#666666',
   },
   infoIconContainer: {
-    marginLeft: 15,
+    marginLeft: responsiveScreenWidth(5),
     justifyContent: 'flex-end',
     alignSelf: 'center',
     // backgroundColor: '#000000',
@@ -163,6 +188,10 @@ const styles = StyleSheet.create({
   infoIcon: {
     color: '#aaaaaa',
     fontSize: responsiveFontSize(3),
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

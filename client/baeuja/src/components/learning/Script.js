@@ -13,19 +13,24 @@ import {
   useResponsiveScreenHeight,
 } from 'react-native-responsive-dimensions'; // Responsive layout
 import { Card } from 'react-native-elements'; // React Native Elements
+import { useNavigation } from '@react-navigation/native'; // Navigation
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import axios from 'axios'; // axios
 
 // Component import
 import Words from './Words';
 
-const Script = ({ currentSentence }) => {
-  // 한국어 문장 만들기
+const Script = ({ currentSentence, updateIsBookmark }) => {
+  const navigation = useNavigation();
   let koreanResult = [];
   let englishResult = [];
+  // const [bookmarkValue, setBookmarkValue] = useState(isBookmarked);
 
-  console.log('Current Sentence is :', currentSentence);
-
+  // 한국어 문장 만들기
   const drawKoreanSentence = () => {
-    koreanResult = [currentSentence.koreanText.toLowerCase()];
+    koreanResult = [currentSentence.koreanText];
 
     const resultKoreanhWords = currentSentence.words;
 
@@ -33,20 +38,36 @@ const Script = ({ currentSentence }) => {
       let idx;
       let temp = [];
       let findFlag = false;
+      let wordId = word.wordId;
       koreanResult.forEach((element) => {
         if (typeof element === 'string') {
-          idx = element.indexOf(word.prevKoreanText);
+          idx = element.indexOf(word.koreanInText);
           if (idx === -1 || findFlag === true) idx = undefined;
           else findFlag = true;
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
-              {word.prevKoreanText}
+            <Text
+              onPress={() =>
+                navigation.navigate('Stack', {
+                  screen: 'LearningWord',
+                  params: {
+                    wordId,
+                  },
+                })
+              }
+              key={word.wordId}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                color: '#4278A4',
+                textDecorationLine: 'underline',
+              }}
+            >
+              {word.koreanInText}
             </Text>
           );
-          temp.push(element.slice(idx + word.prevKoreanText.length));
+          temp.push(element.slice(idx + word.koreanInText.length));
         } else {
           temp.push(element);
         }
@@ -59,28 +80,44 @@ const Script = ({ currentSentence }) => {
 
   // 영어 문장 만들기
   const drawEnglishSentence = () => {
-    englishResult = [currentSentence.translatedText.toLowerCase()];
+    englishResult = [currentSentence.translatedText];
 
     const resultEnglishWords = currentSentence.words;
 
     resultEnglishWords.forEach((word) => {
       let idx;
       let temp = [];
+      let wordId = word.wordId;
       englishResult.forEach((element) => {
         if (typeof element === 'string') {
           idx =
-            element.indexOf(word.prevTranslatedText) === -1
+            element.toLowerCase().indexOf(word.translationInText.toLowerCase()) === -1
               ? undefined
-              : element.indexOf(word.prevTranslatedText);
+              : element.toLowerCase().indexOf(word.translationInText.toLowerCase());
         }
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
-            <Text key={word.wordId} style={{ color: '#3eb2ff', textDecorationLine: 'underline' }}>
-              {word.prevTranslatedText}
+            <Text
+              onPress={() =>
+                navigation.navigate('Stack', {
+                  screen: 'LearningWord',
+                  params: {
+                    wordId,
+                  },
+                })
+              }
+              key={word.wordId}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                color: '#4278A4',
+                textDecorationLine: 'underline',
+              }}
+            >
+              {word.translationInText}
             </Text>
           );
-          temp.push(element.slice(idx + word.prevTranslatedText.length));
+          temp.push(element.slice(idx + word.translationInText.length));
         } else {
           temp.push(element);
         }
@@ -91,24 +128,63 @@ const Script = ({ currentSentence }) => {
     return englishResult;
   };
 
+  // 즐겨찾기 추가 함수
+  const addBookmark = () => {
+    AsyncStorage.getItem('token', async (error, token) => {
+      // setBookmarkValue(!bookmarkValue);
+      try {
+        if (token === null) {
+          // login으로 redirect
+        }
+        // AsyncStorage error
+        if (error) throw error;
+        console.log(currentSentence.sentenceId);
+        const {
+          data: { success, isBookmark },
+        } = await axios.post(
+          `https://api.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        //   if (tokenExpired) {
+        //     // login으로 redirect
+        //   }
+
+        updateIsBookmark(currentSentence.sentenceId);
+
+        console.log(`Bookmark Post Success is :${success}`);
+        console.log(`After Post, isBookmark is :${isBookmark}`);
+
+        if (!success) throw new Error(errorMessage);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
+  // Script 렌더링 부분
   return (
-    <View>
-      <Card containerStyle={{ borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-        <View>
-          <Text style={styles.koreanScript}>
-            🇰🇷 : <Text>{drawKoreanSentence()}</Text>
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.englishScript}>
-            🇺🇸 : <Text> {drawEnglishSentence()}</Text>
-          </Text>
-        </View>
-        <View>
-          <Words currentSentence={currentSentence} />
-        </View>
-      </Card>
-    </View>
+    <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+      <TouchableOpacity
+        style={styles.bookmarkContainer}
+        onPress={() => {
+          addBookmark();
+        }}
+      >
+        <Antdesign
+          size={25}
+          color={currentSentence.isBookmark ? '#FFAD41' : '#AAAAAA'}
+          name={currentSentence.isBookmark ? 'star' : 'staro'}
+        ></Antdesign>
+      </TouchableOpacity>
+      <Text style={styles.koreanScript}>{drawKoreanSentence()}</Text>
+      <Text style={styles.englishScript}>{drawEnglishSentence()}</Text>
+      <Words currentSentence={currentSentence} />
+    </Card>
   );
 };
 
@@ -119,16 +195,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginRight: 10,
+    marginRight: responsiveScreenWidth(3),
+  },
+  bookmarkContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    right: responsiveScreenWidth(-3),
+    top: responsiveScreenHeight(-1),
   },
   koreanScript: {
-    fontSize: responsiveFontSize(2.4),
+    fontSize: responsiveFontSize(2.1),
     color: '#555555',
-    marginBottom: 5,
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
   },
   englishScript: {
-    fontSize: responsiveFontSize(2.4),
+    fontSize: responsiveFontSize(2.1),
     color: '#555555',
-    marginBottom: 15,
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
   },
 });

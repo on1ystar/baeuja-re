@@ -1,49 +1,80 @@
 // Library import
-import React, { Component } from 'react'; // React Hooks
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import {
   StyleSheet,
-  Button,
   View,
   Text,
   Image,
   TouchableOpacity,
   ImageBackground,
+  Platform,
 } from 'react-native'; // React Native Component
 import {
-  responsiveHeight,
-  responsiveWidth,
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
-  responsiveScreenFontSize,
-  useResponsiveHeight,
-  useResponsiveWidth,
 } from 'react-native-responsive-dimensions'; // Responsive Layout
 import axios from 'axios'; // axios
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import * as RNLocalize from 'react-native-localize'; // Localize
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin'; // Google Signin
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
-import { GOOGLE_API_IOS_CLIENT_ID } from '@env'; // React Native Dotenv
+import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+
+// // 토큰 있는지 검사해서 홈으로 이동시키기
+// AsyncStorage.getItem('token', async (error, token) => {
+//   try {
+//     console.log('Token: ', token);
+
+//     // token이 있을 경우 홈으로 이동
+//     if (token) {
+//       this.props.navigation.dispatch(
+//         CommonActions.navigate('Tabs', {
+//           screen: 'Home',
+//         })
+//       );
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+if (Platform.OS === 'ios') {
+  GoogleSignin.configure({
+    iosClientId: GOOGLE_API_IOS_CLIENT_ID,
+  });
+  console.log('iOS GoogleSignin configure');
+} else if (Platform.OS === 'android') {
+  GoogleSignin.configure({
+    webClientId: GOOGLE_API_ANDROID_CLIENT_ID,
+  });
+  console.log('Android GoogleSignin configure');
+}
 
 class Login extends Component {
   componentDidMount() {
     // 스플래쉬
+
     console.log('Component rendered');
-    AsyncStorage.clear();
+    console.log(Platform.OS);
+    // AsyncStorage.clear();
     AsyncStorage.getItem('token', async (error, token) => {
       try {
+        console.log('Token: ', token);
+
         // token이 있을 경우 홈으로 이동
         if (token) {
           this.props.navigation.dispatch(
-            CommonActions.navigate('Tabs', {
-              screen: 'Home',
-            })
+            CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] })
           );
+
+          // this.props.navigation.dispatch(
+          //   CommonActions.navigate('Tabs', {
+          //     screen: 'Home',
+          //   })
+          // );
+        } else {
         }
       } catch (error) {
         console.log(error);
@@ -53,29 +84,25 @@ class Login extends Component {
 
   // 구글 로그인 함수
   googleSignIn = async () => {
-    GoogleSignin.configure({
-      iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-    });
     try {
       await GoogleSignin.hasPlayServices();
       const {
-        user: { email, name },
+        user: { email },
       } = await GoogleSignin.signIn();
-      this.getToken('google', { email, name });
-
-      this.props.navigation.dispatch(
-        CommonActions.navigate('Tabs', {
-          screen: 'Home',
-        })
-      );
+      console.log(email);
+      this.getToken('google', { email });
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log(error);
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log(error);
         // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log(error);
         // play services not available or outdated
       } else {
+        console.log(error);
         // some other error happened
       }
     }
@@ -84,7 +111,10 @@ class Login extends Component {
   // 토큰 가져오는 함수
   getToken = async (authMethod, userinfo) => {
     let config = {};
-    const locale = RNLocalize.getCountry();
+    // const locale = RNLocalize.getCountry();
+    const timezone = RNLocalize.getTimeZone();
+    const country = RNLocalize.getCountry();
+    const platform = Platform.OS;
 
     const url = `https://api.k-peach.io/users`;
     try {
@@ -93,7 +123,7 @@ class Login extends Component {
           method: 'post',
           url,
           data: {
-            userinfo: { ...userinfo, locale },
+            userinfo: { ...userinfo, timezone, country, platform },
           },
         };
       } else {
@@ -106,26 +136,37 @@ class Login extends Component {
           url,
           data: {
             userinfo: {
-              locale,
+              timezone,
+              country,
+              platform,
             },
           },
         };
       }
+
       const {
         data: { success, token, isMember, errorMessage },
       } = await axios(config);
 
       if (!success) {
+        AsyncStorage.removeItem('token');
         throw new Error(errorMessage);
       }
 
       this.saveToken(token);
 
-      this.props.navigation.dispatch(
-        CommonActions.navigate('Tabs', {
-          screen: 'Home',
-        })
-      );
+      this.props.navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] }));
+
+      // navigation.dispatch(CommonActions.reset('Tabs', { screen: 'Home' }));
+      // const resetAction = StackActions.reset({
+      //   index: 0,
+      //   actions: [NavigationActions.navigate('Tabs', { screen: 'Home' })],
+      // });
+      // this.props.navigation.dispatch(resetAction);
+
+      // this.props.navigation.reset('Tabs', {
+      //   screen: 'Home',
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -156,6 +197,7 @@ class Login extends Component {
             <Text style={styles.textThree}>BAEUJA</Text>
             <Text style={styles.textFour}>Learning Korean with K-Contents</Text>
           </View>
+          {/* 구글 로그인 버튼 */}
           <View style={styles.loginBtnContainer}>
             <View>
               <TouchableOpacity onPress={() => this.googleSignIn()}>
@@ -163,26 +205,25 @@ class Login extends Component {
                   <ImageBackground
                     transitionDuration={1000}
                     source={require('../../assets/icons/google.png')}
-                    style={{ width: 40, height: 43 }}
+                    style={{
+                      width: responsiveScreenWidth(10),
+                      height: responsiveScreenWidth(11),
+                    }}
                   >
                     <Text style={styles.googleLoginText}>Sign in with Google</Text>
                   </ImageBackground>
                 </View>
               </TouchableOpacity>
             </View>
-            <View>
-              <TouchableOpacity onPress={() => this.getToken('guest')}>
-                <View style={styles.guestLoginBtn}>
-                  <ImageBackground
-                    transitionDuration={1000}
-                    source={require('../../assets/icons/captureLogo.png')}
-                    style={{ width: 40, height: 43, backgroundColor: '#FFFFFF' }}
-                  >
-                    <Text style={styles.guestLoginText}>Sign in with Guest</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-            </View>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.guestLoginContainer}
+              onPress={() => this.getToken('guest')}
+            >
+              <Text style={styles.guestLoginText}>Try BAEUJA with guest</Text>
+              <Ionicons size={25} name="chevron-forward-outline" color={'#4278A4'} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -248,18 +289,18 @@ const styles = StyleSheet.create({
   googleLoginBtn: {
     width: responsiveScreenWidth(50),
     height: responsiveScreenHeight(5),
+    marginBottom: responsiveScreenHeight(4),
     backgroundColor: '#3f81EC',
     borderRadius: 10,
-    marginBottom: 30,
   },
   googleLoginText: {
     width: responsiveScreenWidth(40),
     height: responsiveScreenHeight(5),
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    marginLeft: 45,
-    marginTop: 12,
+    marginLeft: responsiveScreenWidth(11.5),
+    marginTop: responsiveScreenHeight(1.5),
     color: '#FFFFFF',
   },
   guestLoginBtn: {
@@ -270,13 +311,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   guestLoginText: {
-    width: responsiveScreenWidth(40),
-    height: responsiveScreenHeight(5),
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '900',
-    marginLeft: 45,
-    marginTop: 12,
-    color: '#FFFFFF',
+    color: '#4278A4',
+  },
+  guestLoginContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  guestLoginText2: {
+    fontSize: responsiveFontSize(2.5),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: '900',
+    color: '#9388E8',
   },
 });

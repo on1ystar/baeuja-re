@@ -21,13 +21,13 @@ import GetUnits from '../../components/learning/GetUnits';
 
 const LearningUnits = ({
   route: {
-    params: { contentId },
+    params: { contentId, contentTitle },
   },
 }) => {
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       <View style={styles.allContainer}>
-        <GetUnits contentId={contentId} />
+        <GetUnits contentId={contentId} contentTitle={contentTitle} />
       </View>
     </ScrollView>
   );
@@ -38,6 +38,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  container: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
 });

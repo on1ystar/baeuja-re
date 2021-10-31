@@ -2,6 +2,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Tab Navigation
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions'; // RN responsive Screen
+import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 
 // Screnn import
 import LearningMain from '../../screens/learning/LearningMain';
@@ -16,9 +18,19 @@ const Tabs = () => (
   <Tab.Navigator
     initialRouteName="Home"
     screenOptions={{
+      tabBarStyle: {
+        height: responsiveScreenHeight(8),
+        paddingTop: responsiveScreenHeight(1),
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        position: 'absolute',
+      },
       tabBarActiveTintColor: '#9388E8',
       tabBarInactiveTintColor: '#CCCCCC',
       headerShown: false,
+      tabBarLabelStyle: {
+        marginBottom: responsiveScreenHeight(2),
+      },
     }}
     sceneContainerStyle={{
       backgroundColor: '#FFFFFF',
@@ -34,21 +46,6 @@ const Tabs = () => (
       }}
     />
     <Tab.Screen
-      name="Bookmark"
-      component={Bookmark}
-      options={{
-        tabBarIcon: ({ focused, color, size }) => {
-          return (
-            <Ionicons
-              name={focused ? 'bookmarks' : 'bookmarks-outline'}
-              color={color}
-              size={size}
-            />
-          );
-        },
-      }}
-    />
-    <Tab.Screen
       name="Home"
       component={Home}
       options={{
@@ -58,6 +55,16 @@ const Tabs = () => (
       }}
     />
     <Tab.Screen
+      name="Bookmark"
+      component={Bookmark}
+      options={{
+        tabBarIcon: ({ focused, color, size }) => {
+          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
+        },
+      }}
+    />
+
+    {/* <Tab.Screen
       name="Review"
       component={Review}
       options={{
@@ -67,8 +74,8 @@ const Tabs = () => (
           );
         },
       }}
-    />
-    <Tab.Screen
+    /> */}
+    {/* <Tab.Screen
       name="My"
       component={My}
       options={{
@@ -78,7 +85,7 @@ const Tabs = () => (
           );
         },
       }}
-    />
+    /> */}
   </Tab.Navigator>
 );
 

@@ -2,7 +2,16 @@
 
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Alert,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native'; // React Native Component
 import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe'; // Youtube Player
 import {
   responsiveHeight,
@@ -31,6 +40,9 @@ import Icon3 from 'react-native-vector-icons/MaterialIcons'; // MaterialIcons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import RNFS from 'react-native-fs';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navigation
+import { Card } from 'react-native-elements'; // React Native Elements
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { useNavigation } from '@react-navigation/native'; // Navigation
 
 // Component import
 import Script from '../../components/learning/Script';
@@ -46,13 +58,12 @@ const LearningUnit = ({
     params: { contentId, unitIndex },
   },
 }) => {
+  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
+
   // state
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEvaluationLoading, setIsEvaluationLoading] = useState(true);
-  const [evaluatedSentence, setEvaluatedSentence] = useState({});
-  const [pitchData, setPitchData] = useState({});
   const [currentSentence, setCurrentSentence] = useState({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
@@ -62,6 +73,7 @@ const LearningUnit = ({
   const loadUnit = useCallback(async () => {
     console.log(`load unit => contentId : ${contentId}, unitIndex: ${unitIndex}`);
 
+    // Leraning unit 데이터 조회
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -69,7 +81,7 @@ const LearningUnit = ({
         }
         if (error) throw error;
         const {
-          data: { success, unit, sentences, tokenExpired, errorMessage },
+          data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
           `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
@@ -78,16 +90,30 @@ const LearningUnit = ({
             },
           }
         );
+
+        const {
+          data: { sentences },
+        } = await axios.get(
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`unit: ${unit}\nsentences: ${sentences}`);
+        console.log(`success : ${success}\nunit: ${unit}\nsentences: ${sentences}`);
 
         if (!success) throw new Error(errorMessage);
 
         console.log('success getting learning unit');
+
         setUnit(unit);
         setSentences(sentences);
+        setCurrentSentence(sentences[0]);
         setIsLoading(() => false);
       } catch (error) {
         console.log(error);
@@ -116,6 +142,20 @@ const LearningUnit = ({
     [youtubeRef.current]
   );
 
+  // 북마크 상태 업데이트 함수 (자식 컴포넌트에서 호출됨)
+  const updateIsBookmark = (sentenceId) => {
+    const updateSentences = sentences.map((sentence) => {
+      if (sentence.sentenceId == sentenceId) {
+        sentence.isBookmark = !sentence.isBookmark;
+      }
+      return sentence;
+    });
+
+    setSentences(updateSentences);
+    // sentences에서 sentenceId에 해당하는 sentence 객체 찾아서 isBookmark 값 반대로 바꾸고
+    // 그 수정 된 sentences를 setSentences()로 수정
+  };
+
   // -------------------------------------useEffect----------------------------------------
   useEffect(loadUnit, []);
 
@@ -137,6 +177,7 @@ const LearningUnit = ({
     };
   }, [isPlaying]);
 
+  // 영상 끝났을 때
   useEffect(() => {
     if (isEnded) {
       youtubeRef.current.seekTo(
@@ -149,6 +190,8 @@ const LearningUnit = ({
 
   // -------------------------------------return----------------------------------------
   // Learning 화면 전체 그리기
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={LearningStyles.container}>
       {/* 유튜브 플레이어 */}
@@ -171,23 +214,36 @@ const LearningUnit = ({
                 modestbranding: 1,
                 rel: 0,
               }}
-              height={250}
+              height={responsiveScreenHeight(26)}
               onChangeState={onStateChange}
+              volume={50}
             />
           </View>
-          <View>
-            {/* 스크립트, 단어 그리기 */}
-            {Object.keys(currentSentence).length !== 0 && currentSentence !== undefined ? (
-              <Script currentSentence={currentSentence} />
-            ) : (
-              <Text></Text>
-            )}
+          {/* 스크립트, 단어 그리기 */}
+          <View style={{ flex: 1 }}>
+            <Script currentSentence={currentSentence} updateIsBookmark={updateIsBookmark} />
           </View>
+          <TouchableOpacity
+            style={{
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              marginRight: responsiveScreenWidth(10),
+              marginTop: responsiveScreenHeight(2),
+            }}
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'Help',
+              })
+            }
+          >
+            <Text style={{ color: '#AAAAAA' }}>help?</Text>
+          </TouchableOpacity>
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
             {Object.keys(currentSentence).length !== 0 &&
             currentSentence !== undefined &&
-            isPlaying === false ? (
+            isPlaying === false &&
+            currentSentence.perfectVoiceUri != 'NULL' ? (
               <Tools currentSentence={currentSentence} />
             ) : (
               <Text></Text>
@@ -195,10 +251,42 @@ const LearningUnit = ({
           </View>
         </View>
       )}
-
       {/* 발화 평가 차트 */}
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  allContainer: {
+    flex: 1,
+  },
+  container: {
+    marginRight: responsiveScreenWidth(3),
+  },
+  bookmarkContainer: {
+    zIndex: 1,
+    position: 'absolute',
+    right: responsiveScreenWidth(-3),
+    top: responsiveScreenHeight(-1),
+  },
+  koreanScript: {
+    fontSize: responsiveFontSize(2.1),
+    color: '#555555',
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
+  },
+  englishScript: {
+    fontSize: responsiveFontSize(2.1),
+    color: '#555555',
+    marginBottom: responsiveScreenHeight(1),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlignVertical: 'bottom',
+    width: responsiveScreenWidth(80),
+  },
+});
 
 export default LearningUnit;

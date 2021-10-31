@@ -2,8 +2,8 @@
 /* eslint-disable react/prop-types */
 
 // Library import
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native'; // React Native Component
+import React, { Component, useEffect } from 'react';
+import { StyleSheet, View, Text, Button, BackHandler } from 'react-native'; // React Native Component
 import { NavigationContainer } from '@react-navigation/native'; // Navigation
 
 //Screen import

@@ -1,6 +1,16 @@
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import {
+  StyleSheet,
+  Button,
+  View,
+  Alert,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native'; // React Native Component
 import {
   responsiveHeight,
   responsiveWidth,
@@ -37,24 +47,41 @@ import SpeechEvaluationResult from './SpeechEvaluationResult';
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
 
-const Tools = ({ currentSentence }) => {
-  const audioRecorderPlayer = new AudioRecorderPlayer();
+const audioRecorderPlayer = new AudioRecorderPlayer();
+let userPermission = 'a';
 
-  const [isStopped, setIsStopped] = useState(false);
+const Tools = ({ currentSentence }) => {
+  const [isResponsedEvaluationResult, setIsResponsedEvaluationResult] = useState(false);
   const [evaluatedSentence, setEvaluatedSentence] = useState(null);
   const [pitchData, setPitchData] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [isPlayPerfectVoice, setIsPlayPerfectVoice] = useState(false);
+  const [isRecordingUserVoice, setIsRecordingUserVoice] = useState(false);
+  const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
+  const [userVoiceScore, setUserVoiceScore] = useState(0);
+  const [buttonControl, setButtonControl] = useState(false);
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
+    setIsPlayPerfectVoice(true);
+    setButtonControl(true);
     const music = new Sound(currentSentence.perfectVoiceUri, '', (error) => {
       if (error) {
         console.log('play failed');
         return;
       }
       console.log('-------------성우 음성 재생-------------');
-      music.play(() => {});
+      music.play((success) => {
+        music.setVolume(150);
+        if (success) {
+          setIsPlayPerfectVoice(false);
+          setButtonControl(false);
+          console.log('성우 음성 재생 종료');
+        }
+      });
     });
+
+    // 기록 저장
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -66,7 +93,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/perfect-voice`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -83,71 +110,133 @@ const Tools = ({ currentSentence }) => {
         if (!success) throw new Error(errorMessage);
 
         console.log('success getting sentenceHistory Data');
-        //   setEvaluatedSentence(evaluatedSentence);
-        //   setPitchData(pitchData);
-        //   setIsEvaluationLoading(false);
       } catch (error) {
         console.log(error);
       }
     });
   };
 
+  // 권한 요청 함수
+  const requestPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]).then((result) => {
+        if (
+          result['android.permission.RECORD_AUDIO'] &&
+          result['android.permission.WRITE_EXTERNAL_STORAGE'] &&
+          result['android.permission.READ_EXTERNAL_STORAGE'] === 'granted'
+        ) {
+          userPermission = 'granted';
+          savePermission(userPermission);
+          console.log('모든 권한 획득');
+        } else {
+          console.log('권한 거절');
+        }
+      });
+    } else {
+    }
+  };
+
+  // 권한 저장 함수
+  const savePermission = (permission) => {
+    AsyncStorage.setItem('permission', permission, () => {
+      console.log('saved permission: ', permission);
+    });
+  };
+
   // 음성 녹음 시작
   const onStartRecord = async () => {
-    // setIsStopped(true);
-    // setIsListened(true);
+    // permission 있는지 확인
+    AsyncStorage.getItem('permission', async (error, permission) => {
+      try {
+        console.log('permission: ', permission);
 
-    console.log('-------------음성 녹음 시작-------------');
-    const recoredUserVoice = await audioRecorderPlayer.startRecorder();
-    audioRecorderPlayer.addRecordBackListener((e) => {
-      return;
+        // permission 있을 경우 음성 녹음
+        if (permission) {
+          setButtonControl(true);
+          console.log('-------------음성 녹음 시작-------------');
+          setIsResponsedEvaluationResult(false);
+          setPitchData(null);
+          setEvaluatedSentence(null);
+          setIsRecordingUserVoice(true);
+
+          const recoredUserVoice = await audioRecorderPlayer.startRecorder();
+          audioRecorderPlayer.addRecordBackListener(async (e) => {
+            // e.currentPosition;
+            if (e.currentPosition / 1000 > 15) {
+              await onStopRecord();
+            }
+            return;
+          });
+        } else {
+          requestPermission();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 
   // 음성 녹음 중지
   const onStopRecord = async () => {
-    const DEFAULT_RECOREDED_FILE_NAME = 'sound.m4a';
+    setButtonControl(false);
+    const DEFAULT_RECOREDED_FILE_NAME_iOS = 'sound.m4a';
+    const DEFAULT_RECOREDED_FILE_NAME_Android = 'sound.mp4';
     const recoredUserVoice = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
     if (recoredUserVoice === 'Already stopped') {
-      //
       alert('Please record your the great voice first 🙏');
       console.log('Already stopped');
       return;
     }
-    setIsStopped(true);
+    setIsRecordingUserVoice(false);
+    setIsResponsedEvaluationResult(true);
     console.log(recoredUserVoice);
     console.log('-------------음성 녹음 중지 완료------------');
 
     try {
-      //   var RNFS = require('react-native-fs');
-      //   const path = RNFS.CachesDirectoryPath + '/sound.m4a';
-      //   console.log(path);
       const formData = new FormData();
 
-      formData.append(
-        'userVoice', //업로드할 파일의 폼
-        {
-          uri: recoredUserVoice, //파일 경로
-          type: 'audio/m4a', //파일 형식
-          name: DEFAULT_RECOREDED_FILE_NAME, //파일 이름
-        }
-      );
+      if (Platform.OS === 'ios') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/m4a', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_iOS, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      } else if (Platform.OS === 'android') {
+        formData.append(
+          'userVoice', //업로드할 파일의 폼
+          {
+            uri: recoredUserVoice, //파일 경로
+            type: 'audio/mpeg_4', //파일 형식
+            name: DEFAULT_RECOREDED_FILE_NAME_Android, //파일 이름
+          }
+        );
+        console.log(Platform.OS);
+        console.log(formData);
+        console.log(formData._parts[0][1]);
+      }
 
       AsyncStorage.getItem('token', async (error, token) => {
         // try {
-        if (token === null) {
-          // login으로 redirect
-        }
-        // AsyncStorage error
-        if (error) throw error;
-        // const {
-        //   data: { success, evaluatedSentence, pitchData, errorMessage },
-        // } =
+        if (token === null)
+          if (error)
+            // login으로 redirect
+            // AsyncStorage error
+            throw error;
 
         await axios
           .post(
-            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/evaluation`,
+            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
             formData,
             {
               headers: {
@@ -161,39 +250,33 @@ const Tools = ({ currentSentence }) => {
             console.log(
               `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
             );
-            console.log(`pitchData : ${pitchData}`);
-            console.log(`pitchData : ${pitchData.userVoice.hz}`);
-            console.log(`pitchData : ${pitchData.userVoice.time}`);
+            console.log(`pitchData : ${pitchData.userVoice}`);
 
-            // console.log(`Perfect Voice Hz : ${pitchData.perfectVoice.hz}`);
             setEvaluatedSentence(evaluatedSentence);
+            setUserVoiceScore(evaluatedSentence.score);
             setPitchData(pitchData);
-            if (!success) throw new Error(errorMessage);
+
+            // console.log(success);
+            // if (!success) {
+            //   throw new Error(errorMessage);
+            // }
+
             console.log('success getting Evaluated Data');
           })
+
           .catch((error) => {
+            setIsResponsedEvaluationResult(false);
+            // console.log('This is catch', success);
+            alert('Please record again 🙏');
             console.log(error);
           });
 
         //   if (tokenExpired) {
         //     // login으로 redirect
         //   }
-
-        // console.log(
-        //   `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
-        // );
-
-        // if (!success) throw new Error(errorMessage);
-
-        // console.log('success getting Evaluated Data');
-        //   setEvaluatedSentence(evaluatedSentence);
-        //   setPitchData(pitchData);
-        //   setIsEvaluationLoading(false);
-        // } catch (error) {
-        //   console.log(error);
-        // }
       });
     } catch (err) {
+      console.log(errorMessage);
       //업로드 취소 error 표시
       if (DocumentPicker.isCancel(err)) {
       } else {
@@ -205,19 +288,28 @@ const Tools = ({ currentSentence }) => {
   // 유저 음성 재생
   const onStartPlay = async () => {
     console.log('-------------유저 음성 재생-------------');
-
+    setButtonControl(true);
+    setIsPlayUserVoice(true);
     const msg = await audioRecorderPlayer.startPlayer();
+    audioRecorderPlayer.addPlayBackListener((e) => {
+      if (e.duration === e.currentPosition) {
+        setIsPlayUserVoice(false);
+        setButtonControl(false);
+      }
+    });
     AsyncStorage.getItem('token', async (error, token) => {
       try {
-        if (token === null) {
-          // login으로 redirect
-        }
-        // AsyncStorage error
-        if (error) throw error;
+        if (token === null)
+          if (error)
+            // login으로 redirect
+
+            // AsyncStorage error
+            throw error;
+
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/user-voice`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -234,9 +326,6 @@ const Tools = ({ currentSentence }) => {
         if (!success) throw new Error(errorMessage);
 
         console.log('success getting sentenceHistory Data');
-        //   setEvaluatedSentence(evaluatedSentence);
-        //   setPitchData(pitchData);
-        //   setIsEvaluationLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -246,62 +335,124 @@ const Tools = ({ currentSentence }) => {
   // 학습 도구 부분 리턴
   return (
     <View>
-      <View style={LearningStyles.learningButtonContainer}>
-        {/* 성우 음성 재생 버튼 */}
-        <TouchableOpacity
-          style={LearningStyles.learningButton}
-          onPress={() => {
-            onPlayPerfectVoice();
-          }}
-        >
-          <Ionicons name="play-outline" size={30} color="#9388E8" />
-        </TouchableOpacity>
-
-        {/* 음성 녹음 버튼 */}
-        <TouchableOpacity
-          style={LearningStyles.learningButton}
-          onPress={() => {
-            onStartRecord();
-          }}
-        >
-          <Ionicons name="mic-outline" size={30} color="#9388E8" />
-        </TouchableOpacity>
-
-        {/* 음성 녹음 중지 버튼 */}
-        <TouchableOpacity style={LearningStyles.learningButton} onPress={onStopRecord}>
-          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
-        </TouchableOpacity>
-
-        {/* 음성 재생 버튼 */}
-        <TouchableOpacity
-          style={LearningStyles.learningButton}
-          onPress={() => onStartPlay()}
-          disabled={!isStopped}
-        >
-          <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#9388E8" />
-        </TouchableOpacity>
-      </View>
       <View>
-        {isStopped ? (
-          evaluatedSentence !== null && pitchData !== null ? (
-            <View style={{ marginBottom: 20 }}>
-              <SpeechEvaluationResult evaluatedSentence={evaluatedSentence} pitchData={pitchData} />
-            </View>
+        <View style={LearningStyles.learningButtonContainer}>
+          {/* 성우 음성 재생 버튼 */}
+          {isPlayPerfectVoice ? (
+            <TouchableOpacity
+              style={LearningStyles.learningButtonPlay}
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+              disabled={isPlayPerfectVoice || buttonControl}
+            >
+              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+            </TouchableOpacity>
           ) : (
-            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
-              <Progress.Circle
-                size={80}
-                animated={true}
-                color={'#9388E8'}
-                borderWidth={8}
-                strokeCap={'round'}
-                indeterminate={true}
+            <TouchableOpacity
+              style={
+                buttonControl
+                  ? LearningStyles.learningButtondisable
+                  : LearningStyles.learningButtonEnable
+              }
+              onPress={() => {
+                onPlayPerfectVoice();
+              }}
+              disabled={buttonControl}
+            >
+              <Ionicons
+                name="volume-off-outline"
+                size={30}
+                color={buttonControl ? '#DDDDDD' : '#555555'}
+              ></Ionicons>
+            </TouchableOpacity>
+          )}
+
+          {/* 음성 녹음 버튼 */}
+          <TouchableOpacity
+            style={
+              buttonControl
+                ? LearningStyles.learningButtondisable
+                : LearningStyles.learningButtonEnable
+            }
+            onPress={() => {
+              onStartRecord();
+            }}
+            disabled={buttonControl}
+          >
+            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+          </TouchableOpacity>
+          {/* 음성 중지 버튼으로 바뀌는 부분 */}
+          <TouchableOpacity
+            style={
+              isRecordingUserVoice
+                ? LearningStyles.learningButtonCover
+                : LearningStyles.learningButtonHidden
+            }
+            onPress={() => {
+              onStopRecord();
+            }}
+          >
+            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
+          </TouchableOpacity>
+
+          {/* 유저 음성 재생 버튼 */}
+          {isResponsedEvaluationResult ? (
+            <TouchableOpacity
+              style={
+                buttonControl
+                  ? isPlayUserVoice
+                    ? LearningStyles.learningButtonPlay
+                    : LearningStyles.learningButtondisable
+                  : LearningStyles.learningButtonEnable
+              }
+              onPress={() => onStartPlay()}
+              disabled={buttonControl}
+            >
+              <Ionicons
+                style={{ marginTop: 2 }}
+                name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
+                size={27}
+                color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
               />
-            </View>
-          )
-        ) : (
-          <></>
-        )}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={LearningStyles.learningButtondisable}
+              onPress={() => onStartPlay()}
+              disabled={true}
+            >
+              <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#DDDDDD" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* 발화 평가 결과 */}
+        <View>
+          {isResponsedEvaluationResult ? (
+            evaluatedSentence !== null && pitchData !== null ? (
+              <View>
+                <SpeechEvaluationResult
+                  evaluatedSentence={evaluatedSentence}
+                  pitchData={pitchData}
+                />
+              </View>
+            ) : (
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+                <Progress.Circle
+                  size={60}
+                  animated={true}
+                  color={'#9388E8'}
+                  borderWidth={8}
+                  strokeCap={'round'}
+                  indeterminate={true}
+                />
+              </View>
+            )
+          ) : (
+            <></>
+          )}
+        </View>
       </View>
     </View>
   );

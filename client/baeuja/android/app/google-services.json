@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "300096117355",
+    "project_id": "baeuja-ad",
+    "storage_bucket": "baeuja-ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300096117355:android:4f08c7013b3c2a8f61af2e",
+        "android_client_info": {
+          "package_name": "com.baeuja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300096117355-5vamcb16mjgr47dl2m4to7urrbg533l0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baeuja",
+            "certificate_hash": "9f1d2f94029ddb1fd7d6df16630d5f1fd39b0b91"
+          }
+        },
+        {
+          "client_id": "300096117355-8oj6lm121mq6jkvqo358q9tfpslab53c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baeuja",
+            "certificate_hash": "9382bedde68edb248af069400ab6789fef9aedfe"
+          }
+        },
+        {
+          "client_id": "300096117355-r0gf9b9a0s1ih6vkktgmk8tcfav9bn9l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baeuja",
+            "certificate_hash": "1d209c69e19d4df06449a143c323c5b1fbfa1323"
+          }
+        },
+        {
+          "client_id": "300096117355-ueht2nbsaqoo885n2je4n48k4jj90e0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHQple1KjiFGQrO98NIHsOpNSXt0KqChs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "300096117355-ueht2nbsaqoo885n2je4n48k4jj90e0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
