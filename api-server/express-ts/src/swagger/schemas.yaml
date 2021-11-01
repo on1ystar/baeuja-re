@@ -300,6 +300,9 @@ LearningSentenceEvaluation:
     evaluatedSentence:
       type: object
       properties:
+        correctText:
+          type: string
+          description: 성우의 정답 텍스트
         sentenceEvaluationCounts:
           type: number
           description: 이 문장에 대한 발음 평가 횟수

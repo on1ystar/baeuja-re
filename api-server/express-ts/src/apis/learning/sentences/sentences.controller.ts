@@ -59,13 +59,16 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     );
     console.info('✅ Success S3 upload--------------');
 
+    const koreanText = (
+      (await SentenceRepository.findOne(client, +sentenceId, ['koreanText']))
+        .koreanText as string
+    )
+      .replace(/[\'\"\)`!?.,\(a-zA-Z]/g, '')
+      .trim();
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
     const sentence: SentenceOfPostSentenceToAIDTO = {
       sentenceId: +sentenceId,
-      koreanText: (
-        await SentenceRepository.findOne(client, +sentenceId, ['koreanText'])
-      ).koreanText as string,
-      perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
+      koreanText
     };
     const postEvaluationDTO: PostSentenceToAIDTO = {
       userId: +userId,
@@ -130,6 +133,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       userVoiceUri: `${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     };
     evaluatedSentence = {
+      correctText: koreanText,
       ...evaluatedSentence,
       ...(await UserSentenceEvaluationRepository.save(
         client,
