@@ -20,7 +20,7 @@ import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 // Q&A 화면 전체 그리는 함수
-const sendQna = () => {
+const ContactUs = () => {
   const [qnaTypes, setQnaTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomNumber, setRandomNumber] = useState(Math.random());
@@ -65,7 +65,7 @@ const sendQna = () => {
   // send Qna Screen 전체 렌더링
   return (
     <View style={styles.allContainer}>
-      <Text style={styles.selectQnaType}>Please select a Q&A type</Text>
+      <Text style={styles.selectQnaType}>Select an inquiry type</Text>
       {isLoading ? (
         <Text></Text>
       ) : (
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default sendQna;
+export default ContactUs;

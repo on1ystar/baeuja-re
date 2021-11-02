@@ -39,11 +39,15 @@ import Icon2 from 'react-native-vector-icons/Feather'; // Feather
 import Icon3 from 'react-native-vector-icons/MaterialIcons'; // MaterialIcons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import RNFS from 'react-native-fs';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navigation
+import {
+  useNavigation,
+  useFocusEffect,
+  useIsFocused,
+  CommonActions,
+} from '@react-navigation/native'; // Navigation
 import { Card } from 'react-native-elements'; // React Native Elements
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import { Divider } from 'react-native-elements'; // Elements
-import { useNavigation } from '@react-navigation/native'; // Navigation
 
 const qnaInput = ({
   route: {
@@ -55,6 +59,8 @@ const qnaInput = ({
   const navigation = useNavigation();
 
   let qnaData;
+
+  // QNA 보내기 함수
   const postQna = () => {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
@@ -87,6 +93,7 @@ const qnaInput = ({
             if (!success) throw new Error(errorMessage);
             console.log(errorMessage);
             console.log('success Post QNA');
+            navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] }));
           });
         //   if (tokenExpired) {
         //     // login으로 redirect
@@ -129,7 +136,7 @@ const qnaInput = ({
               fontWeight: 'bold',
             }}
           >
-            Send Q&A
+            Send
           </Text>
         </View>
       </TouchableOpacity>

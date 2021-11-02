@@ -10,6 +10,7 @@ import {
   ScrollView,
   Platform,
   PermissionsAndroid,
+  Animated,
 } from 'react-native'; // React Native Component
 import {
   responsiveHeight,
@@ -38,7 +39,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
-
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'; // React Native Countdown Circle Timer
 // import RNFS from 'react-native-fs'; // React Native File System
 
 // Component import
@@ -53,6 +54,7 @@ let userPermission = 'a';
 const Tools = ({ currentSentence }) => {
   const [isResponsedEvaluationResult, setIsResponsedEvaluationResult] = useState(false);
   const [evaluatedSentence, setEvaluatedSentence] = useState(null);
+  const [correctText, setCorrectText] = useState('');
   const [pitchData, setPitchData] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isPlayPerfectVoice, setIsPlayPerfectVoice] = useState(false);
@@ -72,7 +74,6 @@ const Tools = ({ currentSentence }) => {
       }
       console.log('-------------성우 음성 재생-------------');
       music.play((success) => {
-        music.setVolume(150);
         if (success) {
           setIsPlayPerfectVoice(false);
           setButtonControl(false);
@@ -253,6 +254,7 @@ const Tools = ({ currentSentence }) => {
             console.log(`pitchData : ${pitchData.userVoice}`);
 
             setEvaluatedSentence(evaluatedSentence);
+            setCorrectText(evaluatedSentence.correctText);
             setUserVoiceScore(evaluatedSentence.score);
             setPitchData(pitchData);
 
@@ -427,6 +429,43 @@ const Tools = ({ currentSentence }) => {
           )}
         </View>
 
+        {/* 음성 녹음 진행 중 타이머 */}
+        <View>
+          {isRecordingUserVoice ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: responsiveScreenHeight(5),
+              }}
+            >
+              <CountdownCircleTimer
+                size={responsiveScreenWidth(30)}
+                renderAriaTime={'Hello'}
+                strokeWidth={responsiveScreenWidth(2.5)}
+                isPlaying
+                duration={15}
+                initialRemainingTime={15}
+                colors={[
+                  ['#004777', 0.4],
+                  ['#F7B801', 0.4],
+                  ['#A30000', 0.2],
+                ]}
+              >
+                {({ remainingTime, animatedColor }) => (
+                  <Animated.Text style={{ color: animatedColor }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ color: '#BBBBBB' }}>Recording...</Text>
+                      <Text style={{ color: '#BBBBBB' }}>{remainingTime}</Text>
+                    </View>
+                  </Animated.Text>
+                )}
+              </CountdownCircleTimer>
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
         {/* 발화 평가 결과 */}
         <View>
           {isResponsedEvaluationResult ? (
@@ -438,9 +477,15 @@ const Tools = ({ currentSentence }) => {
                 />
               </View>
             ) : (
-              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: responsiveScreenHeight(10),
+                }}
+              >
                 <Progress.Circle
-                  size={60}
+                  size={responsiveScreenWidth(20)}
                   animated={true}
                   color={'#9388E8'}
                   borderWidth={8}

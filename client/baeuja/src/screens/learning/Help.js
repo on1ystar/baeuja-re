@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   helpImage: {
-    height: responsiveScreenHeight(90),
-    width: responsiveScreenWidth(100),
+    height: responsiveScreenHeight(80),
+    width: responsiveScreenWidth(80),
   },
 });
 

@@ -5,11 +5,14 @@ import { Chart, Line, Area, HorizontalAxis, VerticalAxis } from 'react-native-re
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
 import { Divider } from 'react-native-elements'; // React Native Elements
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryLine } from 'victory-native'; // React Native victory-native
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
 import {
   responsiveFontSize,
+  responsiveHeight,
+  responsiveScreenFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
@@ -18,10 +21,93 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [perfectVoiceData, setPerfectVoiceData] = useState([]);
   const [userVoiceData, setUserVoiceData] = useState([]);
+  const [correctWords, setCorrectWords] = useState([]);
+  const [correctLetters, setCorrectLetters] = useState([]);
   let userScore = evaluatedSentence.score;
   // const [userScore, setUserScore] = useState(evaluatedSentence.score);
 
-  const render = () => {
+  // STT 결과 데이터 생성 함수
+  const setCorrectDataOfResult = () => {
+    const correctTextWords = evaluatedSentence.correctText.split(' ');
+    const sttResultWords = evaluatedSentence.sttResult.trim().split(' ');
+    let tempWords = [];
+    correctTextWords.forEach((word, index) => {
+      if (word === sttResultWords[index])
+        tempWords.push(
+          <Text
+            key={index}
+            style={{
+              fontSize: responsiveFontSize(2.1),
+              fontWeight: '700',
+              color: '#484848',
+            }}
+          >
+            [{word}]
+          </Text>,
+          ' '
+        );
+    });
+    setCorrectWords(tempWords);
+    const correctTextLetters = evaluatedSentence.correctText.split('');
+    let sttResultLetters = evaluatedSentence.sttResult.trim().split('');
+    let tempLetters = [];
+    correctTextLetters.forEach((letter, index) => {
+      if (letter !== ' ') {
+        const finded = sttResultLetters.find((e) => {
+          return e === letter;
+        });
+        if (typeof finded !== 'undefined') {
+          tempLetters.push(
+            <Text
+              key={index}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                fontWeight: '700',
+                color: '#484848',
+                backgroundColor: '#B8FFB9',
+              }}
+            >
+              {letter}
+            </Text>
+          );
+          sttResultLetters = sttResultLetters
+            .slice(0, sttResultLetters.indexOf(finded))
+            .concat(sttResultLetters.slice(sttResultLetters.indexOf(finded) + 1));
+        } else {
+          tempLetters.push(
+            <Text
+              key={index}
+              style={{
+                fontSize: responsiveFontSize(2.1),
+                fontWeight: '700',
+                color: '#484848',
+                backgroundColor: '#FFB6B6',
+              }}
+            >
+              {letter}
+            </Text>
+          );
+        }
+      } else {
+        tempLetters.push(
+          <Text
+            key={index}
+            style={{
+              fontWeight: '700',
+              fontSize: responsiveFontSize(2.1),
+              color: '#484848',
+            }}
+          >
+            {' '}
+          </Text>
+        );
+      }
+    });
+    setCorrectLetters(tempLetters);
+  };
+
+  // 피치 그래프 그리는 데이터 생성하는 함수
+  const setLineChartData = () => {
     let tempPerfectVoiceData = [];
     let tempUserVoiceData = [];
     let perfectVoiceHz = JSON.parse(pitchData.perfectVoice.hz);
@@ -40,7 +126,8 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
     // setUserScore(evaluatedSentence.score);
     setIsLoading(false);
   };
-  useEffect(render, [pitchData]);
+  useEffect(setLineChartData, [pitchData]);
+  useEffect(setCorrectDataOfResult, [evaluatedSentence]);
 
   // 발화평가 결과 받아오기
   return (
@@ -52,7 +139,8 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
           {/* 발화 평가 등급 */}
           <View style={styles.rankingChart}>
             <Progress.Circle
-              size={130}
+              size={responsiveScreenWidth(35)}
+              borderWidth={3}
               animated={true}
               color={'#9388E8'}
               progress={userScore * 0.01}
@@ -61,18 +149,165 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               showsText={true}
               formatText={() => {
                 if (userScore > 85) {
-                  return 'A+';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>A+</Text>
+                    </View>
+                  );
                 } else if (userScore > 75) {
-                  return 'A';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>A</Text>
+                    </View>
+                  );
                 } else if (userScore > 60) {
-                  return 'B';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>B</Text>
+                    </View>
+                  );
                 } else if (userScore > 45) {
-                  return 'C';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>C</Text>
+                    </View>
+                  );
                 } else {
-                  return 'D';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>D</Text>
+                    </View>
+                  );
                 }
               }}
             />
+            <Divider
+              style={{
+                width: '15%',
+                shadowColor: '#000000',
+                shadowOffset: {
+                  width: 30,
+                  height: 2,
+                },
+                shadowOpacity: 0.1,
+                shadowRadius: 15,
+
+                elevation: 5,
+              }}
+              color="#FFFEEE"
+              insetType="middle"
+              width={1}
+              orientation="horizontal"
+            />
+          </View>
+          <View
+            style={{
+              marginTop: responsiveScreenHeight(4),
+              marginLeft: responsiveScreenWidth(15),
+              marginRight: responsiveScreenWidth(15),
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '700',
+                fontSize: responsiveFontSize(2.2),
+                color: '#484848',
+                marginBottom: responsiveScreenHeight(1),
+              }}
+            >
+              ✅ Correct Words{'\n'}
+              <Text>{correctWords}</Text>
+            </Text>
+            <Text
+              style={{
+                fontWeight: '700',
+                fontSize: responsiveFontSize(2.2),
+                color: '#484848',
+              }}
+            >
+              ✅ Letters Checking{'\n'}[ {correctLetters} ]
+            </Text>
+          </View>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Divider
+              style={{
+                width: '80%',
+                marginTop: responsiveScreenHeight(2),
+              }}
+              color="#EEEEEE"
+              insetType="middle"
+              width={4}
+              orientation="horizontal"
+            />
+          </View>
+          <View
+            style={{
+              marginTop: responsiveScreenHeight(5),
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              marginRight: responsiveScreenWidth(15),
+              marginBottom: 0,
+              paddingBottom: 0,
+            }}
+          >
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: '#444444' }}>Voice Actor </Text>
+              <Divider
+                style={{
+                  width: '12%',
+                }}
+                color="#9388E8"
+                insetType="middle"
+                width={4}
+                orientation="horizontal"
+              />
+            </View>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ color: '#444444' }}>You </Text>
+              <Divider
+                style={{
+                  width: '12%',
+                }}
+                color="#88E889"
+                insetType="middle"
+                width={4}
+                orientation="horizontal"
+              />
+            </View>
+          </View>
+          <View style={styles.chartContainer}>
+            <VictoryChart
+              style={{ backgroundColor: '#FFFFFF', marginTop: responsiveScreenHeight(0) }}
+              width={responsiveScreenWidth(90)}
+              height={responsiveScreenHeight(30)}
+              theme={VictoryTheme.material}
+            >
+              <VictoryLine
+                style={{
+                  data: { stroke: '#9388E8', strokeWidth: 3 },
+                }}
+                data={perfectVoiceData}
+              />
+              <VictoryLine
+                style={{
+                  data: { stroke: '#88E889', strokeWidth: 3 },
+                }}
+                data={userVoiceData}
+              />
+            </VictoryChart>
           </View>
         </View>
       )}
@@ -161,10 +396,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+
   rankingChart: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: responsiveScreenHeight(5),
+  },
+  rankingContainer: { justifyContent: 'center', alignItems: 'center' },
+  rankingText: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: responsiveScreenFontSize(2.5),
+    fontWeight: '700',
+    color: '#9388E8',
+  },
+  rankingResultText: {
+    fontSize: responsiveScreenFontSize(2.7),
+    fontWeight: '700',
+    color: '#9388E8',
+  },
+  chartContainer: {
+    flex: 1,
+    height: responsiveScreenHeight(20),
+    marginBottom: responsiveScreenHeight(5),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

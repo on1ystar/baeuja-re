@@ -158,6 +158,11 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
 
         console.log(`Bookmark Post Success is :${success}`);
         console.log(`After Post, isBookmark is :${isBookmark}`);
+        if (isBookmark) {
+          alert('Added to Bookmark');
+        } else {
+          alert('Deleted from Bookmark');
+        }
 
         if (!success) throw new Error(errorMessage);
       } catch (error) {

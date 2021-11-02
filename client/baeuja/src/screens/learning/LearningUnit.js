@@ -58,8 +58,6 @@ const LearningUnit = ({
     params: { contentId, unitIndex },
   },
 }) => {
-  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
-
   // state
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);

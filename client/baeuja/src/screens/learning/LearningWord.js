@@ -111,6 +111,13 @@ const LearningWord = ({
         setWord(newWord);
         console.log(`Bookmark Post Success is :${success}`);
         console.log(`After Post, Word isBookmark is :${isBookmark}`);
+
+        if (isBookmark) {
+          alert('Added to Bookmark');
+        } else {
+          alert('Deleted from Bookmark');
+        }
+
         if (!success) throw new Error(errorMessage);
       } catch (error) {
         console.log(error);
@@ -165,7 +172,6 @@ const DrawExampleSentences = ({ sentence }) => {
   const navigation = useNavigation();
   const contentId = sentence.contentId;
   const unitIndex = sentence.unitIndex;
-  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
 
   return (
     <Card
