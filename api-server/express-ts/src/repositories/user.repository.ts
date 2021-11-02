@@ -173,6 +173,26 @@ export default class UserRepository {
     }
   };
 
+  // 유저 존재 여부 확인
+  static isExistByNickname = async (
+    client: PoolClient,
+    nickname: number
+  ): Promise<boolean> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT COUNT(*) FROM users
+          WHERE nickname = $1`,
+        [nickname]
+      );
+
+      if (+queryResult.rows[0].count === 0) return false;
+      return true;
+    } catch (error) {
+      console.warn('❌ Error: user.repository.ts isExistByNickname function ');
+      throw error;
+    }
+  };
+
   // 유저 전체 조회
   static findAll = async (
     client: PoolClient,

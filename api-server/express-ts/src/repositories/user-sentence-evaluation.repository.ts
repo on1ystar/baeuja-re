@@ -83,4 +83,24 @@ export default class UserSentenceEvaluationRepository {
       throw error;
     }
   };
+
+  static getAvarageScore = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const avarageScoreOfSentences: number = (
+        await client.query(
+          `SELECT avg(score) FROM user_sentence_evaluation
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].avg;
+      return avarageScoreOfSentences;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-evaluation.repository.ts getAvarageScore function '
+      );
+      throw error;
+    }
+  };
 }

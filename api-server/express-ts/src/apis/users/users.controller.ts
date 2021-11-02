@@ -3,7 +3,7 @@
  @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
  */
 
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
 import User from '../../entities/user.entity';
@@ -13,6 +13,12 @@ import conf from '../../config';
 import UserRepository, {
   UserToBeSaved
 } from '../../repositories/user.repository';
+import UserContentHistoryRepository from '../../repositories/user-content-history.repository';
+import UserUnitHistoryRepository from '../../repositories/user-unit-history.repository';
+import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
+import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
+import UserSentenceEvaluationRepository from '../../repositories/user-sentence-evaluation.repository';
+import UserWordEvaluationRepository from '../../repositories/user-word-evaluation.repository';
 
 // GET /users
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -156,6 +162,17 @@ export const patchtUser = async (req: Request, res: Response) => {
     if (typeof column === 'undefined' || typeof updatingValue === 'undefined')
       throw new Error('invalid syntax of request');
 
+    if (
+      column === 'email' &&
+      (await UserRepository.isExistByEmail(client, updatingValue))
+    )
+      throw new Error('already exists');
+    if (
+      column === 'nickname' &&
+      (await UserRepository.isExistByNickname(client, updatingValue))
+    )
+      throw new Error('already exists');
+
     const user: User = await UserRepository.update(
       client,
       +userId,
@@ -215,6 +232,59 @@ export const deleteUser = async (req: Request, res: Response) => {
         nickname: deletedUser.nickname
       }
     });
+  } catch (error) {
+    console.log(error);
+    const errorMessage = (error as Error).message;
+    return res.status(400).json({ success: false, errorMessage });
+  } finally {
+    client.release();
+  }
+};
+
+// GET /users/{userId}/learning-history
+export const getLearningHistory = async (req: Request, res: Response) => {
+  const { userId, timezone } = res.locals;
+  const client: PoolClient = await pool.connect();
+  try {
+    const learningHistory = {
+      countsOfContents: await UserContentHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      countsOfUnits: await UserUnitHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      countsOfSentences:
+        await UserSentenceHistoryRepository.getUserHistoryCounts(
+          client,
+          userId
+        ),
+      countsOfWords: await UserWordHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfSentences:
+        Math.round(
+          (await UserSentenceEvaluationRepository.getAvarageScore(
+            client,
+            userId
+          )) *
+            10 *
+            2
+        ) /
+        (10 * 2),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfWords:
+        Math.round(
+          (await UserWordEvaluationRepository.getAvarageScore(client, userId)) *
+            10 *
+            2
+        ) /
+        (10 * 2)
+    };
+    return res.status(200).json({ success: true, learningHistory });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;

@@ -242,4 +242,25 @@ export default class UserSentenceHistoryRepository {
       throw error;
     }
   };
+
+  static getUserHistoryCounts = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const countsOfSentences: number = (
+        await client.query(
+          `SELECT count(*) FROM user_sentence_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].count;
+
+      return countsOfSentences;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user_sentence_history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
 }

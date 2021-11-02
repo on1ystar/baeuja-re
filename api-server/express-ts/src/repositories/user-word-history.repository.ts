@@ -188,4 +188,25 @@ export default class UserWordHistoryRepository {
       throw error;
     }
   };
+
+  static getUserHistoryCounts = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const countsOfWords: number = (
+        await client.query(
+          `SELECT count(*) FROM user_word_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].count;
+
+      return countsOfWords;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user_word_history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
 }

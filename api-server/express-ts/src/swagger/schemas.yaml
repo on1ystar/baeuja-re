@@ -564,9 +564,9 @@ UserLearningHistory:
           type: number
         countsOfWords:
           type: number
-        evaluationAvarageOfSentence:
+        avarageScoreOfSentences:
           type: number
-        evaluationAvarageOfWord:
+        avarageScoreOfWords:
           type: number
 # -------------------------- bookmark -------------------------- #
 PostBookmark:
