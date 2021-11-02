@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-console */
 /**
  * @description user 테이블 SQL
@@ -53,23 +54,40 @@ export default class UserRepository {
   };
 
   // 닉네임 변경
-  static updateUserNickname = async (
+  static update = async (
     client: PoolClient,
     userId: number,
-    nicknameToUpdate: string
+    column: string,
+    updatingValue: any
   ): Promise<User> => {
     try {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { user_id, email, nickname } = (
+      const {
+        user_id,
+        email,
+        nickname,
+        country,
+        timezone,
+        created_at,
+        role_id
+      } = (
         await client.query(
           `UPDATE users
-            SET nickname = '${nicknameToUpdate}', modified_at = default
+            SET ${column} = $1, modified_at = default
             WHERE user_id = ${userId}
-            RETURNING user_id, email, nickname`
+            RETURNING user_id, email, nickname, country, timezone, created_at, role_id`,
+          [updatingValue]
         )
       ).rows[0];
-      console.info(`✅  updated user's nickname -> ${nicknameToUpdate}`);
-      return { userId: user_id, email, nickname };
+      console.info(`✅  updated ${userId}'s ${column} -> ${updatingValue}`);
+      return {
+        userId: user_id,
+        email,
+        nickname,
+        country,
+        timezone,
+        createdAt: created_at,
+        roleId: role_id
+      };
     } catch (error) {
       console.warn('❌ Error: user.repository.ts updateUserNickname function ');
       throw error;

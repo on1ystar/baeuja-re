@@ -140,7 +140,7 @@ export const postUser = async (req: Request, res: Response) => {
 // PATCH /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const patchtUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const { userId, timezone } = res.locals;
   const { column } = req.query; // email | nickname | country | timezone
   const { updatingValue } = req.body;
   if (+res.locals.userId !== +userId) {
@@ -153,24 +153,30 @@ export const patchtUser = async (req: Request, res: Response) => {
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
-    if (isNaN(+userId)) throw new Error('invalid syntax of params');
     if (typeof column === 'undefined' || typeof updatingValue === 'undefined')
       throw new Error('invalid syntax of request');
-    if (!(await UserRepository.isExistById(client, +userId)))
-      throw new Error('userId does not exist. ');
 
-    const updatedUser: User = await UserRepository.updateUserNickname(
+    const user: User = await UserRepository.update(
       client,
       +userId,
+      column as string,
       updatingValue
     );
+    let token;
+    if (column === 'email' || column === 'timezone') {
+      token = jwt.sign(
+        {
+          userId,
+          tiemzone: String(column) === 'timezone' ? updatingValue : timezone
+        }, // payload: {userId, timezone}
+        conf.jwtToken.secretKey as string, // secretOrPrivateKey
+        user.roleId === 2 ? conf.jwtToken.option : conf.jwtToken.optionGuest // options: guest면 만료 기간이 없는 토큰 생성
+      );
+    }
     return res.status(200).json({
       success: true,
-      user: {
-        userId: updatedUser.userId,
-        email: updatedUser.email,
-        updatingValue
-      }
+      user,
+      token
     });
   } catch (error) {
     console.log(error);

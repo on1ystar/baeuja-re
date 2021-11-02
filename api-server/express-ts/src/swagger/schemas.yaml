@@ -526,7 +526,7 @@ UserUpdated:
     success:
       type: boolean
       example: true
-    users:
+    user:
       type: object
       properties:
         userId:
