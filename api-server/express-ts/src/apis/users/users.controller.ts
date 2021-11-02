@@ -37,7 +37,7 @@ export const getUsers = async (req: Request, res: Response) => {
 // GET /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUserDetail = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const { userId, timezone } = res.locals;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -190,7 +190,7 @@ export const patchtUser = async (req: Request, res: Response) => {
 // DELETE /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const deleteUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const { userId, timezone } = res.locals;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,

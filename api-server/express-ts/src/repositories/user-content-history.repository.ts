@@ -37,6 +37,8 @@ export default class UserContentHistoryRepository {
     }
   };
 
+  static findAll;
+
   // 콘텐츠 학습 횟수 1 증가
   static updateCounts = async (
     client: PoolClient,
