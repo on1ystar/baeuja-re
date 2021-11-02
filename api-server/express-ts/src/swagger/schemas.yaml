@@ -457,6 +457,26 @@ LoginedResult:
       type: boolean
       description: true -> member(이미 가입한 회원) | false -> new member or guest
 # -------------------------- user -------------------------- #
+Users:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    users:
+      type: array
+      items:
+        type: object
+        properties:
+          userId:
+            type: number
+            description: user id
+          email:
+            type: string
+            description: 사용자 이메일
+          nickname:
+            type: string
+            description: 사용자 닉네임
 User:
   type: object
   properties:

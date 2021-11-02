@@ -139,9 +139,9 @@ export const postUser = async (req: Request, res: Response) => {
 
 // PATCH /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const patchtUserNickname = async (req: Request, res: Response) => {
+export const patchtUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const { column } = req.query;
+  const { column } = req.query; // email | nickname | country | timezone
   const { updatingValue } = req.body;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
@@ -161,15 +161,15 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
 
     const updatedUser: User = await UserRepository.updateUserNickname(
       client,
-      +userId
-      // nickname
+      +userId,
+      updatingValue
     );
     return res.status(200).json({
       success: true,
       user: {
         userId: updatedUser.userId,
         email: updatedUser.email,
-        nickname
+        updatingValue
       }
     });
   } catch (error) {
