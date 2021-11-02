@@ -486,26 +486,18 @@ UserDetail:
       properties:
         userId:
           type: number
-          description: user id
         email:
           type: string
-          description: 사용자 이메일
         nickname:
           type: string
-          description: 사용자 닉네임
-        locale:
+        country:
           type: string
-          description: 사용자 국가
+        timezone:
+          type: string
         createdAt:
           type: string
           description: 생성 시기
-        latestLogin:
-          type: string
-          description: 최근 로그인 시간
-        modifiedAt:
-          type: string
-          description: 변경 시간
-        role_id:
+        roleId:
           type: number
           description: '1: admin | 2: member | 3: guest'
 Users:
@@ -529,6 +521,26 @@ Users:
           nickname:
             type: string
             description: 사용자 닉네임
+UserLearningHistory:
+  type: object
+  properties:
+    success:
+      type: boolean
+    learningHistory:
+      type: object
+      properties:
+        countsOfContents:
+          type: number
+        countsOfUnits:
+          type: number
+        countsOfSentences:
+          type: number
+        countsOfWords:
+          type: number
+        evaluationAvarageOfSentence:
+          type: number
+        evaluationAvarageOfWord:
+          type: number
 # -------------------------- bookmark -------------------------- #
 PostBookmark:
   type: object

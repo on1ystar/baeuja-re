@@ -55,6 +55,8 @@ paths:
     $ref: './paths/users/users.yaml'
   /users/{userId}:
     $ref: './paths/users/user.yaml'
+  /users/{userId}/learning-history:
+    $ref: './paths/users/learning-history.yaml'
   /bookmark/sentences:
     $ref: './paths/bookmark/sentences.yaml'
   /bookmark/sentences/{sentenceId}:

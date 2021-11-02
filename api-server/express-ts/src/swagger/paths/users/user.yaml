@@ -39,7 +39,7 @@ get:
 patch:
   tags:
     - users
-  summary: update user's nickname
+  summary: update the user's email | country | nickname | timezone
   security:
     - bearerAuth: []
   parameters:
@@ -49,15 +49,21 @@ patch:
       required: true
       schema:
         type: number
+    - name: column
+      in: query
+      description: 변경할 column
+      requied: true
+      schema:
+        type: string
   requestBody:
-    description: 변경할 닉네임
+    description: 변경할 값
     required: true
     content:
       application/json:
         schema:
           type: object
           properties:
-            nickname:
+            updatingValue:
               type: string
   responses:
     200-304:
