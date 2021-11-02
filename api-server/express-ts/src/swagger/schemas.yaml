@@ -500,27 +500,34 @@ UserDetail:
         roleId:
           type: number
           description: '1: admin | 2: member | 3: guest'
-Users:
+UserUpdated:
   type: object
   properties:
     success:
       type: boolean
       example: true
     users:
-      type: array
-      description: users list
-      items:
-        type: object
-        properties:
-          userId:
-            type: number
-            description: user id
-          email:
-            type: string
-            description: 사용자 이메일
-          nickname:
-            type: string
-            description: 사용자 닉네임
+      type: object
+      properties:
+        userId:
+          type: number
+        email:
+          type: string
+        nickname:
+          type: string
+        country:
+          type: string
+        timezone:
+          type: string
+        createdAt:
+          type: string
+          description: 생성 시기
+        roleId:
+          type: number
+          description: '1: admin | 2: member | 3: guest'
+    token:
+      type: string
+      description: email, timezone이 변경될 때만 재발급
 UserLearningHistory:
   type: object
   properties:

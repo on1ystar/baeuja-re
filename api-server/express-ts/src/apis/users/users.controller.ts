@@ -54,9 +54,9 @@ export const getUserDetail = async (req: Request, res: Response) => {
       'userId',
       'email',
       'nickname',
-      'platform',
       'country',
       'timezone',
+      'createdAt',
       'roleId'
     ]);
     return res.status(200).json({ success: true, user });
@@ -121,7 +121,6 @@ export const postUser = async (req: Request, res: Response) => {
       userId = Number((await UserRepository.save(client, user)).userId);
     }
 
-    console.info(`Login \t user_id: ${userId}`);
     // jwt token 생성
     const token = jwt.sign(
       { userId, timezone: userinfo.timezone }, // payload: {userId, timezone}
@@ -142,7 +141,8 @@ export const postUser = async (req: Request, res: Response) => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const patchtUserNickname = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const { nickname } = req.body;
+  const { column } = req.query;
+  const { updatingValue } = req.body;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -154,14 +154,15 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
   try {
     // reqeust params 유효성 검사
     if (isNaN(+userId)) throw new Error('invalid syntax of params');
-
+    if (typeof column === 'undefined' || typeof updatingValue === 'undefined')
+      throw new Error('invalid syntax of request');
     if (!(await UserRepository.isExistById(client, +userId)))
       throw new Error('userId does not exist. ');
 
     const updatedUser: User = await UserRepository.updateUserNickname(
       client,
-      +userId,
-      nickname
+      +userId
+      // nickname
     );
     return res.status(200).json({
       success: true,
