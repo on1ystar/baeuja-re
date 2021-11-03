@@ -53,7 +53,7 @@ export default class UserRepository {
     }
   };
 
-  // 닉네임 변경
+  // 이메일, 닉네임, 국가, 타임존 변경
   static update = async (
     client: PoolClient,
     userId: number,
@@ -61,6 +61,10 @@ export default class UserRepository {
     updatingValue: any
   ): Promise<User> => {
     try {
+      const roleId =
+        column === 'email'
+          ? 2
+          : (await UserRepository.findOne(client, userId, ['roleId'])).roleId;
       const {
         user_id,
         email,
@@ -72,7 +76,7 @@ export default class UserRepository {
       } = (
         await client.query(
           `UPDATE users
-            SET ${column} = $1, modified_at = default
+            SET ${column} = $1, modified_at = default, role_id = ${roleId}
             WHERE user_id = ${userId}
             RETURNING user_id, email, nickname, country, timezone, created_at, role_id`,
           [updatingValue]
