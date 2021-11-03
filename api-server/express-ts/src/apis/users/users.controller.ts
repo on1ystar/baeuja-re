@@ -180,7 +180,9 @@ export const patchtUser = async (req: Request, res: Response) => {
       updatingValue
     );
     let token;
+    console.log(updatingValue);
     if (column === 'email' || column === 'timezone') {
+      console.log(column);
       token = jwt.sign(
         {
           userId,
