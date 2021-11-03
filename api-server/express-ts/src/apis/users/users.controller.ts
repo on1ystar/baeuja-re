@@ -180,15 +180,11 @@ export const patchtUser = async (req: Request, res: Response) => {
       updatingValue
     );
     let token;
-    console.log(updatingValue);
     if (column === 'email' || column === 'timezone') {
-      console.log(column);
-      console.log(timezone);
-      console.log(String(column) === 'timezone');
       token = jwt.sign(
         {
           userId,
-          tiemzone: String(column) === 'timezone' ? updatingValue : timezone
+          timezone: String(column) === 'timezone' ? updatingValue : timezone
         }, // payload: {userId, timezone}
         conf.jwtToken.secretKey as string, // secretOrPrivateKey
         user.roleId === 2 ? conf.jwtToken.option : conf.jwtToken.optionGuest // options: guest면 만료 기간이 없는 토큰 생성
