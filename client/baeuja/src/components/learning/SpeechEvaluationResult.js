@@ -251,10 +251,20 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               width={4}
               orientation="horizontal"
             />
+            <Text
+              style={{
+                color: '#444444',
+                marginTop: responsiveScreenHeight(3),
+                fontSize: responsiveFontSize(2.3),
+                fontWeight: '700',
+              }}
+            >
+              Pitch graph
+            </Text>
           </View>
           <View
             style={{
-              marginTop: responsiveScreenHeight(5),
+              marginTop: responsiveScreenHeight(2),
               flex: 1,
               justifyContent: 'flex-end',
               alignItems: 'flex-end',

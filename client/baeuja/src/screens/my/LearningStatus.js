@@ -50,58 +50,58 @@ const LearningStatus = () => {
   const navigation = useNavigation();
   const [randomNumber, setRandomNumber] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [country, setCountry] = useState('');
-  const [timezone, setTimezone] = useState('');
-  const [roleId, setRoleId] = useState(0);
+  const [countsOfContents, setCountsOfContents] = useState('');
+  const [countsOfUnits, setCountsOfUnits] = useState('');
+  const [countsOfSentences, setCountsOfSentences] = useState('');
+  const [countsOfWords, setCountsOfWords] = useState('');
+  const [avarageScoreOfSentences, setAvarageScoreOfSentences] = useState(0);
+  const [avarageScoreOfWords, setAvarageScoreOfWords] = useState(0);
+  const [authToken, setAuthToken] = useState(null);
 
-  let changedNickname;
-  let changedCountry;
-
-  // 유저 정보 호출
-  const loadProfileData = () => {
+  // 유저 학습 정보 호출
+  const loadLearningStatus = () => {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
           // login으로 redirect
         }
         if (error) throw error;
+
+        setAuthToken(token);
+
         const {
-          data: { success, user, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/users/777`, {
+          data: { success, learningHistory, tokenExpired, errorMessage },
+        } = await axios.get(`https://dev.k-peach.io/users/777/learning-history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (tokenExpired) {
-          // login으로 redirect
-        }
-        console.log(`success : ${success}\nuser: ${user}`);
+        console.log(`success : ${success}\nlearningHistory: ${learningHistory}`);
 
         if (!success) throw new Error(errorMessage);
 
-        console.log('Success Getting User Detail');
+        console.log('Success Getting LearningHistory');
 
-        setEmail(user.email);
-        setNickname(user.nickname);
-        setCountry(user.country);
-        setTimezone(user.timezone);
-        setRoleId(user.roleId);
+        setCountsOfContents(learningHistory.countsOfContents);
+        setCountsOfUnits(learningHistory.countsOfUnits);
+        setCountsOfSentences(learningHistory.countsOfSentences);
+        setCountsOfWords(learningHistory.countsOfWords);
+        setAvarageScoreOfSentences(learningHistory.avarageScoreOfSentences);
+        setAvarageScoreOfWords(learningHistory.avarageScoreOfWords);
         setIsLoading(() => false);
-
-        console.log(user.nickname);
-        console.log(user.country);
-        console.log(user.timezone);
       } catch (error) {
         console.log(error);
+        if (+error.code === 401) {
+          // 토큰 삭제
+          // 로그인으로 이동
+        }
       }
     });
   };
 
   // useEffect
-  useEffect(loadProfileData, []);
+  useEffect(loadLearningStatus, []);
 
   // Profile 화면 전체 리턴
   return (
@@ -110,25 +110,6 @@ const LearningStatus = () => {
         <></>
       ) : (
         <View style={styles.container}>
-          <Card
-            containerStyle={{
-              borderWidth: 0,
-              borderRadius: 10,
-              backgroundColor: '#FBFBFB',
-            }}
-          >
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ fontSize: responsiveFontSize(2.5), color: '#000000' }}>
-                Hello {nickname}
-              </Text>
-            </View>
-          </Card>
-
           {/* 총 학습한 컨텐츠 개수 항목 */}
           <Card
             containerStyle={{
@@ -138,12 +119,16 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Total number of learned contents</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Total number of learned contents</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {countsOfContents}
                 </Text>
               </View>
             </View>
@@ -158,12 +143,21 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Total number of units learned</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Total number of learned units</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{
+                    color: '#17A2FF',
+                    textDecorationLine: 'underline',
+                    fontWeight: '700',
+                    fontWeight: '700',
+                  }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {countsOfUnits}
                 </Text>
               </View>
             </View>
@@ -178,12 +172,16 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Total number of sentences learned</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Total number of learned sentences</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {countsOfSentences}
                 </Text>
               </View>
             </View>
@@ -198,12 +196,16 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Total number of words learned</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Total number of learned words</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {countsOfWords}
                 </Text>
               </View>
             </View>
@@ -218,12 +220,16 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>My Average Sentence Speech Rating Level</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Average of Sentences Speech Rating</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {avarageScoreOfSentences}
                 </Text>
               </View>
             </View>
@@ -238,12 +244,16 @@ const LearningStatus = () => {
             }}
           >
             <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>My average word utterance rating level</Text>
+              <View style={{ width: responsiveScreenWidth(62) }}>
+                <Text style={{ color: '#000000' }}>Average of Words Speech Rating</Text>
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  asdf
+                <Text
+                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {avarageScoreOfWords}
                 </Text>
               </View>
             </View>

@@ -17,12 +17,13 @@ import qnaInput from '../qna/qnaInput';
 import Help from '../../screens/learning/Help';
 import Profile from '../../screens/my/Profile';
 import LearningStatus from '../../screens/my/LearningStatus';
-import AppInfo from '../../screens/my/AppInfo';
+import AboutUs from '../../screens/my/AboutUs';
 
 const NativeStack = createNativeStackNavigator();
 
 const Stack = () => (
   <NativeStack.Navigator
+    initialRouteName="Login"
     screenOptions={{
       headerBackTitleVisible: false,
       headerTintColor: '#9388E8',
@@ -34,18 +35,18 @@ const Stack = () => (
   >
     <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
     <NativeStack.Group screenOptions={{ presentation: 'modal' }}>
-      <NativeStack.Screen name="MoreInfo" component={MoreInfo} />
+      <NativeStack.Screen name="Song Info" component={MoreInfo} />
       <NativeStack.Screen name="Help" component={Help} />
     </NativeStack.Group>
-    <NativeStack.Screen name="GetKpopLearningContents" component={GetKpopLearningContents} />
-    <NativeStack.Screen name="LearningWord" component={LearningWord} />
-    <NativeStack.Screen options={{ flex: 1 }} name="LearningUnits" component={LearningUnits} />
-    <NativeStack.Screen name="LearningUnit" component={LearningUnit} />
+    <NativeStack.Screen name="K-pop" component={GetKpopLearningContents} />
+    <NativeStack.Screen name="Learning Word" component={LearningWord} />
+    <NativeStack.Screen options={{ flex: 1 }} name="Units" component={LearningUnits} />
+    <NativeStack.Screen name="Learning Unit" component={LearningUnit} />
     <NativeStack.Screen name="Profile" component={Profile} />
-    <NativeStack.Screen name="LearningStatus" component={LearningStatus} />
-    <NativeStack.Screen name="ContactUs" component={ContactUs} />
-    <NativeStack.Screen name="qnaInput" component={qnaInput} />
-    <NativeStack.Screen name="AppInfo" component={AppInfo} />
+    <NativeStack.Screen name="Learning Status" component={LearningStatus} />
+    <NativeStack.Screen name="Contact Us" component={ContactUs} />
+    <NativeStack.Screen name="Inquiry" component={qnaInput} />
+    <NativeStack.Screen name="About Us" component={AboutUs} />
   </NativeStack.Navigator>
 );
 

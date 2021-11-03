@@ -91,9 +91,13 @@ const qnaInput = ({
             console.log(`success: ${success} | qna: ${qna}`);
 
             if (!success) throw new Error(errorMessage);
-            console.log(errorMessage);
+
             console.log('success Post QNA');
-            navigation.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }] }));
+            navigation.dispatch(
+              CommonActions.navigate('Tabs', {
+                screen: 'My',
+              })
+            );
           });
         //   if (tokenExpired) {
         //     // login으로 redirect
@@ -120,6 +124,8 @@ const qnaInput = ({
         placeholderTextColor="#444444"
         value={qnaContent}
         onChangeText={(text) => setQnaContent(text)}
+        multiline={true}
+        numberOfLines={19}
       ></TextInput>
       <TouchableOpacity
         style={{ flex: 1 }}
@@ -159,6 +165,9 @@ const styles = StyleSheet.create({
     height: responsiveScreenHeight(5),
     width: responsiveScreenWidth(80),
     borderWidth: 1,
+    borderColor: '#BBBBBB',
+    borderRadius: 10,
+    paddingLeft: responsiveScreenWidth(5),
   },
   qnaContentInput: {
     marginTop: responsiveScreenHeight(5),
@@ -167,6 +176,9 @@ const styles = StyleSheet.create({
     height: responsiveScreenHeight(50),
     width: responsiveScreenWidth(80),
     borderWidth: 1,
+    borderColor: '#BBBBBB',
+    borderRadius: 20,
+    paddingLeft: responsiveScreenWidth(5),
   },
   qnaSendBtn: {
     justifyContent: 'center',

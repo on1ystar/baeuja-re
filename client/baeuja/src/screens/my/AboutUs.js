@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
   TextInput,
 } from 'react-native'; // React Native Component
 import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe'; // Youtube Player
@@ -43,123 +44,91 @@ import { Divider, Card } from 'react-native-elements'; // Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import { Picker } from '@react-native-picker/picker'; // React Native Picker
 import * as RNLocalize from 'react-native-localize'; // Localize
+import VersionCheck from 'react-native-version-check'; // React Native Version Check
 
 // Q&A 화면 전체 그리는 함수
-const AppInfo = () => {
+const AboutUs = () => {
   const [qnaTypes, setQnaTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomNumber, setRandomNumber] = useState(Math.random());
 
-  // Q&A Types 불러오기
-  const loadQnaTypes = () => {
-    // Q&A Type 가져오기
-    AsyncStorage.getItem('token', async (error, token) => {
-      try {
-        if (token === null) {
-          // login으로 redirect
-        }
-        if (error) throw error;
-        const {
-          data: { success, qnaTypes, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/qnas/types`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (tokenExpired) {
-          // login으로 redirect
-        }
-        console.log(`success : ${success}\n Q&A Types: ${qnaTypes}`);
-
-        if (!success) throw new Error(errorMessage);
-
-        console.log('Success Getting Q&A Types');
-
-        setQnaTypes(qnaTypes);
-        setIsLoading(() => false);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  };
-
-  // useEffect
-  useEffect(loadQnaTypes, []);
-
   // send Qna Screen 전체 렌더링
   return (
     <View style={styles.allContainer}>
-      <Text style={styles.selectQnaType}>About BAEUJA</Text>
-      {isLoading ? (
-        <Text></Text>
-      ) : (
-        <View style={styles.allContainer}>
-          {/* 앱 이름 부분 */}
-          <Card
-            containerStyle={{
-              width: responsiveScreenWidth(90),
-              borderWidth: 0,
-              borderRadius: 10,
-              backgroundColor: '#FBFBFB',
-            }}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Name</Text>
-              </View>
-              <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  BAEUJA
-                </Text>
-              </View>
+      <View style={styles.allContainer}>
+        <View>
+          <Image
+            transitionDuration={1000}
+            source={require('../../assets/icons/captureLogo.png')}
+            style={styles.thumbnailImage}
+          />
+        </View>
+        {/* 앱 이름 부분 */}
+        <Card
+          containerStyle={{
+            width: responsiveScreenWidth(90),
+            marginTop: responsiveScreenHeight(5),
+            borderWidth: 0,
+            borderRadius: 10,
+            backgroundColor: '#FBFBFB',
+          }}
+        >
+          <View style={{ flexDirection: 'row' }}>
+            <View>
+              <Text style={{ color: '#9388E8' }}>Name</Text>
             </View>
-          </Card>
-
-          {/* 앱 버전 부분 */}
-          <Card
-            containerStyle={{
-              width: responsiveScreenWidth(90),
-              borderWidth: 0,
-              borderRadius: 10,
-              backgroundColor: '#FBFBFB',
-            }}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(60) }}>
-                <Text style={{ color: '#9388E8' }}>Version</Text>
-              </View>
-              <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  0.3.2
-                </Text>
-              </View>
+            <View style={{ marginLeft: responsiveScreenWidth(17) }}>
+              <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
+                BAEUJA
+              </Text>
             </View>
-          </Card>
+          </View>
+        </Card>
 
-          {/* 문의 메일 부분 */}
-          <Card
-            containerStyle={{
-              width: responsiveScreenWidth(90),
-              borderWidth: 0,
-              borderRadius: 10,
-              backgroundColor: '#FBFBFB',
-            }}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ width: responsiveScreenWidth(35) }}>
-                <Text style={{ color: '#9388E8' }}>Contact Us</Text>
-              </View>
-              <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
-                  yeongstars@gmail.com
-                </Text>
-              </View>
+        {/* 앱 버전 부분 */}
+        <Card
+          containerStyle={{
+            width: responsiveScreenWidth(90),
+            borderWidth: 0,
+            borderRadius: 10,
+            backgroundColor: '#FBFBFB',
+          }}
+        >
+          <View style={{ flexDirection: 'row' }}>
+            <View>
+              <Text style={{ color: '#9388E8' }}>Version</Text>
             </View>
-          </Card>
+            <View style={{ marginLeft: responsiveScreenWidth(15) }}>
+              <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
+                {VersionCheck.getCurrentVersion()}
+              </Text>
+            </View>
+          </View>
+        </Card>
 
-          {/* 이용 약관 부분 */}
-          <Card
+        {/* 문의 메일 부분 */}
+        <Card
+          containerStyle={{
+            width: responsiveScreenWidth(90),
+            borderWidth: 0,
+            borderRadius: 10,
+            backgroundColor: '#FBFBFB',
+          }}
+        >
+          <View style={{ flexDirection: 'row' }}>
+            <View>
+              <Text style={{ color: '#9388E8' }}>Contact Us</Text>
+            </View>
+            <View style={{ marginLeft: responsiveScreenWidth(10) }}>
+              <Text style={{ color: '#000000' }} numberOfLines={1} ellipsizeMode="tail">
+                yeongstars@gmail.com
+              </Text>
+            </View>
+          </View>
+        </Card>
+
+        {/* 이용 약관 부분 */}
+        {/* <Card
             containerStyle={{
               borderWidth: 0,
               borderRadius: 10,
@@ -176,10 +145,10 @@ const AppInfo = () => {
                 </Text>
               </View>
             </View>
-          </Card>
+          </Card> */}
 
-          {/* 개인 정보 처리 방침 부분 */}
-          <Card
+        {/* 개인 정보 처리 방침 부분 */}
+        {/* <Card
             containerStyle={{
               borderWidth: 0,
               borderRadius: 10,
@@ -196,9 +165,8 @@ const AppInfo = () => {
                 </Text>
               </View>
             </View>
-          </Card>
-        </View>
-      )}
+          </Card> */}
+      </View>
     </View>
   );
 };
@@ -206,6 +174,7 @@ const AppInfo = () => {
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
   },
@@ -247,6 +216,12 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(-0.5),
     justifyContent: 'flex-end',
   },
+  thumbnailImage: {
+    marginTop: responsiveScreenHeight(10),
+    width: responsiveScreenWidth(44),
+    height: responsiveScreenHeight(24),
+    borderRadius: 10,
+  },
 });
 
-export default AppInfo;
+export default AboutUs;

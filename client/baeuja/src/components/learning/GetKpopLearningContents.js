@@ -84,6 +84,8 @@ class GetKpopLearningContents extends React.Component {
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
+  const contentTitle = content.title;
+
   return (
     <SafeAreaView style={styles.allContainer}>
       <View style={styles.kpopContainer}>
@@ -103,9 +105,10 @@ const DrawingContent = ({ content }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningUnits',
+                screen: 'Units',
                 params: {
                   contentId,
+                  contentTitle,
                 },
               })
             }
@@ -140,9 +143,10 @@ const DrawingContent = ({ content }) => {
         <TouchableOpacity
           onPress={() => {
             return navigation.navigate('Stack', {
-              screen: 'MoreInfo',
+              screen: 'Song Info',
               params: {
                 contentId,
+                contentTitle,
               },
             });
           }}

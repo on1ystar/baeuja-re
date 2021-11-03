@@ -48,7 +48,7 @@ class LearningMain extends React.Component {
                 style={styles.moreText}
                 onPress={() =>
                   navigate('Stack', {
-                    screen: 'GetKpopLearningContents',
+                    screen: 'K-pop',
                   })
                 }
               >

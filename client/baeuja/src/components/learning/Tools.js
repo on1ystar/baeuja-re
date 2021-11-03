@@ -40,6 +40,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncSt
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'; // React Native Countdown Circle Timer
+import { useNavigation } from '@react-navigation/native'; // Navigation
 // import RNFS from 'react-native-fs'; // React Native File System
 
 // Component import
@@ -62,6 +63,7 @@ const Tools = ({ currentSentence }) => {
   const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
   const [userVoiceScore, setUserVoiceScore] = useState(0);
   const [buttonControl, setButtonControl] = useState(false);
+  const navigation = useNavigation();
 
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
@@ -338,6 +340,21 @@ const Tools = ({ currentSentence }) => {
   return (
     <View>
       <View>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            marginRight: responsiveScreenWidth(10),
+            marginTop: responsiveScreenHeight(2),
+          }}
+          onPress={() =>
+            navigation.navigate('Stack', {
+              screen: 'Help',
+            })
+          }
+        >
+          <Text style={{ color: '#AAAAAA' }}>help?</Text>
+        </TouchableOpacity>
         <View style={LearningStyles.learningButtonContainer}>
           {/* 성우 음성 재생 버튼 */}
           {isPlayPerfectVoice ? (

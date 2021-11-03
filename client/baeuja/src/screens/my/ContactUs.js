@@ -65,37 +65,41 @@ const ContactUs = () => {
   // send Qna Screen 전체 렌더링
   return (
     <View style={styles.allContainer}>
-      <Text style={styles.selectQnaType}>Select an inquiry type</Text>
       {isLoading ? (
         <Text></Text>
       ) : (
-        qnaTypes.map((qnaType) => {
-          const navigation = useNavigation();
-          const qnaTypeId = qnaType.qnaTypeId;
-          return (
-            <TouchableOpacity
-              key={qnaTypeId}
-              onPress={() =>
-                navigation.navigate('Stack', {
-                  screen: 'qnaInput',
-                  params: {
-                    qnaTypeId,
-                  },
-                })
-              }
-            >
-              <View key={qnaTypeId} style={styles.qnaTypeContainer}>
-                <Text style={styles.qnaTypeText}>{qnaType.name}</Text>
-                <Ionicons
-                  style={{ marginLeft: responsiveScreenWidth(5) }}
-                  size={30}
-                  color={'#444444'}
-                  name="chevron-forward-outline"
-                ></Ionicons>
-              </View>
-            </TouchableOpacity>
-          );
-        })
+        <View style={{ flex: 1, marginTop: responsiveScreenHeight(20) }}>
+          {qnaTypes.map((qnaType, index) => {
+            const navigation = useNavigation();
+            const qnaTypeId = qnaType.qnaTypeId;
+            return (
+              <TouchableOpacity
+                key={qnaTypeId}
+                onPress={() =>
+                  navigation.navigate('Stack', {
+                    screen: 'Inquiry',
+                    params: {
+                      qnaTypeId,
+                    },
+                  })
+                }
+              >
+                <View key={qnaTypeId} style={styles.qnaTypeContainer}>
+                  <Text style={styles.qnaTypeText}>
+                    {`${index + 1}. `}
+                    {qnaType.name}
+                  </Text>
+                  <Ionicons
+                    style={{ marginLeft: responsiveScreenWidth(5) }}
+                    size={22}
+                    color={'#9388E8'}
+                    name="chevron-forward-outline"
+                  ></Ionicons>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       )}
     </View>
   );
@@ -115,16 +119,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   qnaTypeContainer: {
-    justifyContent: 'center',
-    marginTop: responsiveScreenHeight(5),
+    justifyContent: 'flex-start',
+    marginTop: responsiveScreenHeight(7),
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   qnaTypeText: {
     color: '#000000',
-    fontSize: responsiveScreenFontSize(3),
+    fontSize: responsiveScreenFontSize(2.3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   bookmarkedKoreanSentences: {
     color: '#000000',

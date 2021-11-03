@@ -84,6 +84,7 @@ const GetNewContents = () => {
 const DrawNewContents = ({ newcontents }) => {
   const navigation = useNavigation();
   const contentId = newcontents.contentId;
+  const contentTitle = newcontents.title;
 
   return (
     <View style={styles.newContentsContainer}>
@@ -91,9 +92,10 @@ const DrawNewContents = ({ newcontents }) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Stack', {
-              screen: 'LearningUnits',
+              screen: 'Units',
               params: {
                 contentId,
+                contentTitle,
               },
             })
           }

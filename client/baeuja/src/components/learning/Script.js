@@ -51,7 +51,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
             <Text
               onPress={() =>
                 navigation.navigate('Stack', {
-                  screen: 'LearningWord',
+                  screen: 'Learning Word',
                   params: {
                     wordId,
                   },

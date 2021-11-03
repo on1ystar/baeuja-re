@@ -11,3 +11,5 @@ include ':react-native-audio-recorder-player'
 project(':react-native-audio-recorder-player').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-audio-recorder-player/android')
 include ':@react-native-async-storage'
 project(':@react-native-async-storage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
+include ':react-native-version-check' // 11.03 추가
+project(':react-native-version-check').projectDir = new File(rootProject.projectDir,    '../node_modules/react-native-version-check/android') // 11.03 추가

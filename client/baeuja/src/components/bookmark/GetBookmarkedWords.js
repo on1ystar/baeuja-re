@@ -125,7 +125,7 @@ const GetBookmarkedWords = () => {
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('Stack', {
-                      screen: 'LearningWord',
+                      screen: 'Learning Word',
                       params: {
                         wordId,
                       },

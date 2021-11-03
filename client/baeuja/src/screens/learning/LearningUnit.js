@@ -221,21 +221,7 @@ const LearningUnit = ({
           <View style={{ flex: 1 }}>
             <Script currentSentence={currentSentence} updateIsBookmark={updateIsBookmark} />
           </View>
-          <TouchableOpacity
-            style={{
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-              marginRight: responsiveScreenWidth(10),
-              marginTop: responsiveScreenHeight(2),
-            }}
-            onPress={() =>
-              navigation.navigate('Stack', {
-                screen: 'Help',
-              })
-            }
-          >
-            <Text style={{ color: '#AAAAAA' }}>help?</Text>
-          </TouchableOpacity>
+
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
             {Object.keys(currentSentence).length !== 0 &&

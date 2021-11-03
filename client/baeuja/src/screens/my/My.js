@@ -87,7 +87,7 @@ const My = ({ navigation: { navigate } }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningStatus',
+                screen: 'Learning Status',
               })
             }
           >
@@ -119,7 +119,7 @@ const My = ({ navigation: { navigate } }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'ContactUs',
+                screen: 'Contact Us',
               })
             }
           >
@@ -151,13 +151,13 @@ const My = ({ navigation: { navigate } }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'AppInfo',
+                screen: 'About Us',
               })
             }
           >
             <View style={styles.qnaTextContainer}>
               <Ionicons color={'#444444'} size={30} name="information-circle"></Ionicons>
-              <Text style={styles.titleText}>App info</Text>
+              <Text style={styles.titleText}>About us</Text>
               <Ionicons
                 style={{ marginLeft: responsiveScreenWidth(2) }}
                 size={30}

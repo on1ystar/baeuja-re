@@ -6,13 +6,16 @@ import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
 import { Divider } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
-
-// CSS import
-import LearningStyles from '../../styles/LearningStyle';
 import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveScreenFontSize,
   responsiveScreenHeight,
-  useResponsiveScreenHeight,
+  responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+// CSS import
+
+import LearningStyles from '../../styles/LearningStyle';
 
 const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -50,19 +53,61 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
               strokeCap={'round'}
               showsText={true}
               formatText={() => {
-                console.log('form Text user Score', userScore);
-                if (userScore > 70) {
-                  return 'A+';
-                } else if (userScore > 57) {
-                  return 'A';
+                if (userScore > 85) {
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>A+</Text>
+                    </View>
+                  );
+                } else if (userScore > 75) {
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>A</Text>
+                    </View>
+                  );
+                } else if (userScore > 60) {
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>B</Text>
+                    </View>
+                  );
                 } else if (userScore > 45) {
-                  return 'B';
-                } else if (userScore > 30) {
-                  return 'C';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>C</Text>
+                    </View>
+                  );
                 } else {
-                  return 'D';
+                  return (
+                    <View style={styles.rankingContainer}>
+                      <Text style={styles.rankingText}>Rank</Text>
+                      <Text style={styles.rankingResultText}>D</Text>
+                    </View>
+                  );
                 }
               }}
+            />
+            <Divider
+              style={{
+                width: '15%',
+                shadowColor: '#000000',
+                shadowOffset: {
+                  width: 30,
+                  height: 2,
+                },
+                shadowOpacity: 0.1,
+                shadowRadius: 15,
+
+                elevation: 5,
+              }}
+              color="#FFFEEE"
+              insetType="middle"
+              width={1}
+              orientation="horizontal"
             />
           </View>
 
@@ -81,7 +126,28 @@ const styles = StyleSheet.create({
   rankingChart: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: responsiveScreenHeight(10),
+    marginTop: responsiveScreenHeight(7),
+    marginBottom: responsiveScreenHeight(5),
+  },
+  rankingContainer: { justifyContent: 'center', alignItems: 'center' },
+  rankingText: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: responsiveScreenFontSize(2.5),
+    fontWeight: '700',
+    color: '#9388E8',
+  },
+  rankingResultText: {
+    fontSize: responsiveScreenFontSize(2.7),
+    fontWeight: '700',
+    color: '#9388E8',
+  },
+  chartContainer: {
+    flex: 1,
+    height: responsiveScreenHeight(20),
+    marginBottom: responsiveScreenHeight(5),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

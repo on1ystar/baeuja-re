@@ -119,7 +119,7 @@ const DrawRecommandWords = ({ word }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningWord',
+                screen: 'Learning Word',
                 params: {
                   wordId,
                 },
@@ -172,6 +172,7 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
+            '(            )'
             // <Text
             //   style={{
             //     fontSize: responsiveFontSize(1.7),
@@ -180,15 +181,16 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
             // >
             //   ( )
             // </Text>
-            <View
-              key={wordId}
-              style={{
-                backgroundColor: '#E7E7E7',
-                borderRadius: 20,
-                width: responsiveScreenWidth(15),
-                height: responsiveScreenHeight(2.5),
-              }}
-            ></View>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
           );
           temp.push(element.slice(idx + sentences.koreanInText.length));
         } else {
@@ -221,6 +223,7 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
         if (idx !== undefined) {
           temp.push(element.slice(0, idx));
           temp.push(
+            '(            )'
             // <Text
             //   key={word.wordId}
             //   style={{
@@ -231,15 +234,16 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
             // >
             //   {word.translationInText}
             // </Text>
-            <View
-              key={wordId}
-              style={{
-                backgroundColor: '#E7E7E7',
-                borderRadius: 20,
-                width: responsiveScreenWidth(15),
-                height: responsiveScreenHeight(2.5),
-              }}
-            ></View>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
           );
           temp.push(element.slice(idx + sentences.translationInText.length));
         } else {
@@ -259,7 +263,7 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningUnit',
+                screen: 'Learning Unit',
                 params: {
                   contentId,
                   unitIndex,
@@ -284,6 +288,7 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
               {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.koreanText}
             </Text> */}
+
               <Text style={styles.newWordSentence} numberOfLines={2} ellipsizeMode="tail">
                 {drawKoreanSentence()}
               </Text>
@@ -292,12 +297,17 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
               {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.translatedText}
             </Text> */}
+
               <Text style={styles.newWordSentence} numberOfLines={2} ellipsizeMode="tail">
-                {drawEnglishSentence()}
+                {sentences.translatedText}
               </Text>
+            </View>
+            <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <Text style={{ color: '#4278A4', fontWeight: '700' }}>Let's Learn →</Text>
             </View>
           </TouchableOpacity>
         </Card>
+
         <Divider
           style={{
             marginLeft: responsiveScreenWidth(5),
@@ -348,7 +358,7 @@ const styles = StyleSheet.create({
   recommandWordContainer: {
     // width: responsiveScreenWidth(100),
     // marginTop: responsiveScreenHeight(2),
-    height: responsiveScreenHeight(17),
+    height: responsiveScreenHeight(21),
     marginRight: responsiveScreenWidth(-3),
   },
   recommandWordKoreanSentenceContainer: {
@@ -370,6 +380,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
+    paddingBottom: responsiveScreenHeight(1),
   },
   recommandWordSentenceInfo: {
     fontSize: responsiveScreenFontSize(1.5),

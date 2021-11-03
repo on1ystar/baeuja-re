@@ -134,7 +134,7 @@ const LearningWord = ({
       {isLoading ? (
         <Text> </Text>
       ) : (
-        <View style={styles.allContainer}>
+        <View style={styles.wordAllContainer}>
           <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
             <Text style={styles.koreanWord}>{word.korean}</Text>
             <Text style={styles.translatedWord}>{word.translation}</Text>
@@ -209,6 +209,10 @@ const DrawExampleSentences = ({ sentence }) => {
 
 const styles = StyleSheet.create({
   allContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  wordAllContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
   },

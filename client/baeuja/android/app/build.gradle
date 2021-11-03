@@ -244,6 +244,9 @@ dependencies {
         }
     }
     // 여기까지
+
+    compile project(':react-native-version-check') // 11.03 버전 체크를 위해 추가
+
     compile project(':react-native-audio-recorder-player')
     implementation 'com.android.support:design:27.1.0' // mergeLibDexDebug 에러 때문에 추가
     implementation fileTree(dir: 'libs', include: ['*.jar']) // mergeLibDexDebug 에러 때문에 추가

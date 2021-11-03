@@ -122,7 +122,7 @@ const GetBookmarkedSentences = () => {
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('Stack', {
-                      screen: 'LearningUnit',
+                      screen: 'Learning Unit',
                       params: {
                         contentId,
                         unitIndex,
