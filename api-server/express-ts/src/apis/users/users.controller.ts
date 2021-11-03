@@ -183,6 +183,8 @@ export const patchtUser = async (req: Request, res: Response) => {
     console.log(updatingValue);
     if (column === 'email' || column === 'timezone') {
       console.log(column);
+      console.log(timezone);
+      console.log(String(column) === 'timezone');
       token = jwt.sign(
         {
           userId,
