@@ -48,7 +48,7 @@ const LearningWord = ({
 
         const {
           data: { sentences },
-        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}/sentences`, {
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,7 +56,7 @@ const LearningWord = ({
 
         const {
           data: { success, word, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}`, {
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,7 +95,7 @@ const LearningWord = ({
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/words/${wordId}`,
+          `https://api.k-peach.io/bookmark/words/${wordId}`,
           {},
           {
             headers: {

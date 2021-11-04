@@ -17,11 +17,9 @@ import {
 import axios from 'axios'; // axios
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import * as RNLocalize from 'react-native-localize'; // Localize
-import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'; // Google Signin
 import { useNavigation, CommonActions } from '@react-navigation/native'; // Navigation
-import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
-
+import { googleSigninConfigure } from '../../components/login/googleSignin';
 // // 토큰 있는지 검사해서 홈으로 이동시키기
 // AsyncStorage.getItem('token', async (error, token) => {
 //   try {
@@ -39,18 +37,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 //     console.log(error);
 //   }
 // });
-
-if (Platform.OS === 'ios') {
-  GoogleSignin.configure({
-    iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-  });
-  console.log('iOS GoogleSignin configure');
-} else if (Platform.OS === 'android') {
-  GoogleSignin.configure({
-    webClientId: GOOGLE_API_ANDROID_CLIENT_ID,
-  });
-  console.log('Android GoogleSignin configure');
-}
 
 class Login extends Component {
   componentDidMount() {
@@ -85,6 +71,8 @@ class Login extends Component {
   // 구글 로그인 함수
   googleSignIn = async () => {
     try {
+      const GoogleSignin = googleSigninConfigure();
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const {
         user: { email },
@@ -116,7 +104,7 @@ class Login extends Component {
     const country = RNLocalize.getCountry();
     const platform = Platform.OS;
 
-    const url = `https://dev.k-peach.io/users`;
+    const url = `https://api.k-peach.io/users`;
     try {
       if (authMethod === 'google') {
         config = {

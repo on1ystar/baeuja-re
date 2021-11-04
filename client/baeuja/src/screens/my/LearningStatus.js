@@ -71,7 +71,7 @@ const LearningStatus = () => {
 
         const {
           data: { success, learningHistory, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/users/777/learning-history`, {
+        } = await axios.get(`https://api.k-peach.io/users/777/learning-history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -56,7 +56,13 @@ const AboutUs = () => {
   return (
     <View style={styles.allContainer}>
       <View style={styles.allContainer}>
-        <View>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: responsiveScreenWidth(100),
+          }}
+        >
           <Image
             transitionDuration={1000}
             source={require('../../assets/icons/captureLogo.png')}

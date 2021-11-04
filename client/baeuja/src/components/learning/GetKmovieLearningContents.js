@@ -41,7 +41,7 @@ class GetKmovieLearningContents extends React.Component {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios('https://dev.k-peach.io/learning/contents', {
+        } = await axios('https://api.k-peach.io/learning/contents', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

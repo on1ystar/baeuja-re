@@ -81,7 +81,7 @@ const LearningUnit = ({
         const {
           data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ const LearningUnit = ({
         const {
           data: { sentences },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -226,11 +226,41 @@ const LearningUnit = ({
           <View style={LearningStyles.learningButtonContainer}>
             {Object.keys(currentSentence).length !== 0 &&
             currentSentence !== undefined &&
-            isPlaying === false &&
-            currentSentence.perfectVoiceUri != 'NULL' ? (
-              <Tools currentSentence={currentSentence} />
+            isPlaying === false ? (
+              currentSentence.perfectVoiceUri === 'NULL' ? (
+                <View>
+                  <Text
+                    style={{
+                      marginTop: responsiveScreenHeight(3),
+                      color: '#BBBBBB',
+                    }}
+                  >
+                    {'Sorry, This is not learning sentence 😅'}
+                  </Text>
+                </View>
+              ) : (
+                <Tools currentSentence={currentSentence} />
+              )
             ) : (
-              <Text></Text>
+              <View>
+                <Text
+                  style={{
+                    marginTop: responsiveScreenHeight(3),
+                    color: '#BBBBBB',
+                  }}
+                >
+                  {'When you pause the video,'}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: responsiveScreenHeight(1.5),
+                    marginLeft: responsiveScreenWidth(20),
+                    color: '#BBBBBB',
+                  }}
+                >
+                  {'we provide learning tools 👍'}
+                </Text>
+              </View>
             )}
           </View>
         </View>

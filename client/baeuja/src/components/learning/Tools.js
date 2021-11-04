@@ -65,6 +65,7 @@ const Tools = ({ currentSentence }) => {
   const [buttonControl, setButtonControl] = useState(false);
   const navigation = useNavigation();
 
+  // currentSentence.perfectVoiceUri
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
     setIsPlayPerfectVoice(true);
@@ -96,7 +97,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -239,7 +240,7 @@ const Tools = ({ currentSentence }) => {
 
         await axios
           .post(
-            `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
+            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
             formData,
             {
               headers: {
@@ -313,7 +314,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
           {},
           {
             headers: {

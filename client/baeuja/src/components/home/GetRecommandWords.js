@@ -43,7 +43,7 @@ const GetRecommandWords = ({ randomNumber }) => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/recommendations`, {
+        } = await axios.get(`https://api.k-peach.io/home/recommendations`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

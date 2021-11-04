@@ -36,6 +36,7 @@ const Tabs = () => (
       backgroundColor: '#FFFFFF',
     }}
   >
+    {/* Learning 탭 */}
     <Tab.Screen
       name="Learning"
       component={LearningMain}
@@ -45,15 +46,8 @@ const Tabs = () => (
         },
       }}
     />
-    <Tab.Screen
-      name="Home"
-      component={Home}
-      options={{
-        tabBarIcon: ({ focused, color, size }) => {
-          return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
-        },
-      }}
-    />
+
+    {/* Bookmark 탭 */}
     <Tab.Screen
       name="Bookmark"
       component={Bookmark}
@@ -64,7 +58,19 @@ const Tabs = () => (
       }}
     />
 
-    {/* <Tab.Screen
+    {/* Home 탭 */}
+    <Tab.Screen
+      name="Home"
+      component={Home}
+      options={{
+        tabBarIcon: ({ focused, color, size }) => {
+          return <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />;
+        },
+      }}
+    />
+
+    {/* Review 탭 */}
+    <Tab.Screen
       name="Review"
       component={Review}
       options={{
@@ -74,7 +80,9 @@ const Tabs = () => (
           );
         },
       }}
-    /> */}
+    />
+
+    {/* My 탭 */}
     <Tab.Screen
       name="My"
       component={My}

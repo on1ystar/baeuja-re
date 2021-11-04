@@ -6,6 +6,15 @@ import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
 import { Divider } from 'react-native-elements'; // React Native Elements
 import { VictoryBar, VictoryChart, VictoryTheme, VictoryLine } from 'victory-native'; // React Native victory-native
+// import {
+//   VictoryPie,
+//   VictoryTooltip,
+//   VictoryLabel,
+//   VictoryChart,
+//   VictoryScatter,
+//   VictoryTheme,
+//   VictoryLine,
+// } from '../../../victory';
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';

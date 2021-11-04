@@ -34,7 +34,7 @@ const GetNewContents = () => {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/contents`, {
+        } = await axios.get(`https://api.k-peach.io/home/contents`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

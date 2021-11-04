@@ -1,22 +1,67 @@
 // Library import
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native'; // React Native Component
+import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
+import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } from 'react-native'; // React Native Component
+import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe'; // Youtube Player
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+  responsiveScreenHeight,
+  responsiveScreenWidth,
+  responsiveScreenFontSize,
+  useResponsiveHeight,
+  useResponsiveWidth,
+  useResponsiveScreenHeight,
+} from 'react-native-responsive-dimensions'; // Responsive layout
+import axios from 'axios'; // axios
+import Sound from 'react-native-sound'; // React Native Sound (성우 음성 재생)
+import AudioRecorderPlayer, {
+  AVEncoderAudioQualityIOSType,
+  AVEncodingOption,
+  AudioEncoderAndroidType,
+  AudioSet,
+  AudioSourceAndroidType,
+} from 'react-native-audio-recorder-player'; // React Native Audio Recorder Player (사용자 음성 녹음 및 재생)
+import DocumentPicker from 'react-native-document-picker'; // Document Picker (파일 업로드)
+import Icon from 'react-native-vector-icons/AntDesign'; // AntDesign
+import Icon2 from 'react-native-vector-icons/Feather'; // Feather
+import Icon3 from 'react-native-vector-icons/MaterialIcons'; // MaterialIcons
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import RNFS from 'react-native-fs';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native'; // Navigation
+import { Card } from 'react-native-elements'; // React Native Elements
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
+import { Divider } from 'react-native-elements'; // Elements
+import { useNavigation } from '@react-navigation/native'; // Navigation
 
-class Review extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Review Screen</Text>
-      </View>
-    );
-  }
-}
+const Review = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.mainText}>Review</Text>
+      <Divider
+        style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
+        color="#EEEEEE"
+        insetType="middle"
+        width={1}
+        orientation="horizontal"
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  mainText: {
+    justifyContent: 'flex-start',
+    marginTop: responsiveScreenHeight(3),
+    marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    color: '#444444',
+    // backgroundColor: 'black',
   },
 });
 

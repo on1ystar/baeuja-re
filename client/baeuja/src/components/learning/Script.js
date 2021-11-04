@@ -101,7 +101,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
             <Text
               onPress={() =>
                 navigation.navigate('Stack', {
-                  screen: 'LearningWord',
+                  screen: 'Learning Word',
                   params: {
                     wordId,
                   },
@@ -142,7 +142,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
+          `https://api.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
           {},
           {
             headers: {
@@ -180,11 +180,15 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
           addBookmark();
         }}
       >
-        <Antdesign
-          size={25}
-          color={currentSentence.isBookmark ? '#FFAD41' : '#AAAAAA'}
-          name={currentSentence.isBookmark ? 'star' : 'staro'}
-        ></Antdesign>
+        {currentSentence.perfectVoiceUri === 'NULL' ? (
+          <></>
+        ) : (
+          <Antdesign
+            size={25}
+            color={currentSentence.isBookmark ? '#FFAD41' : '#AAAAAA'}
+            name={currentSentence.isBookmark ? 'star' : 'staro'}
+          ></Antdesign>
+        )}
       </TouchableOpacity>
       <Text style={styles.koreanScript}>{drawKoreanSentence()}</Text>
       <Text style={styles.englishScript}>{drawEnglishSentence()}</Text>

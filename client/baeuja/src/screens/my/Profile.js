@@ -47,6 +47,7 @@ import { Picker } from '@react-native-picker/picker'; // React Native Picker
 import * as RNLocalize from 'react-native-localize'; // Localize
 import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'; // Google Signin
 import { GOOGLE_API_IOS_CLIENT_ID, GOOGLE_API_ANDROID_CLIENT_ID } from '@env'; // React Native Dotenv
+import { googleSigninConfigure } from '../../components/login/googleSignin';
 
 // Data import
 import { TIMEZONE_LIST } from './timezone'; // Timezone List
@@ -76,7 +77,7 @@ const Profile = () => {
 
         const {
           data: { success, user, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/users/777`, {
+        } = await axios.get(`https://api.k-peach.io/users/777`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -147,19 +148,9 @@ const Profile = () => {
 
   // 이메일 변경 함수
   const onChangeEmail = async () => {
-    let changedEmail;
-
-    if (Platform.OS === 'ios') {
-      GoogleSignin.configure({
-        iosClientId: GOOGLE_API_IOS_CLIENT_ID,
-      });
-    } else if (Platform.OS === 'android') {
-      GoogleSignin.configure({
-        webClientId: GOOGLE_API_ANDROID_CLIENT_ID,
-      });
-    }
-
     try {
+      const GoogleSignin = googleSigninConfigure();
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const {
         user: { email },
@@ -168,11 +159,15 @@ const Profile = () => {
 
       const {
         data: { success, user, token, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=email`, email, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      } = await axios.patch(
+        `https://api.k-peach.io/users/777?column=email`,
+        { updatingValue: email },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (tokenExpired) {
         console.log('tokenExpired');
@@ -184,10 +179,19 @@ const Profile = () => {
         console.log('new token saved !');
       });
 
-      if (!success) throw new Error(errorMessage);
-
       setIsLoading(() => false);
+
+      alert('Successful change!');
+      setEmail(user.email);
+      setRoleId(user.roleId);
     } catch (error) {
+      if (error.response.status === 401) {
+        console.log('tokenExpired');
+        // login으로 redirect
+      }
+      if (error.response.status === 409) {
+        alert('Duplicate email.\nPlease enter another email.');
+      }
       console.log(error);
     }
   };
@@ -205,7 +209,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=nickname`, changedNickname, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=nickname`, changedNickname, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -244,7 +248,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=country`, changedCountry, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=country`, changedCountry, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -281,7 +285,7 @@ const Profile = () => {
 
       const {
         data: { success, user, token, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=timezone`, changedTimezone, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=timezone`, changedTimezone, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
