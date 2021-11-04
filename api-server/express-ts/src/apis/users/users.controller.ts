@@ -34,6 +34,8 @@ export const getUsers = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -69,6 +71,8 @@ export const getUserDetail = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -137,7 +141,9 @@ export const postUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
-    return res.status(500).json({ sucess: false, errorMessage });
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
+    return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
   }
@@ -239,6 +245,8 @@ export const deleteUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -292,6 +300,8 @@ export const getLearningHistory = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

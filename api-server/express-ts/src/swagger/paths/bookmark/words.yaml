@@ -7,10 +7,10 @@ get:
   parameters:
     - name: sortBy
       in: query
-      description: 정렬 파라미터 (bookmarkAt(default)  = 즐겨찾기 추가 날짜 순 | latestLearningAt = 최근 학습 날짜 순)
+      description: 정렬 파라미터 (bookmark_at(default)  = 즐겨찾기 추가 날짜 순 | latestLearning_at = 최근 학습 날짜 순 | importance = 중요도 순)
       schema:
         type: string
-        expample: bookmarkAt(default)| latestLearningAt
+        expample: bookmark_at(default)| latestLearning_at
     - name: option
       in: query
       description: 정렬 옵션 (DESC(default) = 내림차순 | ASC = 오름차순 )

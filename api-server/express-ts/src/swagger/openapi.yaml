@@ -1,6 +1,6 @@
 openapi: '3.0.0'
 info:
-  version: 0.2.0
+  version: 1.0.0
   title: BAEUJA API DOCS
   description: '`BAEUJA` TEAM의 API 문서입니다'
   license:
@@ -22,6 +22,8 @@ tags:
     description: words in learning app APIs
   - name: bookmark
     description: bookmark app APIs
+  - name: review
+    description: review app APIs
   - name: qnas
     description: qna app APIs
 paths:
@@ -65,6 +67,10 @@ paths:
     $ref: './paths/bookmark/words.yaml'
   /bookmark/words/{wordId}:
     $ref: './paths/bookmark/word.yaml'
+  /review/sentences:
+    $ref: './paths/review/sentences.yaml'
+  /review/words:
+    $ref: './paths/review/words.yaml'
   /qnas/types:
     $ref: './paths/qna/qna-types.yaml'
   /qnas:

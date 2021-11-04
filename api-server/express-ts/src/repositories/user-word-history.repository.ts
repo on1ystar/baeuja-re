@@ -38,7 +38,8 @@ export default class UserWordHistoryRepository {
     userId: number,
     sortBy: string,
     option: string,
-    _columns: any[]
+    _columns: any[],
+    isBookmark?: boolean
   ): Promise<any[]> => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -48,13 +49,18 @@ export default class UserWordHistoryRepository {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
+      const andIsBookmark = isBookmark
+        ? `AND user_word_history.is_bookmark = true`
+        : '';
+      const table = sortBy === 'importance' ? 'word' : 'user_word_history';
+
       const queryResult: QueryResult<any> = await client.query(
         `SELECT ${SELECT_COLUMNS} 
         FROM user_word_history
         JOIN word
         ON user_word_history.word_id = word.word_id
-        WHERE user_word_history.user_id = ${userId} AND user_word_history.is_bookmark = true
-        ORDER BY user_word_history.${sortBy} ${option}`
+        WHERE user_word_history.user_id = ${userId} ${andIsBookmark}
+        ORDER BY ${table}.${sortBy} ${option}`
       );
 
       return queryResult.rows;

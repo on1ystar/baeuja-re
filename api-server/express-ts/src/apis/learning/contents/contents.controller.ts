@@ -49,6 +49,8 @@ export const getContents = async (_req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -84,6 +86,8 @@ export const getContentDetail = async (
     console.log(error);
     const errorMessage = (error as Error).message;
 
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -159,6 +163,8 @@ export const getUnits = async (
     await client.query('ROLLBACK');
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -218,6 +224,8 @@ export const getUnit = async (req: Request, res: Response) => {
     console.warn(error);
     const errorMessage = (error as Error).message;
 
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -313,6 +321,8 @@ export const getSentences = async (
     console.warn(error);
     const errorMessage = (error as Error).message;
 
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

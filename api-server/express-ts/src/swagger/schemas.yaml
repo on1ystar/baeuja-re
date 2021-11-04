@@ -564,9 +564,9 @@ UserLearningHistory:
           type: number
         countsOfWords:
           type: number
-        avarageScoreOfSentences:
+        averageScoreOfSentences:
           type: number
-        avarageScoreOfWords:
+        averageScoreOfWords:
           type: number
 # -------------------------- bookmark -------------------------- #
 PostBookmark:
@@ -620,6 +620,67 @@ BookmarkWords:
             type: string
           importance:
             type: string
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
+# -------------------------- review -------------------------- #
+ReviewSentences:
+  type: object
+  properties:
+    success:
+      type: boolean
+    sentences:
+      type: array
+      items:
+        type: object
+        properties:
+          sentenceId:
+            type: number
+          contentId:
+            type: number
+          unitIndex:
+            type: number
+          koreanText:
+            type: string
+          translatedText:
+            type: string
+          startTime:
+            type: string
+          averageScore:
+            type: number
+          highestScore:
+            type: number
+          isBookmark:
+            type: boolean
+          latestLearningAt:
+            type: string
+          bookmarkAt:
+            type: string
+ReviewWords:
+  type: object
+  properties:
+    success:
+      type: boolean
+    words:
+      type: array
+      items:
+        type: object
+        properties:
+          wordId:
+            type: number
+          korean:
+            type: string
+          translation:
+            type: string
+          importance:
+            type: string
+          averageScore:
+            type: number
+          highestScore:
+            type: number
+          isBookmark:
+            type: boolean
           latestLearningAt:
             type: string
           bookmarkAt:

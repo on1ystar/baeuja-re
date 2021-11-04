@@ -52,7 +52,8 @@ export default class UserSentenceHistoryRepository {
     userId: number,
     sortBy: string,
     option: string,
-    _columns: any[]
+    _columns: any[],
+    isBookmark?: boolean
   ): Promise<any[]> => {
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
@@ -62,12 +63,16 @@ export default class UserSentenceHistoryRepository {
       // SELECT 쿼리에 들어갈 컬럼 문자열 조합
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
+      const andIsBookmark = isBookmark
+        ? `AND user_sentence_history.is_bookmark = true`
+        : '';
+
       const queryResult: QueryResult<any> = await client.query(
         `SELECT ${SELECT_COLUMNS} 
         FROM user_sentence_history
         JOIN sentence
         ON user_sentence_history.sentence_id = sentence.sentence_id
-        WHERE user_sentence_history.user_id = ${userId} AND user_sentence_history.is_bookmark = true
+        WHERE user_sentence_history.user_id = ${userId} ${andIsBookmark}
         ORDER BY user_sentence_history.${sortBy} ${option}`
       );
 

@@ -1,16 +1,16 @@
 get:
   tags:
-    - bookmark
-  summary: 즐겨찾기된 문장 리스트
+    - review
+  summary: 사용자 단어 학습 기록
   security:
     - bearerAuth: []
   parameters:
     - name: sortBy
       in: query
-      description: 정렬 파라미터 (bookmark_at(default)  = 즐겨찾기 추가 날짜 순 | latest_learning_at = 최근 학습 날짜 순)
+      description: 정렬 파라미터 (latest_learning_at(default) = 최근 학습 날짜 순 | avarage_score = 평균 점수 순 | highest_score = 가장 높은 점수 순 | importance = 중요도 순)
       schema:
         type: string
-        expample: bookmark_at(default)| latest_learning_at
+        expample: latest_learning_at(default)| avarage_score | highest_score | importance
     - name: option
       in: query
       description: 정렬 옵션 (DESC(default) = 내림차순 | ASC = 오름차순 )
@@ -23,7 +23,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../../openapi.yaml#/components/schemas/BookmarkSentences'
+            $ref: '../../openapi.yaml#/components/schemas/ReviewWords'
     400-BadRequest:
       description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
       content:
