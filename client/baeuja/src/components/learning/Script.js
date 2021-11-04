@@ -142,7 +142,7 @@ const Script = ({ currentSentence, updateIsBookmark }) => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
+          `https://dev.k-peach.io/bookmark/sentences/${currentSentence.sentenceId}`,
           {},
           {
             headers: {

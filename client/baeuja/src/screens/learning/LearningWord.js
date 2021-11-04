@@ -48,7 +48,7 @@ const LearningWord = ({
 
         const {
           data: { sentences },
-        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}/sentences`, {
+        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,7 +56,7 @@ const LearningWord = ({
 
         const {
           data: { success, word, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}`, {
+        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,7 +95,7 @@ const LearningWord = ({
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/words/${wordId}`,
+          `https://dev.k-peach.io/bookmark/words/${wordId}`,
           {},
           {
             headers: {
@@ -168,10 +168,72 @@ const LearningWord = ({
   );
 };
 
+// 예시 문장 그리기
 const DrawExampleSentences = ({ sentence }) => {
   const navigation = useNavigation();
   const contentId = sentence.contentId;
   const unitIndex = sentence.unitIndex;
+  let koreanResult = [];
+
+  // 예시 문장 정해진 단어에 색칠
+  const drawKoreanSentence = () => {
+    koreanResult = [sentence.koreanText];
+
+    const resultKoreanhWords = [sentence.koreanInText];
+
+    resultKoreanhWords.forEach((word) => {
+      let idx;
+      let temp = [];
+      let findFlag = false;
+      koreanResult.forEach((element) => {
+        if (typeof element === 'string') {
+          idx = element.indexOf(sentence.koreanInText);
+          if (idx === -1 || findFlag === true) idx = undefined;
+          else findFlag = true;
+        }
+        if (idx !== undefined) {
+          temp.push(element.slice(0, idx));
+          temp.push(
+            // '(            )'
+            <Text
+              key={sentence.sentenceId}
+              style={{
+                fontSize: responsiveFontSize(1.75),
+                color: '#4278A4',
+                textDecorationLine: 'underline',
+              }}
+            >
+              {sentence.koreanInText}
+            </Text>
+            // <Text
+            //   style={{
+            //     fontSize: responsiveFontSize(1.7),
+            //     color: '#000000',
+            //   }}
+            // >
+            //   ( )
+            // </Text>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
+          );
+          temp.push(element.slice(idx + sentence.koreanInText.length));
+        } else {
+          temp.push(element);
+        }
+        idx = undefined;
+      });
+      koreanResult = temp;
+    });
+    return koreanResult;
+  };
 
   return (
     <Card
@@ -184,15 +246,14 @@ const DrawExampleSentences = ({ sentence }) => {
     >
       <View style={{ flexDirection: 'row' }}>
         <View>
-          <Text style={styles.relatedKoreanSentences}>{sentence.koreanText}</Text>
+          <Text style={styles.relatedKoreanSentences}>{drawKoreanSentence()}</Text>
           <Text style={styles.relatedEnglishSentences}>{sentence.translatedText}</Text>
         </View>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={styles.goToLearnArrow}
           onPress={() => {
-            console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
             navigation.navigate('Stack', {
-              screen: 'LearningUnit',
+              screen: 'Learning Unit',
               params: {
                 contentId,
                 unitIndex,
@@ -201,7 +262,7 @@ const DrawExampleSentences = ({ sentence }) => {
           }}
         >
           <Ionicons size={30} color={'#444444'} name="chevron-forward-outline"></Ionicons>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
     </Card>
   );

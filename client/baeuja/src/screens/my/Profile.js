@@ -53,6 +53,63 @@ import { googleSigninConfigure } from '../../components/login/googleSignin';
 import { TIMEZONE_LIST } from './timezone'; // Timezone List
 import { COUNTRIES } from './countries';
 
+// 피커 돌리기
+/*
+<View
+                  style={{
+                    // backgroundColor: '#FBFBFB',
+                    // color: '#000000',
+                    // paddingBottom: 0,
+                    // paddingTop: 0,
+                    // paddingRight: 0,
+                    // paddingLeft: 0,
+                    // height: responsiveScreenHeight(4.5),
+                    width: responsiveScreenWidth(45),
+                    borderRadius: 4,
+                  }}
+                >
+                  <Icon3
+                    name="arrow-drop-down"
+                    style={{
+                      position: 'absolute',
+                      color: '#000000',
+                      bottom: responsiveScreenHeight(1.7),
+                      right: responsiveScreenWidth(8),
+                      fontSize: responsiveFontSize(2.5),
+                    }}
+                  />
+                  <Picker
+                    style={{
+                      color: '#000000',
+                      marginLeft: responsiveScreenWidth(-4),
+                      marginTop: responsiveScreenHeight(-0.5),
+                      backgroundColor: 'transparent',
+                      // backgroundColor: '#F0F0F0',
+                      // borderColor: '#000000',
+                      // width: responsiveScreenWidth(50),
+                      // paddingBottom: 0,
+                      // paddingTop: 0,
+                      // borderWidth: 1,
+                    }}
+                    itemStyle={{ backgroundColor: '#000000' }}
+                    supportedOrientations={['portrait', 'landscape']}
+                    selectedValue={country}
+                    onValueChange={(itemValue, itemIndex) => setCountry(itemValue)}
+                  >
+                    {COUNTRIES.map((nation) => {
+                      return (
+                        <Picker.Item
+                          style={{ fontSize: responsiveFontSize(1.5) }}
+                          label={nation.name}
+                          value={nation.code}
+                          key={nation.name}
+                        />
+                      );
+                    })}
+                  </Picker>
+                </View>
+*/
+
 const Profile = () => {
   const navigation = useNavigation();
   const [randomNumber, setRandomNumber] = useState(1);
@@ -77,7 +134,7 @@ const Profile = () => {
 
         const {
           data: { success, user, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/users/777`, {
+        } = await axios.get(`https://dev.k-peach.io/users/777`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -160,7 +217,7 @@ const Profile = () => {
       const {
         data: { success, user, token, tokenExpired, errorMessage },
       } = await axios.patch(
-        `https://api.k-peach.io/users/777?column=email`,
+        `https://dev.k-peach.io/users/777?column=email`,
         { updatingValue: email },
         {
           headers: {
@@ -209,7 +266,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://api.k-peach.io/users/777?column=nickname`, changedNickname, {
+      } = await axios.patch(`https://dev.k-peach.io/users/777?column=nickname`, changedNickname, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -248,7 +305,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://api.k-peach.io/users/777?column=country`, changedCountry, {
+      } = await axios.patch(`https://dev.k-peach.io/users/777?column=country`, changedCountry, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -285,7 +342,7 @@ const Profile = () => {
 
       const {
         data: { success, user, token, tokenExpired, errorMessage },
-      } = await axios.patch(`https://api.k-peach.io/users/777?column=timezone`, changedTimezone, {
+      } = await axios.patch(`https://dev.k-peach.io/users/777?column=timezone`, changedTimezone, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },

@@ -15,9 +15,12 @@ import MoreInfo from '../../screens/learning/MoreInfo';
 import ContactUs from '../../screens/my/ContactUs';
 import qnaInput from '../qna/qnaInput';
 import Help from '../../screens/learning/Help';
+import WordsReview from '../../screens/review/WordsReview';
+import SentencesReview from '../../screens/review/SentencesReview';
 import Profile from '../../screens/my/Profile';
 import LearningStatus from '../../screens/my/LearningStatus';
 import AboutUs from '../../screens/my/AboutUs';
+import BookmarkSortModal from '../../screens/bookmark/BookmarkSortModal';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -42,6 +45,9 @@ const Stack = () => (
     <NativeStack.Screen name="Learning Word" component={LearningWord} />
     <NativeStack.Screen options={{ flex: 1 }} name="Units" component={LearningUnits} />
     <NativeStack.Screen name="Learning Unit" component={LearningUnit} />
+    <NativeStack.Screen name="Sort Options" component={BookmarkSortModal} />
+    <NativeStack.Screen name="Words Review" component={WordsReview} />
+    <NativeStack.Screen name="Sentences Review" component={SentencesReview} />
     <NativeStack.Screen name="Profile" component={Profile} />
     <NativeStack.Screen name="Learning Status" component={LearningStatus} />
     <NativeStack.Screen name="Contact Us" component={ContactUs} />

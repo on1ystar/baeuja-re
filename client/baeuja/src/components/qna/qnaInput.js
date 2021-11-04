@@ -82,7 +82,7 @@ const qnaInput = ({
         }
 
         await axios
-          .post(`https://api.k-peach.io/qnas`, qnaData, {
+          .post(`https://dev.k-peach.io/qnas`, qnaData, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

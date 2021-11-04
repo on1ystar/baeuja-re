@@ -20,7 +20,7 @@ import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 // 북마크 문장 화면 전체 그리는 함수
-const GetBookmarkedSentences = () => {
+const GetBookmarkedSentences = ({ sortBy, option }) => {
   const [bookmarkedSentences, setBookmarkedSentences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomNumber, setRandomNumber] = useState(Math.random());
@@ -34,13 +34,19 @@ const GetBookmarkedSentences = () => {
           // login으로 redirect
         }
         if (error) throw error;
+        // 쿼리 : sentences 뒤에 ?sortBy=latest_learning_at&option=ASC 붙이기 bookmark_at, DESC
+        const sortByQeury = sortBy === '' ? 'sortBy=bookmark_at' : `sortBy=${sortBy}`;
+        const optionQeury = option === '' ? 'option=DESC' : `option=${option}`;
         const {
           data: { success, sentences, tokenExpired, errorMessage },
-        } = await axios.get(`https://api.k-peach.io/bookmark/sentences`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        } = await axios.get(
+          `https://dev.k-peach.io/bookmark/sentences?${sortByQeury}&${optionQeury}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (tokenExpired) {
           // login으로 redirect
@@ -73,7 +79,7 @@ const GetBookmarkedSentences = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://api.k-peach.io/bookmark/sentences/${bookmarkedSentence.sentenceId}`,
+          `https://dev.k-peach.io/bookmark/sentences/${bookmarkedSentence.sentenceId}`,
           {},
           {
             headers: {
@@ -102,11 +108,11 @@ const GetBookmarkedSentences = () => {
   };
 
   // useEffect
-  useEffect(loadBookmarkedSentences, [randomNumber]);
+  useEffect(loadBookmarkedSentences, [randomNumber, sortBy, option]);
 
   // GetBookmarkedSentences Screen 전체 렌더링
   return (
-    <View>
+    <View style={{ marginBottom: responsiveScreenHeight(10) }}>
       {isLoading ? (
         <Text></Text>
       ) : (
@@ -114,10 +120,30 @@ const GetBookmarkedSentences = () => {
           const navigation = useNavigation();
           const contentId = bookmarkedSentence.contentId;
           const unitIndex = bookmarkedSentence.unitIndex;
+          let latestLearningAt;
+          let bookmarkedAt;
+
+          if (bookmarkedSentence.latestLearningAt == null) {
+            latestLearningAt = 'Not learned yet';
+          } else {
+            latestLearningAt = bookmarkedSentence.latestLearningAt.split('T');
+            latestLearningAt = latestLearningAt[0];
+          }
+          if (bookmarkedSentence.bookmarkAt == null) {
+            bookmarkedAt = 'Not bookmarked yet';
+          } else {
+            bookmarkedAt = bookmarkedSentence.bookmarkAt.split('T');
+            bookmarkedAt = bookmarkedAt[0];
+          }
           return (
             <ScrollView key={bookmarkedSentence.sentenceId}>
               <Card
-                containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}
+                containerStyle={{
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  backgroundColor: '#FBFBFB',
+                  marginBottom: responsiveScreenHeight(0.1),
+                }}
               >
                 <TouchableOpacity
                   onPress={() =>
@@ -137,6 +163,31 @@ const GetBookmarkedSentences = () => {
                     <Text style={styles.bookmarkedSentences}>
                       {bookmarkedSentence.translatedText}
                     </Text>
+                    <View
+                      style={{
+                        marginLeft: responsiveScreenWidth(5),
+                        width: responsiveScreenWidth(75),
+                        marginTop: responsiveScreenHeight(1),
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text style={{ fontSize: responsiveFontSize(1.5) }}>
+                        <Ionicons name="pencil-outline" size={10} color={'#FFAD41'}></Ionicons>{' '}
+                        <Text style={{ color: '#BBB2F9', fontFamily: 'NanumSquareOTFB' }}>
+                          {latestLearningAt}
+                        </Text>
+                      </Text>
+                      <Text
+                        style={{ fontSize: responsiveFontSize(1.5), fontFamily: 'NanumSquareOTFB' }}
+                      >
+                        <View>
+                          <Antdesign size={10} color={'#FFAD41'} name={'star'}></Antdesign>
+                        </View>{' '}
+                        <Text style={{ color: '#BBB2F9' }}>{bookmarkedAt}</Text>
+                      </Text>
+                    </View>
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -165,22 +216,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   bookmarkedKoreanSentences: {
-    color: '#000000',
+    color: '#444444',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: responsiveScreenHeight(1),
   },
   bookmarkedSentences: {
-    color: '#000000',
+    color: '#444444',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   bookmarkedIconContainer: {
     position: 'absolute',
     right: responsiveScreenWidth(-2),
-    top: responsiveScreenHeight(-0.5),
+    top: responsiveScreenHeight(1),
     justifyContent: 'flex-end',
   },
 });

@@ -52,7 +52,7 @@ const MoreInfo = ({
             success,
             content: { thumbnailUri, title, artist, director, description, youtubeUrl },
           },
-        } = await axios(`https://api.k-peach.io/learning/contents/${contentId}`, {
+        } = await axios(`https://dev.k-peach.io/learning/contents/${contentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
