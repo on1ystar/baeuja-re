@@ -1,8 +1,60 @@
 import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
+import UserSentenceEvaluationRepository from '../../repositories/user-sentence-evaluation.repository';
 import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
+import UserWordEvaluationRepository from '../../repositories/user-word-evaluation.repository';
 import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
+
+// GET /review
+export const getLearningHistory = async (req: Request, res: Response) => {
+  const { userId } = res.locals;
+  const client: PoolClient = await pool.connect();
+  try {
+    const learningHistory = {
+      countsOfSentences:
+        await UserSentenceHistoryRepository.getUserHistoryCounts(
+          client,
+          userId
+        ),
+      countsOfWords: await UserWordHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfSentences:
+        Math.round(
+          (await UserSentenceHistoryRepository.getAverageOfAverageScore(
+            client,
+            userId
+          )) *
+            10 *
+            2
+        ) /
+        (10 * 2),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfWords:
+        Math.round(
+          (await UserWordHistoryRepository.getAverageOfAverageScore(
+            client,
+            userId
+          )) *
+            10 *
+            2
+        ) /
+        (10 * 2)
+    };
+    return res.status(200).json({ success: true, learningHistory });
+  } catch (error) {
+    console.log(error);
+    const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
+    return res.status(400).json({ success: false, errorMessage });
+  } finally {
+    client.release();
+  }
+};
 
 // GET /review/sentences
 export const getReviewSentences = async (req: Request, res: Response) => {

@@ -82,24 +82,4 @@ export default class UserWordEvaluationRepository {
       throw error;
     }
   };
-
-  static getAvarageScore = async (
-    client: PoolClient,
-    userId: number
-  ): Promise<number> => {
-    try {
-      const avarageScoreOfWords: number = (
-        await client.query(
-          `SELECT avg(score) FROM user_word_evaluation
-        WHERE user_id = ${userId}`
-        )
-      ).rows[0].avg;
-      return avarageScoreOfWords;
-    } catch (error) {
-      console.warn(
-        '❌ Error: user-word-evaluation.repository.ts getAvarageScore function '
-      );
-      throw error;
-    }
-  };
 }

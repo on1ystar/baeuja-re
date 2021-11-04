@@ -190,7 +190,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     ).data;
     if (!success) throw new Error('fail to ai server rest communication');
 
-    console.log(pitchData.perfectVoice.hz);
+    // score 반올림
+    evaluatedWord.score = Math.round(evaluatedWord.score);
 
     // 소수점 6째 자리 이하 반올림
     if (pitchData.perfectVoice.hz.length !== 0) {
@@ -229,6 +230,31 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       ...evaluatedWord,
       ...(await UserWordEvaluationRepository.save(client, userWordEvaluation))
     };
+
+    // 발화 평균 점수 및 가장 높은 점수 업데이트
+    let { averageScore, highestScore } =
+      await UserWordHistoryRepository.findOne(
+        client,
+        { userId, wordId: +wordId },
+        ['averageScore', 'highestScore']
+      );
+    averageScore =
+      averageScore === null
+        ? evaluatedWord.score
+        : Math.round((Number(averageScore) + evaluatedWord.score) / 2);
+    highestScore =
+      Number(highestScore) < evaluatedWord.score
+        ? evaluatedWord.score
+        : Number(highestScore);
+    await UserWordHistoryRepository.updateScore(
+      client,
+      {
+        userId,
+        wordId: +wordId
+      },
+      averageScore,
+      highestScore
+    );
 
     await client.query('COMMIT');
 

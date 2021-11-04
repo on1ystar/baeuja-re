@@ -40,7 +40,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     await client.query(`SET TIME ZONE '${timezone}'`);
 
     // 사용자 음성 파일 s3 저장
-    // 사용자가 요청한 문장의 발음 평가 기록 횟수
+    // 사용자가 요청한 문장의 발음 평가 기록 횟수 (다음 기록되야 할 횟수)
     const sentenceEvaluationCounts =
       await UserSentenceEvaluationRepository.getSentenceEvaluationCounts(
         client,
@@ -75,7 +75,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       userVoiceUri: `${S3_URL}/${conf.s3.bucketData}/${Key}`,
       sentence
     };
-    // responsed to ai server
+    // ----------------------responsed to ai server-----------------------------
     let {
       // eslint-disable-next-line prefer-const
       success,
@@ -98,6 +98,9 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       })
     ).data;
     if (!success) throw new Error('fail to ai server rest communication');
+
+    // score 반올림
+    evaluatedSentence.score = Math.round(evaluatedSentence.score);
 
     // 소수점 6째 자리 이하 반올림
     if (pitchData.perfectVoice.hz.length !== 0) {
@@ -140,6 +143,31 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
         userSentenceEvaluation
       ))
     };
+
+    // 발화 평균 점수 및 가장 높은 점수 업데이트
+    let { averageScore, highestScore } =
+      await UserSentenceHistoryRepository.findOne(
+        client,
+        { userId, sentenceId: +sentenceId },
+        ['averageScore', 'highestScore']
+      );
+    averageScore =
+      averageScore === null
+        ? evaluatedSentence.score
+        : Math.round((Number(averageScore) + evaluatedSentence.score) / 2);
+    highestScore =
+      Number(highestScore) < evaluatedSentence.score
+        ? evaluatedSentence.score
+        : Number(highestScore);
+    await UserSentenceHistoryRepository.updateScore(
+      client,
+      {
+        userId,
+        sentenceId: +sentenceId
+      },
+      averageScore,
+      highestScore
+    );
 
     await client.query('COMMIT');
 

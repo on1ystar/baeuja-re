@@ -67,6 +67,8 @@ paths:
     $ref: './paths/bookmark/words.yaml'
   /bookmark/words/{wordId}:
     $ref: './paths/bookmark/word.yaml'
+  /review:
+    $ref: './paths/review/root.yaml'
   /review/sentences:
     $ref: './paths/review/sentences.yaml'
   /review/words:

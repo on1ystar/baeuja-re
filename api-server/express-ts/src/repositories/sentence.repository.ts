@@ -25,11 +25,10 @@ export default class SentenceRepository {
       const SELECT_COLUMNS = getSelectColumns(_columns);
 
       const queryResult: QueryResult<any> = await client.query(
-        `SELECT ${SELECT_COLUMNS} FROM sentence \
+        `SELECT ${SELECT_COLUMNS} FROM sentence 
         WHERE sentence_id = ${sentenceId}`
       );
-      if (!queryResult.rowCount)
-        throw new Error('unitIndex or contentId does not exist');
+      if (!queryResult.rowCount) throw new Error('sentence_id does not exist');
 
       return queryResult.rows[0];
     } catch (error) {

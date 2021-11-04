@@ -5,7 +5,9 @@
  */
 
 import { PoolClient, QueryResult } from 'pg';
-import { UserSentenceHistoryPK } from '../entities/user-sentence-history.entity';
+import UserSentenceHistory, {
+  UserSentenceHistoryPK
+} from '../entities/user-sentence-history.entity';
 import SentenceRepository from './sentence.repository';
 import { UnitPK } from '../entities/unit.entity';
 import { getSelectColumns } from '../utils/Query';
@@ -41,6 +43,36 @@ export default class UserSentenceHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-sentence-history.repository.ts save function '
+      );
+      throw error;
+    }
+  };
+
+  // id에 해당하는 문장 학습 기록 1개
+  static findOne = async (
+    client: PoolClient,
+    { userId, sentenceId }: UserSentenceHistoryPK,
+    _columns: any[]
+  ): Promise<UserSentenceHistory> => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT ${SELECT_COLUMNS} FROM user_sentence_history
+        WHERE user_id = ${userId} AND sentence_id = ${sentenceId}`
+      );
+      if (!queryResult.rowCount)
+        throw new Error('user sentence history does not exist');
+
+      return queryResult.rows[0];
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts findOne function '
       );
       throw error;
     }
@@ -183,7 +215,7 @@ export default class UserSentenceHistoryRepository {
       const isBookmark: boolean = (
         await client.query(
           `UPDATE user_sentence_history
-          SET is_bookmark = NOT is_bookmark, bookmark_at = CURRENT_TIMESTAMP(0)
+          SET is_bookmark = NOT is_bookmark, bookmark_at = default
           WHERE user_id = $1 AND sentence_id = $2
           RETURNING is_bookmark`,
           [userId, sentenceId]
@@ -195,6 +227,31 @@ export default class UserSentenceHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user-sentence-history.repository.ts updateIsBookmark function '
+      );
+      throw error;
+    }
+  };
+
+  static updateScore = async (
+    client: PoolClient,
+    { userId, sentenceId }: UserSentenceHistoryPK,
+    averageScore: number,
+    highestScore: number
+  ): Promise<void> => {
+    try {
+      await client.query(
+        `UPDATE user_sentence_history
+          SET average_score = $3, highest_score = $4
+          WHERE user_id = $1 AND sentence_id = $2`,
+        [userId, sentenceId, averageScore, highestScore]
+      );
+
+      console.info(
+        "✅ updated user_sentence_history table's average_score and highest_score"
+      );
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts updateScore function '
       );
       throw error;
     }
@@ -263,7 +320,27 @@ export default class UserSentenceHistoryRepository {
       return countsOfSentences;
     } catch (error) {
       console.warn(
-        '❌ Error: user_sentence_history.repository.ts getUserHistoryCounts function '
+        '❌ Error: user-sentence-history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
+
+  static getAverageOfAverageScore = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const averageScoreOfSentences: number = (
+        await client.query(
+          `SELECT avg(average_score) FROM user_sentence_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].avg;
+      return averageScoreOfSentences;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-sentence-history.repository.ts getAvarageOfAvarageScore function '
       );
       throw error;
     }

@@ -1,5 +1,7 @@
 import { PoolClient, QueryResult } from 'pg';
-import { UserWordHistoryPK } from '../entities/user-word-history.entity';
+import UserWordHistory, {
+  UserWordHistoryPK
+} from '../entities/user-word-history.entity';
 import { getSelectColumns } from '../utils/Query';
 
 const DEFAULT_LEARNING_RATE = 0;
@@ -28,6 +30,36 @@ export default class UserWordHistoryRepository {
       );
     } catch (error) {
       console.warn('❌ Error: user-word-history.repository.ts save function ');
+      throw error;
+    }
+  };
+
+  // id에 해당하는 문장 학습 기록 1개
+  static findOne = async (
+    client: PoolClient,
+    { userId, wordId }: UserWordHistoryPK,
+    _columns: any[]
+  ): Promise<UserWordHistory> => {
+    try {
+      // SELECT할 컬럼이 최소 1개 이상 있어야 함
+      if (_columns.length === 0)
+        throw new Error('At least 1 column in _column is required');
+
+      // SELECT 쿼리에 들어갈 컬럼 문자열 조합
+      const SELECT_COLUMNS = getSelectColumns(_columns);
+
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT ${SELECT_COLUMNS} FROM user_word_history
+        WHERE user_id = ${userId} AND word_id = ${wordId}`
+      );
+      if (!queryResult.rowCount)
+        throw new Error('user word history does not exist');
+
+      return queryResult.rows[0];
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts findOne function '
+      );
       throw error;
     }
   };
@@ -173,6 +205,31 @@ export default class UserWordHistoryRepository {
     }
   };
 
+  static updateScore = async (
+    client: PoolClient,
+    { userId, wordId }: UserWordHistoryPK,
+    averageScore: number,
+    highestScore: number
+  ): Promise<void> => {
+    try {
+      await client.query(
+        `UPDATE user_word_history
+          SET average_score = $3, highest_score = $4
+          WHERE user_id = $1 AND word_id = $2`,
+        [userId, wordId, averageScore, highestScore]
+      );
+
+      console.info(
+        "✅ updated user_word_history table's average_score and highest_score"
+      );
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts updateScore function '
+      );
+      throw error;
+    }
+  };
+
   // 존재 여부
   static isExist = async (
     client: PoolClient,
@@ -211,6 +268,26 @@ export default class UserWordHistoryRepository {
     } catch (error) {
       console.warn(
         '❌ Error: user_word_history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
+
+  static getAverageOfAverageScore = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const averageScoreOfWords: number = (
+        await client.query(
+          `SELECT avg(average_score) FROM user_word_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].avg;
+      return averageScoreOfWords;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-word-history.repository.ts getAvarageOfAvarageScore function '
       );
       throw error;
     }

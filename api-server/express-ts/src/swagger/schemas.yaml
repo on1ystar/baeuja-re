@@ -685,6 +685,22 @@ ReviewWords:
             type: string
           bookmarkAt:
             type: string
+ReviewIntro:
+  type: object
+  properties:
+    success:
+      type: boolean
+    learningHistory:
+      type: object
+      properties:
+        countsOfSentences:
+          type: number
+        countsOfWords:
+          type: number
+        averageScoreOfSentences:
+          type: number
+        averageScoreOfWords:
+          type: number
 # -------------------------- qna -------------------------- #
 Qnas:
   type: object
