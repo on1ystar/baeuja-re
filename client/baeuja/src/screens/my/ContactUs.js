@@ -65,38 +65,72 @@ const ContactUs = () => {
   // send Qna Screen 전체 렌더링
   return (
     <View style={styles.allContainer}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: responsiveScreenWidth(50),
+        }}
+      >
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/icons/captureLogo.png')}
+          style={styles.thumbnailImage}
+        />
+      </View>
       {isLoading ? (
         <Text></Text>
       ) : (
-        <View style={{ flex: 1, marginTop: responsiveScreenHeight(20) }}>
+        <View style={{ flex: 1, marginTop: responsiveScreenHeight(2) }}>
           {qnaTypes.map((qnaType, index) => {
             const navigation = useNavigation();
             const qnaTypeId = qnaType.qnaTypeId;
             return (
-              <TouchableOpacity
+              <Card
                 key={qnaTypeId}
-                onPress={() =>
-                  navigation.navigate('Stack', {
-                    screen: 'Inquiry',
-                    params: {
-                      qnaTypeId,
-                    },
-                  })
-                }
+                containerStyle={{
+                  width: responsiveScreenWidth(90),
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  backgroundColor: '#FBFBFB',
+                }}
               >
-                <View key={qnaTypeId} style={styles.qnaTypeContainer}>
-                  <Text style={styles.qnaTypeText}>
-                    {`${index + 1}. `}
-                    {qnaType.name}
-                  </Text>
-                  <Ionicons
-                    style={{ marginLeft: responsiveScreenWidth(5) }}
-                    size={22}
-                    color={'#9388E8'}
-                    name="chevron-forward-outline"
-                  ></Ionicons>
-                </View>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Stack', {
+                      screen: 'Inquiry',
+                      params: {
+                        qnaTypeId,
+                      },
+                    })
+                  }
+                >
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{
+                        marginLeft: responsiveScreenWidth(5),
+                      }}
+                    >
+                      <Text
+                        style={{ color: '#000000', fontSize: responsiveFontSize(2.3) }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        {`${index + 1}. `}
+                        {qnaType.name}
+                      </Text>
+                    </View>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                      <Ionicons
+                        style={{ marginLeft: responsiveScreenWidth(5) }}
+                        size={25}
+                        color={'#9388E8'}
+                        name="arrow-redo-outline"
+                      ></Ionicons>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </Card>
             );
           })}
         </View>
@@ -149,6 +183,12 @@ const styles = StyleSheet.create({
     right: responsiveScreenWidth(-2),
     top: responsiveScreenHeight(-0.5),
     justifyContent: 'flex-end',
+  },
+  thumbnailImage: {
+    marginTop: responsiveScreenHeight(5),
+    width: responsiveScreenWidth(44),
+    height: responsiveScreenHeight(24),
+    borderRadius: 10,
   },
 });
 

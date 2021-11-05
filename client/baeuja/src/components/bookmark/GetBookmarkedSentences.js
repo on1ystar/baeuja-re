@@ -1,6 +1,6 @@
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'; // React Native elements
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native'; // React Native elements
 import {
   responsiveHeight,
   responsiveWidth,
@@ -95,9 +95,13 @@ const GetBookmarkedSentences = ({ sortBy, option }) => {
         console.log(`After Post, isBookmark is :${isBookmark}`);
 
         if (isBookmark) {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         } else {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         }
 
         if (!success) throw new Error(errorMessage);
@@ -157,10 +161,14 @@ const GetBookmarkedSentences = ({ sortBy, option }) => {
                   }
                 >
                   <View style={styles.bookmarkedSentencesContainer}>
-                    <Text style={styles.bookmarkedKoreanSentences}>
+                    <Text
+                      style={styles.bookmarkedKoreanSentences}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {bookmarkedSentence.koreanText}
                     </Text>
-                    <Text style={styles.bookmarkedSentences}>
+                    <Text style={styles.bookmarkedSentences} numberOfLines={1} ellipsizeMode="tail">
                       {bookmarkedSentence.translatedText}
                     </Text>
                     <View
@@ -217,12 +225,14 @@ const styles = StyleSheet.create({
   },
   bookmarkedKoreanSentences: {
     color: '#444444',
+    width: responsiveScreenWidth(70),
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '700',
     marginBottom: responsiveScreenHeight(1),
   },
   bookmarkedSentences: {
+    width: responsiveScreenWidth(80),
     color: '#444444',
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
@@ -230,8 +240,8 @@ const styles = StyleSheet.create({
   },
   bookmarkedIconContainer: {
     position: 'absolute',
-    right: responsiveScreenWidth(-2),
-    top: responsiveScreenHeight(1),
+    right: responsiveScreenWidth(0),
+    top: responsiveScreenHeight(-0.5),
     justifyContent: 'flex-end',
   },
 });

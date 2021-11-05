@@ -235,11 +235,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bookmarkTitle: {
-    marginTop: responsiveScreenHeight(3),
+    marginTop: responsiveScreenHeight(2),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveScreenFontSize(3),
-    fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontSize: responsiveScreenFontSize(3.5),
+    // fontFamily: 'NanumSquareOTFB',
+    // fontWeight: 'bold',
+    fontFamily: 'Playball-Regular',
+
     color: '#444444',
   },
   selectButtonContainer: {

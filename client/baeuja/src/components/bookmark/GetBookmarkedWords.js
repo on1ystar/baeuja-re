@@ -1,6 +1,6 @@
 // Library import
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'; // React Native elements
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native'; // React Native elements
 import {
   responsiveHeight,
   responsiveWidth,
@@ -91,9 +91,13 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
         console.log(`After Post, isBookmark is :${isBookmark}`);
 
         if (isBookmark) {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         } else {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         }
 
         if (!success) throw new Error(errorMessage);

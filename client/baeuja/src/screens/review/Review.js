@@ -46,6 +46,7 @@ const Review = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [reviewRecords, setReviewRecords] = useState({});
+  const [randomNumber, setRandomNumber] = useState(0);
 
   // 리뷰 기록 데이터 불러오기
   const loadReviewRecords = () => {
@@ -72,9 +73,10 @@ const Review = () => {
         if (!success) throw new Error(errorMessage);
 
         console.log('Success Getting Learning History');
-        console.log(`${learningHistory.averageScoreOfWords}`);
+        console.log(`${learningHistory.avarageScoreOfWords}`);
 
         setReviewRecords(learningHistory);
+        setRandomNumber(Math.random());
         setIsLoading(() => false);
       } catch (error) {
         console.log(error);
@@ -128,12 +130,17 @@ const Review = () => {
             width={1}
             orientation="horizontal"
           />
+          {/* <Image
+            transitionDuration={1000}
+            source={require('../../assets/img/review.png')}
+            style={styles.thumbnailImage}
+          /> */}
           <Card
             containerStyle={{
               borderWidth: 0,
               borderRadius: 10,
               backgroundColor: '#FBFBFB',
-              marginTop: responsiveScreenHeight(5),
+              marginTop: responsiveScreenHeight(3),
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -309,15 +316,24 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(3),
+    marginTop: responsiveScreenHeight(2),
     marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3),
-    fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    fontSize: responsiveFontSize(3.5),
+    // fontFamily: 'NanumSquareOTFB',
+    fontFamily: 'Playball-Regular',
+
+    // fontWeight: 'bold',
     color: '#444444',
     // backgroundColor: 'black',
   },
   goToLearnArrow: {},
+  thumbnailImage: {
+    marginTop: responsiveScreenHeight(3),
+    marginLeft: responsiveScreenWidth(4),
+    width: responsiveScreenWidth(92.5),
+    height: responsiveScreenHeight(12),
+    borderRadius: 10,
+  },
 });
 
 export default Review;

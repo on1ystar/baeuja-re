@@ -113,9 +113,11 @@ const LearningWord = ({
         console.log(`After Post, Word isBookmark is :${isBookmark}`);
 
         if (isBookmark) {
-          alert('Added to Bookmark');
+          Alert.alert('Added', 'Added to Bookmark', [{ text: 'Confirm', onPress: () => null }]);
         } else {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         }
 
         if (!success) throw new Error(errorMessage);
@@ -135,7 +137,7 @@ const LearningWord = ({
         <Text> </Text>
       ) : (
         <View style={styles.wordAllContainer}>
-          <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+          <Card containerStyle={{ borderWidth: 0.5, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
             <Text style={styles.koreanWord}>{word.korean}</Text>
             <Text style={styles.translatedWord}>{word.translation}</Text>
             <Text style={styles.wordImportance}>importance : {word.importance}</Text>
@@ -156,7 +158,12 @@ const LearningWord = ({
             <WordTools words={word} />
           </View>
           <ScrollView>
-            <View style={{ marginTop: responsiveScreenHeight(5) }}>
+            <View
+              style={{
+                marginTop: responsiveScreenHeight(3),
+                marginBottom: responsiveScreenHeight(1),
+              }}
+            >
               {exampleSentences.map((sentence) => (
                 <DrawExampleSentences key={sentence.sentenceId} sentence={sentence} />
               ))}
@@ -239,7 +246,7 @@ const DrawExampleSentences = ({ sentence }) => {
     <Card
       containerStyle={{
         marginTop: responsiveScreenHeight(2),
-        borderWidth: 0,
+        borderWidth: 0.5,
         borderRadius: 10,
         backgroundColor: '#FBFBFB',
       }}
@@ -302,6 +309,7 @@ const styles = StyleSheet.create({
   },
   wordToolsContainer: {
     marginTop: responsiveScreenHeight(5),
+    justifyContent: 'center',
   },
   relatedKoreanSentences: {
     color: '#666666',

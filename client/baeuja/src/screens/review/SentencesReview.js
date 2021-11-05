@@ -118,9 +118,11 @@ const SentencesReview = () => {
         console.log(`After Post, isBookmark is :${isBookmark}`);
 
         if (isBookmark) {
-          alert('Added from Bookmark');
+          Alert.alert('Added', 'Added to Bookmark', [{ text: 'Confirm', onPress: () => null }]);
         } else {
-          alert('Deleted from Bookmark');
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
         }
 
         if (!success) throw new Error(errorMessage);

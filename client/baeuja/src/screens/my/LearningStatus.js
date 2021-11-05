@@ -103,6 +103,33 @@ const LearningStatus = () => {
   // useEffect
   useEffect(loadLearningStatus, []);
 
+  let avarageRankOfSentences;
+  let avarageRankOfWords;
+
+  if (avarageScoreOfSentences > 85) {
+    avarageRankOfSentences = 'A+';
+  } else if (avarageScoreOfSentences > 75) {
+    avarageRankOfSentences = 'A';
+  } else if (avarageScoreOfSentences > 60) {
+    avarageRankOfSentences = 'B';
+  } else if (avarageScoreOfSentences > 45) {
+    avarageRankOfSentences = 'C';
+  } else {
+    avarageRankOfSentences = 'D';
+  }
+
+  if (avarageScoreOfWords > 85) {
+    avarageRankOfWords = 'A+';
+  } else if (avarageScoreOfWords > 75) {
+    avarageRankOfWords = 'A';
+  } else if (avarageScoreOfWords > 60) {
+    avarageRankOfWords = 'B';
+  } else if (avarageScoreOfWords > 45) {
+    avarageRankOfWords = 'C';
+  } else {
+    avarageRankOfWords = 'D';
+  }
+
   // Profile 화면 전체 리턴
   return (
     <View style={styles.container}>
@@ -124,7 +151,7 @@ const LearningStatus = () => {
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
                 <Text
-                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  style={{ color: '#17A2FF', fontWeight: '700' }}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
@@ -150,7 +177,6 @@ const LearningStatus = () => {
                 <Text
                   style={{
                     color: '#17A2FF',
-                    textDecorationLine: 'underline',
                     fontWeight: '700',
                     fontWeight: '700',
                   }}
@@ -175,15 +201,30 @@ const LearningStatus = () => {
               <View style={{ width: responsiveScreenWidth(62) }}>
                 <Text style={{ color: '#000000' }}>Total number of learned sentences</Text>
               </View>
-              <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text
-                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {countsOfSentences}
-                </Text>
-              </View>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() =>
+                  navigation.navigate('Stack', {
+                    screen: 'Sentences Review',
+                  })
+                }
+              >
+                <View style={{ marginLeft: responsiveScreenWidth(10) }}>
+                  <Text
+                    style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {countsOfSentences}
+                  </Text>
+                </View>
+                <Ionicons
+                  style={{ marginLeft: responsiveScreenWidth(1) }}
+                  size={18}
+                  color={'#17A2FF'}
+                  name="arrow-redo-circle-outline"
+                ></Ionicons>
+              </TouchableOpacity>
             </View>
           </Card>
 
@@ -199,15 +240,30 @@ const LearningStatus = () => {
               <View style={{ width: responsiveScreenWidth(62) }}>
                 <Text style={{ color: '#000000' }}>Total number of learned words</Text>
               </View>
-              <View style={{ marginLeft: responsiveScreenWidth(10) }}>
-                <Text
-                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {countsOfWords}
-                </Text>
-              </View>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() =>
+                  navigation.navigate('Stack', {
+                    screen: 'Words Review',
+                  })
+                }
+              >
+                <View style={{ marginLeft: responsiveScreenWidth(10) }}>
+                  <Text
+                    style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {countsOfWords}
+                  </Text>
+                </View>
+                <Ionicons
+                  style={{ marginLeft: responsiveScreenWidth(1) }}
+                  size={18}
+                  color={'#17A2FF'}
+                  name="arrow-redo-circle-outline"
+                ></Ionicons>
+              </TouchableOpacity>
             </View>
           </Card>
 
@@ -225,11 +281,11 @@ const LearningStatus = () => {
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
                 <Text
-                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  style={{ color: '#17A2FF', fontWeight: '700' }}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {avarageScoreOfSentences}
+                  {avarageRankOfSentences}
                 </Text>
               </View>
             </View>
@@ -249,11 +305,11 @@ const LearningStatus = () => {
               </View>
               <View style={{ marginLeft: responsiveScreenWidth(10) }}>
                 <Text
-                  style={{ color: '#17A2FF', textDecorationLine: 'underline', fontWeight: '700' }}
+                  style={{ color: '#17A2FF', fontWeight: '700' }}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {avarageScoreOfWords}
+                  {avarageRankOfWords}
                 </Text>
               </View>
             </View>

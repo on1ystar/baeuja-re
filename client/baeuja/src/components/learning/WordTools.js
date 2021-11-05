@@ -48,6 +48,7 @@ import WordSpeechEvaluationResult from './WordSpeechEvaluationResult';
 
 // CSS import
 import LearningStyles from '../../styles/LearningStyle';
+import { createTabNavigator } from 'react-navigation-tabs';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 let userPermission = 'a';
@@ -332,40 +333,19 @@ const WordTools = ({ words }) => {
   // 학습 도구 부분 리턴
   return (
     <View>
-      <View>
-        <View style={LearningStyles.learningButtonContainer}>
-          {/* 성우 음성 재생 버튼 */}
-          {isPlayPerfectVoice ? (
-            <TouchableOpacity
-              style={LearningStyles.learningButtonPlay}
-              onPress={() => {
-                onPlayPerfectVoice();
-              }}
-              disabled={isPlayPerfectVoice || buttonControl}
-            >
-              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={
-                buttonControl
-                  ? LearningStyles.learningButtondisable
-                  : LearningStyles.learningButtonEnable
-              }
-              onPress={() => {
-                onPlayPerfectVoice();
-              }}
-              disabled={buttonControl}
-            >
-              <Ionicons
-                name="volume-off-outline"
-                size={30}
-                color={buttonControl ? '#DDDDDD' : '#555555'}
-              ></Ionicons>
-            </TouchableOpacity>
-          )}
-
-          {/* 음성 녹음 버튼 */}
+      <View style={LearningStyles.learningButtonContainer}>
+        {/* 성우 음성 재생 버튼 */}
+        {isPlayPerfectVoice ? (
+          <TouchableOpacity
+            style={LearningStyles.learningButtonPlay}
+            onPress={() => {
+              onPlayPerfectVoice();
+            }}
+            disabled={isPlayPerfectVoice || buttonControl}
+          >
+            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+          </TouchableOpacity>
+        ) : (
           <TouchableOpacity
             style={
               buttonControl
@@ -373,118 +353,137 @@ const WordTools = ({ words }) => {
                 : LearningStyles.learningButtonEnable
             }
             onPress={() => {
-              onStartRecord();
+              onPlayPerfectVoice();
             }}
             disabled={buttonControl}
           >
-            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+            <Ionicons
+              name="volume-off-outline"
+              size={30}
+              color={buttonControl ? '#DDDDDD' : '#555555'}
+            ></Ionicons>
           </TouchableOpacity>
-          {/* 음성 중지 버튼으로 바뀌는 부분 */}
+        )}
+
+        {/* 음성 녹음 버튼 */}
+        <TouchableOpacity
+          style={
+            buttonControl
+              ? LearningStyles.learningButtondisable
+              : LearningStyles.learningButtonEnable
+          }
+          onPress={() => {
+            onStartRecord();
+          }}
+          disabled={buttonControl}
+        >
+          <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+        </TouchableOpacity>
+        {/* 음성 중지 버튼으로 바뀌는 부분 */}
+        <TouchableOpacity
+          style={
+            isRecordingUserVoice
+              ? LearningStyles.learningButtonCover
+              : LearningStyles.learningButtonHidden
+          }
+          onPress={() => {
+            onStopRecord();
+          }}
+        >
+          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
+        </TouchableOpacity>
+
+        {/* 유저 음성 재생 버튼 */}
+        {isResponsedEvaluationResult ? (
           <TouchableOpacity
             style={
-              isRecordingUserVoice
-                ? LearningStyles.learningButtonCover
-                : LearningStyles.learningButtonHidden
+              buttonControl
+                ? isPlayUserVoice
+                  ? LearningStyles.learningButtonPlay
+                  : LearningStyles.learningButtondisable
+                : LearningStyles.learningButtonEnable
             }
-            onPress={() => {
-              onStopRecord();
+            onPress={() => onStartPlay()}
+            disabled={buttonControl}
+          >
+            <Ionicons
+              style={{ marginTop: 2 }}
+              name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
+              size={27}
+              color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={LearningStyles.learningButtondisable}
+            onPress={() => onStartPlay()}
+            disabled={true}
+          >
+            <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#DDDDDD" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* 음성 녹음 진행 중 타이머 */}
+      <View>
+        {isRecordingUserVoice ? (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: responsiveScreenHeight(5),
             }}
           >
-            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
-          </TouchableOpacity>
+            <CountdownCircleTimer
+              size={responsiveScreenWidth(30)}
+              renderAriaTime={'Hello'}
+              strokeWidth={responsiveScreenWidth(2.5)}
+              isPlaying
+              duration={15}
+              initialRemainingTime={15}
+              colors={[
+                ['#004777', 0.4],
+                ['#F7B801', 0.4],
+                ['#A30000', 0.2],
+              ]}
+            >
+              {({ remainingTime, animatedColor }) => (
+                <Animated.Text style={{ color: animatedColor }}>
+                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: '#BBBBBB' }}>Recording...</Text>
+                    <Text style={{ color: '#BBBBBB' }}>{remainingTime}</Text>
+                  </View>
+                </Animated.Text>
+              )}
+            </CountdownCircleTimer>
+          </View>
+        ) : (
+          <></>
+        )}
+      </View>
 
-          {/* 유저 음성 재생 버튼 */}
-          {isResponsedEvaluationResult ? (
-            <TouchableOpacity
-              style={
-                buttonControl
-                  ? isPlayUserVoice
-                    ? LearningStyles.learningButtonPlay
-                    : LearningStyles.learningButtondisable
-                  : LearningStyles.learningButtonEnable
-              }
-              onPress={() => onStartPlay()}
-              disabled={buttonControl}
-            >
-              <Ionicons
-                style={{ marginTop: 2 }}
-                name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
-                size={27}
-                color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={LearningStyles.learningButtondisable}
-              onPress={() => onStartPlay()}
-              disabled={true}
-            >
-              <Ionicons style={{ marginTop: 2 }} name="ear-outline" size={27} color="#DDDDDD" />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* 음성 녹음 진행 중 타이머 */}
-        <View>
-          {isRecordingUserVoice ? (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: responsiveScreenHeight(5),
-              }}
-            >
-              <CountdownCircleTimer
-                size={responsiveScreenWidth(30)}
-                renderAriaTime={'Hello'}
-                strokeWidth={responsiveScreenWidth(2.5)}
-                isPlaying
-                duration={15}
-                initialRemainingTime={15}
-                colors={[
-                  ['#004777', 0.4],
-                  ['#F7B801', 0.4],
-                  ['#A30000', 0.2],
-                ]}
-              >
-                {({ remainingTime, animatedColor }) => (
-                  <Animated.Text style={{ color: animatedColor }}>
-                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ color: '#BBBBBB' }}>Recording...</Text>
-                      <Text style={{ color: '#BBBBBB' }}>{remainingTime}</Text>
-                    </View>
-                  </Animated.Text>
-                )}
-              </CountdownCircleTimer>
+      {/* 발화 평가 결과 */}
+      <View>
+        {isResponsedEvaluationResult ? (
+          evaluatedWord !== null && pitchData !== null ? (
+            <View>
+              <WordSpeechEvaluationResult evaluatedWord={evaluatedWord} pitchData={pitchData} />
             </View>
           ) : (
-            <></>
-          )}
-        </View>
-
-        {/* 발화 평가 결과 */}
-        <View>
-          {isResponsedEvaluationResult ? (
-            evaluatedWord !== null && pitchData !== null ? (
-              <View>
-                <WordSpeechEvaluationResult evaluatedWord={evaluatedWord} pitchData={pitchData} />
-              </View>
-            ) : (
-              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
-                <Progress.Circle
-                  size={60}
-                  animated={true}
-                  color={'#9388E8'}
-                  borderWidth={8}
-                  strokeCap={'round'}
-                  indeterminate={true}
-                />
-              </View>
-            )
-          ) : (
-            <></>
-          )}
-        </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+              <Progress.Circle
+                size={60}
+                animated={true}
+                color={'#9388E8'}
+                borderWidth={8}
+                strokeCap={'round'}
+                indeterminate={true}
+              />
+            </View>
+          )
+        ) : (
+          <></>
+        )}
       </View>
     </View>
   );

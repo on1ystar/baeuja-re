@@ -25,6 +25,7 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 
 const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +74,7 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
                 fontSize: responsiveFontSize(2.1),
                 fontWeight: '700',
                 color: '#484848',
-                backgroundColor: '#B8FFB9',
+                backgroundColor: '#CBFFCE',
               }}
             >
               {letter}
@@ -195,7 +196,7 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
                 }
               }}
             />
-            <Divider
+            {/* <Divider
               style={{
                 width: '15%',
                 shadowColor: '#000000',
@@ -212,18 +213,27 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               insetType="middle"
               width={1}
               orientation="horizontal"
-            />
+            /> */}
+            <View
+              style={{
+                width: responsiveScreenWidth(5),
+                marginTop: responsiveScreenHeight(0.5),
+                height: responsiveScreenHeight(0.5),
+                backgroundColor: '#000000',
+                opacity: 0.15,
+                borderRadius: 10,
+              }}
+            ></View>
           </View>
           <View
             style={{
-              marginTop: responsiveScreenHeight(4),
-              marginLeft: responsiveScreenWidth(15),
-              marginRight: responsiveScreenWidth(15),
+              marginTop: responsiveScreenHeight(2),
               justifyContent: 'center',
-              alignItems: 'flex-start',
+              alignItems: 'center',
             }}
           >
-            <Text
+            {/* Correct Words 부분 */}
+            {/* <Text
               style={{
                 fontWeight: '700',
                 fontSize: responsiveFontSize(2.2),
@@ -233,7 +243,7 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
             >
               ✅ Correct Words{'\n'}
               <Text>{correctWords}</Text>
-            </Text>
+            </Text> */}
             <Text
               style={{
                 fontWeight: '700',
@@ -241,7 +251,24 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
                 color: '#484848',
               }}
             >
-              ✅ Letters Checking{'\n'}[ {correctLetters} ]
+              {/* <Ionicons name="checkmark-circle-outline" color={'#CBFFCE'} size={18}></Ionicons>{' '} */}
+              Letters Checking
+            </Text>
+          </View>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: '700',
+                fontSize: responsiveFontSize(2.2),
+                color: '#484848',
+              }}
+            >
+              [ {correctLetters} ]
             </Text>
           </View>
           <View

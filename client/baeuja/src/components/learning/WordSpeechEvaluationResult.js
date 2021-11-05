@@ -91,7 +91,7 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
                 }
               }}
             />
-            <Divider
+            {/* <Divider
               style={{
                 width: '15%',
                 shadowColor: '#000000',
@@ -108,7 +108,17 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
               insetType="middle"
               width={1}
               orientation="horizontal"
-            />
+            /> */}
+            <View
+              style={{
+                width: responsiveScreenWidth(5),
+                marginTop: responsiveScreenHeight(0.5),
+                height: responsiveScreenHeight(0.5),
+                backgroundColor: '#000000',
+                opacity: 0.15,
+                borderRadius: 10,
+              }}
+            ></View>
           </View>
 
           {/* 발화 평가 피치 그래프 주석 */}

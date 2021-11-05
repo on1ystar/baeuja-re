@@ -74,7 +74,7 @@ const AboutUs = () => {
           containerStyle={{
             width: responsiveScreenWidth(90),
             marginTop: responsiveScreenHeight(5),
-            borderWidth: 0,
+            borderWidth: 0.5,
             borderRadius: 10,
             backgroundColor: '#FBFBFB',
           }}
@@ -95,7 +95,7 @@ const AboutUs = () => {
         <Card
           containerStyle={{
             width: responsiveScreenWidth(90),
-            borderWidth: 0,
+            borderWidth: 0.5,
             borderRadius: 10,
             backgroundColor: '#FBFBFB',
           }}
@@ -116,7 +116,7 @@ const AboutUs = () => {
         <Card
           containerStyle={{
             width: responsiveScreenWidth(90),
-            borderWidth: 0,
+            borderWidth: 0.5,
             borderRadius: 10,
             backgroundColor: '#FBFBFB',
           }}
