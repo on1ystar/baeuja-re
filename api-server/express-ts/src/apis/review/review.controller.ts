@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
-import UserSentenceEvaluationRepository from '../../repositories/user-sentence-evaluation.repository';
 import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
-import UserWordEvaluationRepository from '../../repositories/user-word-evaluation.repository';
 import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
 
 // GET /review
