@@ -142,6 +142,7 @@ export const getReviewWords = async (req: Request, res: Response) => {
           UserWordHistory: [
             'averageScore',
             'highestScore',
+            'isBookmark',
             'latestLearningAt',
             'bookmarkAt'
           ]
