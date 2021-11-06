@@ -122,9 +122,9 @@ export default class SentenceRepository {
       const queryResult = await client.query(
         `SELECT ${SELECT_COLUMNS}
         FROM sentence
-        JOIN sentence_word
+        LEFT JOIN sentence_word
         ON sentence.sentence_id = sentence_word.sentence_id
-        JOIN word
+        LEFT JOIN word
         ON sentence_word.word_id = word.word_id 
         WHERE sentence.content_id = ${contentId} AND sentence.unit_index = ${unitIndex}
         ORDER BY word.word_id ASC`
