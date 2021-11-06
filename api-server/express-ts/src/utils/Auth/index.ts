@@ -44,6 +44,8 @@ export const checkUserId = async (
       }
       const userId = decodedToken?.userId;
       const timezone = decodedToken?.timezone;
+      console.log(timezone);
+      console.log(timezone);
       try {
         if (!(await UserRepository.isExistById(poolClient, parseInt(userId)))) {
           return res.status(401).json({

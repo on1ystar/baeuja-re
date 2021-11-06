@@ -6,7 +6,6 @@
 export interface SentenceOfPostSentenceToAIDTO {
   readonly sentenceId: number;
   readonly koreanText: string;
-  readonly perfectVoiceUri: string;
 }
 
 export default interface PostSentenceToAIDTO {

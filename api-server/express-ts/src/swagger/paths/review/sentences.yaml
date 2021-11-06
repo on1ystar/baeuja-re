@@ -1,0 +1,44 @@
+get:
+  tags:
+    - review
+  summary: 사용자 문장 학습 기록
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: sortBy
+      in: query
+      description: 정렬 파라미터 (latest_learning_at(default) = 최근 학습 날짜 순 | avarage_score = 평균 점수 순 | highest_score = 가장 높은 점수 순)
+      schema:
+        type: string
+        expample: latest_learning_at(default)| avarage_score | highest_score
+    - name: option
+      in: query
+      description: 정렬 옵션 (DESC(default) = 내림차순 | ASC = 오름차순 )
+      schema:
+        type: string
+        expample: DESC | ASC
+  responses:
+    200-304:
+      description: 요청 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/ReviewSentences'
+    400-BadRequest:
+      description: 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    401-UnauthorizedError:
+      description: Access token이 없거나 유효하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'
+    404-NotFound:
+      description: 서버는 요청받은 리소스를 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Error'

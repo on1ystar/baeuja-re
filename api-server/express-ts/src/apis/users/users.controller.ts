@@ -3,7 +3,7 @@
  @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
  */
 
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
 import User from '../../entities/user.entity';
@@ -13,6 +13,12 @@ import conf from '../../config';
 import UserRepository, {
   UserToBeSaved
 } from '../../repositories/user.repository';
+import UserContentHistoryRepository from '../../repositories/user-content-history.repository';
+import UserUnitHistoryRepository from '../../repositories/user-unit-history.repository';
+import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
+import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
+import UserSentenceEvaluationRepository from '../../repositories/user-sentence-evaluation.repository';
+import UserWordEvaluationRepository from '../../repositories/user-word-evaluation.repository';
 
 // GET /users
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -28,6 +34,8 @@ export const getUsers = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -37,7 +45,7 @@ export const getUsers = async (req: Request, res: Response) => {
 // GET /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getUserDetail = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const { userId, timezone } = res.locals;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -54,15 +62,17 @@ export const getUserDetail = async (req: Request, res: Response) => {
       'userId',
       'email',
       'nickname',
-      'platform',
       'country',
       'timezone',
+      'createdAt',
       'roleId'
     ]);
     return res.status(200).json({ success: true, user });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -121,7 +131,6 @@ export const postUser = async (req: Request, res: Response) => {
       userId = Number((await UserRepository.save(client, user)).userId);
     }
 
-    console.info(`Login \t user_id: ${userId}`);
     // jwt token 생성
     const token = jwt.sign(
       { userId, timezone: userinfo.timezone }, // payload: {userId, timezone}
@@ -132,7 +141,9 @@ export const postUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
-    return res.status(500).json({ sucess: false, errorMessage });
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
+    return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
   }
@@ -140,9 +151,10 @@ export const postUser = async (req: Request, res: Response) => {
 
 // PATCH /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const patchtUserNickname = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const { nickname } = req.body;
+export const patchtUser = async (req: Request, res: Response) => {
+  const { userId, timezone } = res.locals;
+  const { column } = req.query; // email | nickname | country | timezone
+  const { updatingValue } = req.body;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -153,27 +165,49 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
   const client: PoolClient = await pool.connect();
   try {
     // reqeust params 유효성 검사
-    if (isNaN(+userId)) throw new Error('invalid syntax of params');
+    if (typeof column === 'undefined' || typeof updatingValue === 'undefined')
+      throw new Error('invalid syntax of request');
 
-    if (!(await UserRepository.isExistById(client, +userId)))
-      throw new Error('userId does not exist. ');
+    if (
+      column === 'email' &&
+      (await UserRepository.isExistByEmail(client, updatingValue))
+    )
+      throw new Error('already exists');
+    if (
+      column === 'nickname' &&
+      (await UserRepository.isExistByNickname(client, updatingValue))
+    )
+      throw new Error('already exists');
 
-    const updatedUser: User = await UserRepository.updateUserNickname(
+    const user: User = await UserRepository.update(
       client,
       +userId,
-      nickname
+      column as string,
+      updatingValue
     );
+    let token;
+    if (column === 'email' || column === 'timezone') {
+      token = jwt.sign(
+        {
+          userId,
+          timezone: String(column) === 'timezone' ? updatingValue : timezone
+        }, // payload: {userId, timezone}
+        conf.jwtToken.secretKey as string, // secretOrPrivateKey
+        user.roleId === 2 ? conf.jwtToken.option : conf.jwtToken.optionGuest // options: guest면 만료 기간이 없는 토큰 생성
+      );
+    }
     return res.status(200).json({
       success: true,
-      user: {
-        userId: updatedUser.userId,
-        email: updatedUser.email,
-        nickname
-      }
+      user,
+      token
     });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
+    if (errorMessage === 'already exists')
+      return res.status(409).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -183,7 +217,7 @@ export const patchtUserNickname = async (req: Request, res: Response) => {
 // DELETE /users/{userId}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const deleteUser = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const { userId, timezone } = res.locals;
   if (+res.locals.userId !== +userId) {
     return res.status(401).json({
       success: false,
@@ -211,6 +245,66 @@ export const deleteUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
+    return res.status(400).json({ success: false, errorMessage });
+  } finally {
+    client.release();
+  }
+};
+
+// GET /users/{userId}/learning-history
+export const getLearningHistory = async (req: Request, res: Response) => {
+  const { userId, timezone } = res.locals;
+  const client: PoolClient = await pool.connect();
+  try {
+    const learningHistory = {
+      countsOfContents: await UserContentHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      countsOfUnits: await UserUnitHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      countsOfSentences:
+        await UserSentenceHistoryRepository.getUserHistoryCounts(
+          client,
+          userId
+        ),
+      countsOfWords: await UserWordHistoryRepository.getUserHistoryCounts(
+        client,
+        userId
+      ),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfSentences:
+        Math.round(
+          (await UserSentenceHistoryRepository.getAverageOfAverageScore(
+            client,
+            userId
+          )) *
+            10 *
+            2
+        ) /
+        (10 * 2),
+      // 소수점 2째자리에서 반올림
+      avarageScoreOfWords:
+        Math.round(
+          (await UserWordHistoryRepository.getAverageOfAverageScore(
+            client,
+            userId
+          )) *
+            10 *
+            2
+        ) /
+        (10 * 2)
+    };
+    return res.status(200).json({ success: true, learningHistory });
+  } catch (error) {
+    console.log(error);
+    const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

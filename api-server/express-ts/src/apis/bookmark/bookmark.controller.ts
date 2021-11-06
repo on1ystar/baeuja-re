@@ -23,7 +23,7 @@ export const getBookmarkSentences = async (req: Request, res: Response) => {
       client,
       userId,
       sortBy === undefined ? 'bookmark_at' : sortBy, // default = bookmark_at
-      option === undefined ? 'DESC' : option, // default = DESC
+      option === undefined ? 'DESC' : option, // default = DESC,
       [
         {
           Sentence: [
@@ -36,13 +36,16 @@ export const getBookmarkSentences = async (req: Request, res: Response) => {
           ]
         },
         { UserSentenceHistory: ['latestLearningAt', 'bookmarkAt'] }
-      ]
+      ],
+      true
     );
 
     return res.status(200).json({ success: true, sentences });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -72,6 +75,8 @@ export const postBookmarkSentence = async (
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -103,13 +108,16 @@ export const getBookmarkWords = async (req: Request, res: Response) => {
           Word: ['wordId', 'korean', 'translation', 'importance']
         },
         { UserWordHistory: ['latestLearningAt', 'bookmarkAt'] }
-      ]
+      ],
+      true
     );
 
     return res.status(200).json({ success: true, words });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -139,6 +147,8 @@ export const postBookmarkWord = async (
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

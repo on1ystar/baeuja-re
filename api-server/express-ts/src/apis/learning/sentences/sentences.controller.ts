@@ -40,7 +40,7 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     await client.query(`SET TIME ZONE '${timezone}'`);
 
     // 사용자 음성 파일 s3 저장
-    // 사용자가 요청한 문장의 발음 평가 기록 횟수
+    // 사용자가 요청한 문장의 발음 평가 기록 횟수 (다음 기록되야 할 횟수)
     const sentenceEvaluationCounts =
       await UserSentenceEvaluationRepository.getSentenceEvaluationCounts(
         client,
@@ -59,20 +59,23 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     );
     console.info('✅ Success S3 upload--------------');
 
+    const koreanText = (
+      (await SentenceRepository.findOne(client, +sentenceId, ['koreanText']))
+        .koreanText as string
+    )
+      .replace(/[\'\"\)`!?.,\(a-zA-Z]/g, '')
+      .trim();
     // ai server에 보낼 PostEvaluationDTO 인스턴스 생성
     const sentence: SentenceOfPostSentenceToAIDTO = {
       sentenceId: +sentenceId,
-      koreanText: (
-        await SentenceRepository.findOne(client, +sentenceId, ['koreanText'])
-      ).koreanText as string,
-      perfectVoiceUri: `${S3_URL}/${conf.s3.bucketData}/perfect-voice/sentences/${sentenceId}.wav`
+      koreanText
     };
     const postEvaluationDTO: PostSentenceToAIDTO = {
       userId: +userId,
       userVoiceUri: `${S3_URL}/${conf.s3.bucketData}/${Key}`,
       sentence
     };
-    // responsed to ai server
+    // ----------------------responsed to ai server-----------------------------
     let {
       // eslint-disable-next-line prefer-const
       success,
@@ -95,6 +98,9 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       })
     ).data;
     if (!success) throw new Error('fail to ai server rest communication');
+
+    // score 반올림
+    evaluatedSentence.score = Math.round(evaluatedSentence.score);
 
     // 소수점 6째 자리 이하 반올림
     if (pitchData.perfectVoice.hz.length !== 0) {
@@ -130,12 +136,38 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
       userVoiceUri: `${conf.s3.bucketDataCdn}/${Key}` // userVoiceUri for requesting to AI server
     };
     evaluatedSentence = {
+      correctText: koreanText,
       ...evaluatedSentence,
       ...(await UserSentenceEvaluationRepository.save(
         client,
         userSentenceEvaluation
       ))
     };
+
+    // 발화 평균 점수 및 가장 높은 점수 업데이트
+    let { averageScore, highestScore } =
+      await UserSentenceHistoryRepository.findOne(
+        client,
+        { userId, sentenceId: +sentenceId },
+        ['averageScore', 'highestScore']
+      );
+    averageScore =
+      averageScore === null
+        ? evaluatedSentence.score
+        : Math.round((Number(averageScore) + evaluatedSentence.score) / 2);
+    highestScore =
+      Number(highestScore) < evaluatedSentence.score
+        ? evaluatedSentence.score
+        : Number(highestScore);
+    await UserSentenceHistoryRepository.updateScore(
+      client,
+      {
+        userId,
+        sentenceId: +sentenceId
+      },
+      averageScore,
+      highestScore
+    );
 
     await client.query('COMMIT');
 
@@ -148,6 +180,8 @@ export const evaluateUserVoice = async (req: Request, res: Response) => {
     if (error instanceof MulterError) console.log('❌ MulterError ');
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -211,6 +245,8 @@ export const recordUserSentenceHistory = async (
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

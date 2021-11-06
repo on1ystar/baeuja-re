@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-console */
 /**
  * @description user 테이블 SQL
@@ -52,24 +53,45 @@ export default class UserRepository {
     }
   };
 
-  // 닉네임 변경
-  static updateUserNickname = async (
+  // 이메일, 닉네임, 국가, 타임존 변경
+  static update = async (
     client: PoolClient,
     userId: number,
-    nicknameToUpdate: string
+    column: string,
+    updatingValue: any
   ): Promise<User> => {
     try {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { user_id, email, nickname } = (
+      const roleId =
+        column === 'email'
+          ? 2
+          : (await UserRepository.findOne(client, userId, ['roleId'])).roleId;
+      const {
+        user_id,
+        email,
+        nickname,
+        country,
+        timezone,
+        created_at,
+        role_id
+      } = (
         await client.query(
           `UPDATE users
-            SET nickname = '${nicknameToUpdate}', modified_at = default
+            SET ${column} = $1, modified_at = default, role_id = ${roleId}
             WHERE user_id = ${userId}
-            RETURNING user_id, email, nickname`
+            RETURNING user_id, email, nickname, country, timezone, created_at, role_id`,
+          [updatingValue]
         )
       ).rows[0];
-      console.info(`✅  updated user's nickname -> ${nicknameToUpdate}`);
-      return { userId: user_id, email, nickname };
+      console.info(`✅  updated ${userId}'s ${column} -> ${updatingValue}`);
+      return {
+        userId: user_id,
+        email,
+        nickname,
+        country,
+        timezone,
+        createdAt: created_at,
+        roleId: role_id
+      };
     } catch (error) {
       console.warn('❌ Error: user.repository.ts updateUserNickname function ');
       throw error;
@@ -151,6 +173,26 @@ export default class UserRepository {
       return true;
     } catch (error) {
       console.warn('❌ Error: user.repository.ts isExistById function ');
+      throw error;
+    }
+  };
+
+  // 유저 존재 여부 확인
+  static isExistByNickname = async (
+    client: PoolClient,
+    nickname: number
+  ): Promise<boolean> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT COUNT(*) FROM users
+          WHERE nickname = $1`,
+        [nickname]
+      );
+
+      if (+queryResult.rows[0].count === 0) return false;
+      return true;
+    } catch (error) {
+      console.warn('❌ Error: user.repository.ts isExistByNickname function ');
       throw error;
     }
   };
