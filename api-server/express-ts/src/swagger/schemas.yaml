@@ -141,6 +141,12 @@ LearningUnits:
           wordsCounts:
             type: number
             description: 학습할 수 있는 단어 개수
+          isConversationsCounts:
+            type: number
+            description: 학습할 수 있는 회화 표현 개수
+          isFamousLinesCounts:
+            type: number
+            description: 학습할 수 있는 명대사 개수
           counts:
             type: number
             description: 유닛을 학습한 횟수

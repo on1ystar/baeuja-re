@@ -14,7 +14,7 @@ import WordRepository from '../../repositories/word.repository';
 import NewContentsDTO from './dto/new-contents.dto';
 import RecommendationsOfWordDTO from './dto/recommendationsOfWord.dto';
 
-const NUM_OF_LAST_WORD_ID = 275;
+const NUM_OF_LAST_WORD_ID = 682;
 
 // GET /home/contents
 export const getNewContents = async (

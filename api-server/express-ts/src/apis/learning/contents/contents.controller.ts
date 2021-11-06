@@ -148,11 +148,19 @@ export const getUnits = async (
       client,
       +contentId
     );
+    // 학습 유닛 별 회화 표현 개수 리스트
+    const isConversationsCountsObjects: any[] =
+      await UnitRepository.getIsConversations(client, +contentId);
+    // 학습 유닛 별 명대사 개수 리스트
+    const isFamousLinesCountsObjects: any[] =
+      await UnitRepository.getIsFamousLines(client, +contentId);
     units = units.map((unit, index) => {
       return {
         ...unit,
         sentencesCounts: +sentencesCountsObjects[index].count,
-        wordsCounts: +wordsCountsObjects[index].count
+        wordsCounts: +wordsCountsObjects[index].count,
+        isConversationsCounts: +isConversationsCountsObjects[index].count,
+        isFamousLinesCounts: +isFamousLinesCountsObjects[index].count
       };
     });
 

@@ -73,7 +73,7 @@ export default class ContentRepository {
     client: PoolClient,
     _columns: any[]
   ): Promise<any[]> => {
-    const LIMIT_NUM = 5;
+    const LIMIT_NUM = 10;
     try {
       // SELECT할 컬럼이 최소 1개 이상 있어야 함
       if (_columns.length === 0)
