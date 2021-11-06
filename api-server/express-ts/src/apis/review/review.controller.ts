@@ -22,7 +22,7 @@ export const getLearningHistory = async (req: Request, res: Response) => {
         userId
       ),
       // 소수점 2째자리에서 반올림
-      avarageScoreOfSentences:
+      averageScoreOfSentences:
         Math.round(
           (await UserSentenceHistoryRepository.getAverageOfAverageScore(
             client,
@@ -33,7 +33,7 @@ export const getLearningHistory = async (req: Request, res: Response) => {
         ) /
         (10 * 2),
       // 소수점 2째자리에서 반올림
-      avarageScoreOfWords:
+      averageScoreOfWords:
         Math.round(
           (await UserWordHistoryRepository.getAverageOfAverageScore(
             client,
