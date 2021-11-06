@@ -43,7 +43,7 @@ const GetRecommandWords = ({ randomNumber }) => {
         if (error) throw error;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/recommendations`, {
+        } = await axios.get(`https://api.k-peach.io/home/recommendations`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -145,6 +145,7 @@ const DrawRecommandWords = ({ word }) => {
   );
 };
 
+// 동일한 표현 그려주는 것 (옆으로)
 const DrawSameRecommandWords = ({ sentences, word }) => {
   const navigation = useNavigation();
   const contentId = sentences.contentId;
@@ -259,54 +260,58 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
   return (
     <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
       <View style={styles.recommandWordContainer}>
-        <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Stack', {
-                screen: 'Learning Unit',
-                params: {
-                  contentId,
-                  unitIndex,
-                },
-              })
-            }
-          >
-            {/* <Image
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Stack', {
+              screen: 'Learning Unit',
+              params: {
+                contentId,
+                unitIndex,
+              },
+            })
+          }
+        >
+          <Image
             transitionDuration={1000}
             source={{
               uri: sentences.thumbnailUri,
             }}
             style={styles.thumbnailImage}
-          /> */}
-            {/* <Image
+          />
+          {/* <Image
             transitionDuration={1000}
             source={require('../../assets/img/kpopunit.png')}
             style={styles.thumbnailImage}
           /> */}
 
-            <View style={styles.recommandWordKoreanSentenceContainer}>
-              {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+          <View style={styles.recommandWordKoreanSentenceContainer}>
+            {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.koreanText}
             </Text> */}
 
-              <Text style={styles.newWordSentence} numberOfLines={2} ellipsizeMode="tail">
-                {drawKoreanSentence()}
-              </Text>
-            </View>
-            <View style={styles.recommandWordEnglishSentenceContainer}>
-              {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+            <Text style={styles.newWordKoreanSentence} numberOfLines={1} ellipsizeMode="tail">
+              {drawKoreanSentence()}
+            </Text>
+          </View>
+          <View style={styles.recommandWordEnglishSentenceContainer}>
+            {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.translatedText}
             </Text> */}
 
-              <Text style={styles.newWordSentence} numberOfLines={2} ellipsizeMode="tail">
-                {sentences.translatedText}
-              </Text>
-            </View>
-            <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <Text style={{ color: '#4278A4', fontWeight: '700' }}>Let's Learn →</Text>
-            </View>
-          </TouchableOpacity>
-        </Card>
+            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+              {sentences.translatedText}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginRight: responsiveScreenWidth(3.5),
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+            }}
+          >
+            <Text style={{ color: '#4278A4', fontWeight: '700' }}>Let's Learn →</Text>
+          </View>
+        </TouchableOpacity>
 
         <Divider
           style={{
@@ -356,10 +361,11 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(1),
   },
   recommandWordContainer: {
-    // width: responsiveScreenWidth(100),
-    // marginTop: responsiveScreenHeight(2),
-    height: responsiveScreenHeight(21),
-    marginRight: responsiveScreenWidth(-3),
+    width: responsiveScreenWidth(90),
+    marginTop: responsiveScreenHeight(2),
+    marginLeft: responsiveScreenWidth(3.5),
+    // height: responsiveScreenHeight(21),
+    // marginRight: responsiveScreenWidth(-3),
   },
   recommandWordKoreanSentenceContainer: {
     flexDirection: 'row',
@@ -376,8 +382,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     color: '#444444',
-    width: responsiveScreenWidth(80),
+    width: responsiveScreenWidth(85),
     fontSize: responsiveScreenFontSize(1.7),
+    opacity: 0.9,
+    fontFamily: 'NanumSquareOTFB',
+    paddingBottom: responsiveScreenHeight(1),
+  },
+  newWordKoreanSentence: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#444444',
+    width: responsiveScreenWidth(85),
+    fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
     paddingBottom: responsiveScreenHeight(1),
@@ -390,7 +406,7 @@ const styles = StyleSheet.create({
     color: '#9388E8',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(87),
+    width: responsiveScreenWidth(90),
     height: responsiveScreenHeight(22),
     borderRadius: 10,
   },

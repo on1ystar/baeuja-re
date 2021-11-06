@@ -81,7 +81,7 @@ const LearningUnit = ({
         const {
           data: { success, unit, tokenExpired, errorMessage },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ const LearningUnit = ({
         const {
           data: { sentences },
         } = await axios.get(
-          `https://dev.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
+          `https://api.k-peach.io/learning/contents/${contentId}/units/${unitIndex}/sentences`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -155,7 +155,7 @@ const LearningUnit = ({
   };
 
   // -------------------------------------useEffect----------------------------------------
-  useEffect(loadUnit, []);
+  useEffect(loadUnit, [contentId, unitIndex]);
 
   useEffect(() => {
     // 유튜브 영상 시간 가져오는 인터벌 실행
@@ -167,7 +167,12 @@ const LearningUnit = ({
           const sentenceEndTimeToSec = parseInt(sentenceMin) * 60 + parseInt(sentenceSec);
           return curruentTime <= sentenceEndTimeToSec;
         });
-        setCurrentSentence(() => filteredSentences[0]);
+        setCurrentSentence(() => {
+          if (filteredSentences.length === 0) {
+            return sentences[sentences.length - 1];
+          }
+          return filteredSentences[0];
+        });
       } else if (!isPlaying) clearInterval(intervalId);
     }, 100);
     return () => {
@@ -178,6 +183,7 @@ const LearningUnit = ({
   // 영상 끝났을 때
   useEffect(() => {
     if (isEnded) {
+      console.log(sentences[0]);
       youtubeRef.current.seekTo(
         parseInt(unit.startTime.split(':')[0]) * 60 + parseInt(unit.startTime.split(':')[1])
       );
@@ -214,7 +220,7 @@ const LearningUnit = ({
               }}
               height={responsiveScreenHeight(26)}
               onChangeState={onStateChange}
-              volume={50}
+              volume={100}
             />
           </View>
           {/* 스크립트, 단어 그리기 */}
@@ -224,9 +230,11 @@ const LearningUnit = ({
 
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
-            {Object.keys(currentSentence).length !== 0 &&
-            currentSentence !== undefined &&
-            isPlaying === false ? (
+            {
+              Object.keys(currentSentence).length !== 0 &&
+              currentSentence !== undefined &&
+              // isPlaying === false ?
+
               currentSentence.perfectVoiceUri === 'NULL' ? (
                 <View>
                   <Text
@@ -239,29 +247,35 @@ const LearningUnit = ({
                   </Text>
                 </View>
               ) : (
-                <Tools currentSentence={currentSentence} />
+                <Tools
+                  currentSentence={currentSentence}
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                />
               )
-            ) : (
-              <View>
-                <Text
-                  style={{
-                    marginTop: responsiveScreenHeight(3),
-                    color: '#BBBBBB',
-                  }}
-                >
-                  {'When you pause the video,'}
-                </Text>
-                <Text
-                  style={{
-                    marginTop: responsiveScreenHeight(1.5),
-                    marginLeft: responsiveScreenWidth(20),
-                    color: '#BBBBBB',
-                  }}
-                >
-                  {'we provide learning tools 👍'}
-                </Text>
-              </View>
-            )}
+
+              // : (
+              //   <View>
+              //     <Text
+              //       style={{
+              //         marginTop: responsiveScreenHeight(3),
+              //         color: '#BBBBBB',
+              //       }}
+              //     >
+              //       {'When you pause the video,'}
+              //     </Text>
+              //     <Text
+              //       style={{
+              //         marginTop: responsiveScreenHeight(1.5),
+              //         marginLeft: responsiveScreenWidth(20),
+              //         color: '#BBBBBB',
+              //       }}
+              //     >
+              //       {'we provide learning tools 👍'}
+              //     </Text>
+              //   </View>
+              // )
+            }
           </View>
         </View>
       )}

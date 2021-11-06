@@ -50,7 +50,8 @@ const Tabs = () => (
     {/* Bookmark 탭 */}
     <Tab.Screen
       name="Bookmark"
-      component={Bookmark}
+      children={() => <Bookmark reload={Date.now()} />}
+      // component={Bookmark}
       options={{
         tabBarIcon: ({ focused, color, size }) => {
           return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
@@ -72,7 +73,8 @@ const Tabs = () => (
     {/* Review 탭 */}
     <Tab.Screen
       name="Review"
-      component={Review}
+      children={() => <Review reload={Date.now()} />}
+      // component={Review}
       options={{
         tabBarIcon: ({ focused, color, size }) => {
           return (

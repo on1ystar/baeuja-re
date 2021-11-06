@@ -34,7 +34,7 @@ const GetNewContents = () => {
         if (error) throw error;
         const {
           data: { success, contents, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/home/contents`, {
+        } = await axios.get(`https://api.k-peach.io/home/contents`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -109,12 +109,20 @@ const DrawNewContents = ({ newcontents }) => {
           /> */}
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/albumJacketBig.jpg')}
+            source={
+              newcontents.classification === 'K-POP'
+                ? require('../../assets/img/albumJacketBig.jpg')
+                : newcontents.classification === 'K-MOVIE'
+                ? require('../../assets/img/moviePosterBig2.png')
+                : require('../../assets/img/director2.png')
+            }
             style={styles.thumbnailImage}
           />
           <View style={styles.kdramaTitleContainer}>
             <Text style={styles.kdramaTitle} numberOfLines={1} ellipsizeMode="tail">
-              {newcontents.artist} - {newcontents.title}
+              {newcontents.classification === 'K-POP'
+                ? `${newcontents.artist} - ${newcontents.title}`
+                : newcontents.title}
             </Text>
           </View>
           <View style={{ flexDirection: 'row' }}>

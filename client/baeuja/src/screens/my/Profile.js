@@ -134,7 +134,7 @@ const Profile = () => {
 
         const {
           data: { success, user, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/users/777`, {
+        } = await axios.get(`https://api.k-peach.io/users/777`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -217,7 +217,7 @@ const Profile = () => {
       const {
         data: { success, user, token, tokenExpired, errorMessage },
       } = await axios.patch(
-        `https://dev.k-peach.io/users/777?column=email`,
+        `https://api.k-peach.io/users/777?column=email`,
         { updatingValue: email },
         {
           headers: {
@@ -266,7 +266,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=nickname`, changedNickname, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=nickname`, changedNickname, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -305,7 +305,7 @@ const Profile = () => {
 
       const {
         data: { success, user, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=country`, changedCountry, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=country`, changedCountry, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -342,7 +342,7 @@ const Profile = () => {
 
       const {
         data: { success, user, token, tokenExpired, errorMessage },
-      } = await axios.patch(`https://dev.k-peach.io/users/777?column=timezone`, changedTimezone, {
+      } = await axios.patch(`https://api.k-peach.io/users/777?column=timezone`, changedTimezone, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -394,9 +394,12 @@ const Profile = () => {
               }}
             >
               <Text style={{ fontSize: responsiveFontSize(2.5), color: '#9388E8' }}>
-                Hello, {nickname} 👋
+                <Text style={{ fontSize: responsiveFontSize(2.2), color: '#444444' }}>
+                  Hello~{'\n'}
+                </Text>
+                {nickname} 👋
               </Text>
-              {roleId == 2 ? (
+              {/* {roleId == 2 ? (
                 <Text style={{ fontSize: responsiveFontSize(2), color: '#000000' }}>
                   You are a Member !
                 </Text>
@@ -404,7 +407,7 @@ const Profile = () => {
                 <Text style={{ fontSize: responsiveFontSize(2), color: '#000000' }}>
                   You are a Guest !
                 </Text>
-              )}
+              )} */}
               <TouchableOpacity
                 style={{ flexDirection: 'row' }}
                 onPress={() => {
@@ -466,7 +469,11 @@ const Profile = () => {
                       Switch to Google
                     </Text>
                   )}
-                  <Ionicons size={20} color={'#444444'} name="chevron-forward-outline"></Ionicons>
+                  <Ionicons
+                    size={roleId == 2 ? 0 : 20}
+                    color={'#444444'}
+                    name="chevron-forward-outline"
+                  ></Ionicons>
                 </TouchableOpacity>
               </View>
             </View>

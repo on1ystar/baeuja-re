@@ -36,7 +36,7 @@ const ContactUs = () => {
         if (error) throw error;
         const {
           data: { success, qnaTypes, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/qnas/types`, {
+        } = await axios.get(`https://api.k-peach.io/qnas/types`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

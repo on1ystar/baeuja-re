@@ -1,7 +1,15 @@
 /* eslint-disable react/prop-types */
 // Library import
-import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -19,12 +27,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import { ProgressBar } from '@react-native-community/progress-bar-android'; // RN Progress bar android
 
-const GetLearningContents = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [contents, setContents] = useState([]);
+class Kmovie extends React.Component {
+  state = {
+    count: 0,
+    isLoading: true,
+    contents: [],
+  };
+  componentDidMount() {
+    this.getContents();
+    console.log('Component rendered');
+  }
 
-  // Contents Data 가져오기
-  const getContents = () => {
+  getContents = () => {
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -45,39 +59,39 @@ const GetLearningContents = () => {
 
         if (!success) throw new Error(errorMessage);
 
-        setContents(contents);
-        setIsLoading(false);
-        console.log('success getting K-POP Contents');
+        console.log('success getting contents');
+        this.setState({ isLoading: false, contents });
       } catch (error) {
         console.log(error);
       }
     });
   };
 
-  // useEffect
-  useEffect(getContents, []);
-
-  return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF', marginBottom: responsiveScreenHeight(1) }}>
-      {isLoading ? (
-        <Text> </Text>
-      ) : (
-        contents.map((content) => {
-          if (content.classification === 'K-POP') {
-            return <DrawingContent key={content.contentId} content={content} />;
-          }
-        })
-      )}
-    </View>
-  );
-};
+  render() {
+    const { contents, isLoading } = this.state;
+    return (
+      <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        {isLoading ? (
+          <Text> </Text>
+        ) : (
+          contents.map((content) => {
+            if (content.classification === 'K-MOVIE') {
+              return <DrawingContent key={content.contentId} content={content} />;
+            }
+          })
+        )}
+      </ScrollView>
+    );
+  }
+}
 
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
   const contentTitle = content.title;
+
   return (
-    <View style={styles.allContainer}>
+    <SafeAreaView style={styles.allContainer}>
       <View style={styles.kpopContainer}>
         {/* <Image
           transitionDuration={1000}
@@ -88,7 +102,7 @@ const DrawingContent = ({ content }) => {
         /> */}
         <Image
           transitionDuration={1000}
-          source={require('../../assets/img/albumJacket.jpg')}
+          source={require('../../assets/img/moviePoster.jpg')}
           style={styles.thumbnailImage}
         />
         <View style={styles.titleContainer}>
@@ -106,7 +120,9 @@ const DrawingContent = ({ content }) => {
             <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
               {content.title}
             </Text>
-            <Text style={styles.artist}>{content.artist}</Text>
+            <Text style={styles.artist} numberOfLines={1} ellipsizeMode="tail">
+              {content.director}
+            </Text>
           </TouchableOpacity>
           <View style={styles.progressContainer}>
             <Text
@@ -145,13 +161,14 @@ const DrawingContent = ({ content }) => {
           <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
+    marginBottom: responsiveScreenHeight(2),
   },
   kpopContainer: {
     flex: 1,
@@ -159,27 +176,29 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(2),
     marginLeft: responsiveScreenWidth(5),
     width: responsiveScreenWidth(100),
-    // backgroundColor: '#000000',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(15),
-    height: responsiveScreenWidth(15),
+    width: responsiveScreenWidth(23),
+    height: responsiveScreenWidth(30),
     borderRadius: 10,
   },
   titleContainer: {
-    width: responsiveScreenWidth(54.5),
-    height: responsiveHeight(8),
     marginLeft: responsiveScreenWidth(5),
+    height: responsiveHeight(8),
   },
   title: {
     color: '#444444',
-    width: responsiveScreenWidth(54.5),
+    width: responsiveScreenWidth(50),
+    marginTop: responsiveScreenHeight(1),
     fontSize: responsiveFontSize(2.1),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
   artist: {
-    fontSize: responsiveFontSize(1.6),
+    width: responsiveScreenWidth(50),
+    marginBottom: responsiveScreenHeight(1),
+    marginTop: responsiveScreenHeight(0.5),
+    fontSize: responsiveFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
     color: '#666666',
@@ -195,9 +214,8 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(3),
   },
   progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginTop: responsiveScreenHeight(3),
   },
 });
 
-export default GetLearningContents;
+export default Kmovie;

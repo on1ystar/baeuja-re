@@ -42,7 +42,7 @@ import { Card, Divider } from 'react-native-elements'; // React Native Elements
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import { useNavigation } from '@react-navigation/native'; // Navigation
 
-const Review = () => {
+const Review = ({ reload }) => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [reviewRecords, setReviewRecords] = useState({});
@@ -59,7 +59,7 @@ const Review = () => {
         if (error) throw error;
         const {
           data: { success, learningHistory, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/review`, {
+        } = await axios.get(`https://api.k-peach.io/review`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -68,15 +68,13 @@ const Review = () => {
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`success : ${success}\nLearning History: ${learningHistory}`);
+        console.log(`success : ${success}\n`);
 
         if (!success) throw new Error(errorMessage);
 
         console.log('Success Getting Learning History');
-        console.log(`${learningHistory.avarageScoreOfWords}`);
 
         setReviewRecords(learningHistory);
-        setRandomNumber(Math.random());
         setIsLoading(() => false);
       } catch (error) {
         console.log(error);
@@ -85,7 +83,7 @@ const Review = () => {
   };
 
   // useEffect
-  useEffect(loadReviewRecords, []);
+  useEffect(loadReviewRecords, [reload]);
 
   let countsOfWords;
   let averageScoreOfWords;
@@ -123,13 +121,13 @@ const Review = () => {
       ) : (
         <View style={styles.container}>
           <Text style={styles.mainText}>Review</Text>
-          <Divider
+          {/* <Divider
             style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
             color="#EEEEEE"
             insetType="middle"
             width={1}
             orientation="horizontal"
-          />
+          /> */}
           {/* <Image
             transitionDuration={1000}
             source={require('../../assets/img/review.png')}
@@ -317,13 +315,17 @@ const styles = StyleSheet.create({
   mainText: {
     justifyContent: 'flex-start',
     marginTop: responsiveScreenHeight(2),
-    marginLeft: responsiveScreenWidth(5),
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
     fontSize: responsiveFontSize(3.5),
-    // fontFamily: 'NanumSquareOTFB',
-    fontFamily: 'Playball-Regular',
-
-    // fontWeight: 'bold',
-    color: '#444444',
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
     // backgroundColor: 'black',
   },
   goToLearnArrow: {},

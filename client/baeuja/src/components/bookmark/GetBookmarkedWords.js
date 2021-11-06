@@ -19,7 +19,7 @@ import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
-const GetBookmarkedWords = ({ sortBy, option }) => {
+const GetBookmarkedWords = ({ sortBy, option, reload, startIndex }) => {
   const navigation = useNavigation();
   const [bookmarkedWords, setBookmarkedWords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +38,7 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
         const optionQeury = `option=${option}`;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/bookmark/words?${sortByQeury}&${optionQeury}`, {
+        } = await axios.get(`https://api.k-peach.io/bookmark/words?${sortByQeury}&${optionQeury}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -47,7 +47,7 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`success : ${success}\n words: ${words}`);
+        console.log(`success : ${success}\n`);
 
         if (!success) throw new Error(errorMessage);
 
@@ -71,11 +71,10 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
         }
         // AsyncStorage error
         if (error) throw error;
-        console.log(bookmarkedWord.wordId);
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
+          `https://api.k-peach.io/bookmark/words/${bookmarkedWord.wordId}`,
           {},
           {
             headers: {
@@ -108,14 +107,14 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
   };
 
   // useEffect
-  useEffect(loadBookmarkedWords, [randomNumber, sortBy, option]);
+  useEffect(loadBookmarkedWords, [reload, randomNumber, sortBy, option]);
 
   return (
     <View style={{ marginBottom: responsiveScreenHeight(10) }}>
       {isLoading ? (
         <Text></Text>
       ) : (
-        bookmarkedWords.map((bookmarkedWord) => {
+        bookmarkedWords.slice(0, startIndex + 10).map((bookmarkedWord) => {
           const wordId = bookmarkedWord.wordId;
           let latestLearningAt;
           let bookmarkedAt;
@@ -132,7 +131,7 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
             bookmarkedAt = bookmarkedAt[0];
           }
           return (
-            <ScrollView style={styles.allContainer} key={bookmarkedWord.wordId}>
+            <View style={styles.allContainer} key={bookmarkedWord.wordId}>
               <Card
                 containerStyle={{
                   borderWidth: 0.5,
@@ -152,22 +151,34 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
                   }
                 >
                   <View style={styles.bookmarkedWordsContainer}>
-                    <Text style={styles.bookmarkedWords}>{bookmarkedWord.korean}</Text>
-                    <Text style={styles.bookmarkedWords}>{bookmarkedWord.translation}</Text>
+                    <Text
+                      style={styles.bookmarkedKoreanWords}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {bookmarkedWord.korean}
+                    </Text>
+                    <Text style={styles.bookmarkedWords} numberOfLines={1} ellipsizeMode="tail">
+                      {bookmarkedWord.translation}
+                    </Text>
                   </View>
                   <View
                     style={{
-                      marginLeft: responsiveScreenWidth(10),
-                      width: responsiveScreenWidth(63),
+                      marginLeft: responsiveScreenWidth(5),
+                      width: responsiveScreenWidth(68),
                       marginTop: responsiveScreenHeight(1),
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       alignItems: 'center',
                     }}
                   >
-                    <Text style={{ fontSize: responsiveFontSize(1.5) }}>
+                    <Text
+                      style={{
+                        fontSize: responsiveFontSize(1.5),
+                      }}
+                    >
                       <Ionicons name="pencil-outline" size={10} color={'#FFAD41'}></Ionicons>{' '}
-                      <Text style={{ color: '#BBB2F9', fontFamily: 'NanumSquareOTFB' }}>
+                      <Text style={{ color: '#AAAAAA', fontFamily: 'NanumSquareOTFB' }}>
                         {latestLearningAt}
                       </Text>
                     </Text>
@@ -175,7 +186,7 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
                       <View>
                         <Antdesign size={10} color={'#FFAD41'} name={'star'}></Antdesign>
                       </View>{' '}
-                      <Text style={{ color: '#BBB2F9', fontFamily: 'NanumSquareOTFB' }}>
+                      <Text style={{ color: '#AAAAAA', fontFamily: 'NanumSquareOTFB' }}>
                         {bookmarkedAt}
                       </Text>
                     </Text>
@@ -191,7 +202,7 @@ const GetBookmarkedWords = ({ sortBy, option }) => {
                   <Antdesign color={'#FFAD41'} size={25} name={'star'}></Antdesign>
                 </TouchableOpacity>
               </Card>
-            </ScrollView>
+            </View>
           );
         })
       )}
@@ -205,13 +216,23 @@ const styles = StyleSheet.create({
   },
   bookmarkedWordsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    alignItems: 'center',
   },
-  bookmarkedWords: {
+  bookmarkedKoreanWords: {
+    marginLeft: responsiveScreenWidth(5),
+    marginRight: responsiveScreenWidth(5),
     color: '#444444',
+    width: responsiveScreenWidth(40),
     fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '700',
+  },
+  bookmarkedWords: {
+    color: '#444444',
+    width: responsiveScreenWidth(25),
+    fontSize: responsiveScreenFontSize(1.6),
+    fontFamily: 'NanumSquareOTFB',
+    opacity: 0.9,
   },
   bookmarkedIconContainer: {
     position: 'absolute',

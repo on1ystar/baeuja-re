@@ -43,6 +43,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import { Picker } from '@react-native-picker/picker'; // React Native Picker
 
+const getLevel = (score) => {
+  if (score > 85) return 'A+';
+  else if (score > 75) return 'A';
+  else if (score > 60) return 'B';
+  else if (score > 45) return 'C';
+  else if (score === 0) return 'X';
+  else return 'D';
+};
+
 const WordsReview = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
@@ -50,6 +59,7 @@ const WordsReview = () => {
   const [randomNumber, setRandomNumber] = useState(Math.random());
   const [sortBy, setSortBy] = useState('latest_learning_at'); // bookmark_at(default) | latest_learning_at
   const [option, setOption] = useState('DESC'); // DESC(default)  | ASC
+  const [startIndex, setStartIndex] = useState(0); // sentences 시작 인덱스
 
   // 리뷰 단어 불러오기
   const loadWordsReview = () => {
@@ -64,7 +74,7 @@ const WordsReview = () => {
         const optionQeury = `option=${option}`;
         const {
           data: { success, words, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/review/words?${sortByQeury}&${optionQeury}`, {
+        } = await axios.get(`https://api.k-peach.io/review/words?${sortByQeury}&${optionQeury}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -73,7 +83,7 @@ const WordsReview = () => {
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`success : ${success}\nWords: ${words}`);
+        console.log(`success : ${success}\n`);
 
         if (!success) throw new Error(errorMessage);
 
@@ -100,7 +110,7 @@ const WordsReview = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/words/${word.wordId}`,
+          `https://api.k-peach.io/bookmark/words/${word.wordId}`,
           {},
           {
             headers: {
@@ -128,10 +138,24 @@ const WordsReview = () => {
     });
   };
 
+  // 무한 스크롤 로딩 함수
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 40;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
   useEffect(loadWordsReview, [sortBy, option, randomNumber]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      onScroll={({ nativeEvent }) => {
+        if (isCloseToBottom(nativeEvent)) {
+          setStartIndex(() => startIndex + 10);
+        }
+      }}
+      scrollEventThrottle={100}
+    >
       <View style={{ marginBottom: responsiveScreenHeight(3) }}>
         <View
           style={{
@@ -184,7 +208,8 @@ const WordsReview = () => {
                 borderColor: '#000000',
                 color: '#000000',
                 height: responsiveScreenHeight(5),
-                width: responsiveScreenWidth(40),
+                width: responsiveScreenWidth(43),
+                paddingRight: 0,
                 paddingBottom: 0,
                 paddingTop: 0,
                 borderWidth: 1,
@@ -200,13 +225,13 @@ const WordsReview = () => {
               />
               <Picker.Item
                 style={{ fontSize: responsiveFontSize(1.5) }}
-                label={'average score'}
+                label={'average level'}
                 value={'average_score'}
                 key={'average_score'}
               />
               <Picker.Item
                 style={{ fontSize: responsiveFontSize(1.5) }}
-                label={'highest score'}
+                label={'highest level'}
                 value={'highest_score'}
                 key={'highest_score'}
               />
@@ -285,9 +310,10 @@ const WordsReview = () => {
         {isLoading ? (
           <Text></Text>
         ) : (
-          words.map((word) => {
+          words.slice(0, startIndex + 10).map((word) => {
             const navigation = useNavigation();
             const wordId = word.wordId;
+
             let latestLearningAt;
             if (word.latestLearningAt == null) {
               latestLearningAt = 'Not learned yet';
@@ -347,6 +373,7 @@ const WordsReview = () => {
                           style={{
                             flexDirection: 'row',
                             justifyContent: 'space-between',
+                            alignItems: 'center',
                             width: responsiveScreenWidth(55),
                           }}
                         >
@@ -364,8 +391,9 @@ const WordsReview = () => {
                           <Text
                             style={{
                               color: '#444444',
-                              fontSize: responsiveFontSize(2.2),
-                              width: responsiveScreenWidth(25),
+                              fontSize: responsiveFontSize(1.9),
+                              opacity: 0.9,
+                              width: responsiveScreenWidth(35),
                             }}
                             numberOfLines={1}
                             ellipsizeMode="tail"
@@ -384,50 +412,50 @@ const WordsReview = () => {
                       <Text
                         style={{
                           width: responsiveScreenWidth(32.65),
-                          fontSize: responsiveFontSize(1.5),
+                          fontSize: responsiveFontSize(1.3),
                           paddingRight: 0,
                           color: '#444444',
                         }}
                       >
-                        ▪︎Highest score :
+                        ▪︎Highest level :
                         <Text
                           style={{
-                            fontSize: responsiveFontSize(1.5),
+                            fontSize: responsiveFontSize(1.3),
                             color: '#BBB2F9',
                             marginRight: 0,
                           }}
                         >
                           {' '}
-                          {word.highestScore}
+                          {getLevel(word.highestScore)}
                         </Text>
                       </Text>
                       <Text
                         style={{
-                          fontSize: responsiveFontSize(1.5),
+                          fontSize: responsiveFontSize(1.3),
                           color: '#444444',
                           marginLeft: responsiveScreenWidth(5),
                         }}
                       >
-                        ▪︎Average score :
-                        <Text style={{ fontSize: responsiveFontSize(1.5), color: '#BBB2F9' }}>
+                        ▪︎Average level :
+                        <Text style={{ fontSize: responsiveFontSize(1.3), color: '#BBB2F9' }}>
                           {' '}
-                          {word.averageScore}
+                          {getLevel(word.averageScore)}
                         </Text>
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: responsiveScreenHeight(1) }}>
-                      <Text style={{ fontSize: responsiveFontSize(1.5), color: '#444444' }}>
+                      <Text style={{ fontSize: responsiveFontSize(1.3), color: '#444444' }}>
                         ▪︎Importance :<Text style={{ color: '#BBB2F9' }}> {word.importance}</Text>
                       </Text>
                       <Text
                         style={{
-                          fontSize: responsiveFontSize(1.5),
+                          fontSize: responsiveFontSize(1.3),
                           color: '#444444',
-                          marginLeft: responsiveScreenWidth(12.2),
+                          marginLeft: responsiveScreenWidth(15.3),
                         }}
                       >
                         ▪︎Latest learned :
-                        <Text style={{ fontSize: responsiveFontSize(1.5), color: '#BBB2F9' }}>
+                        <Text style={{ fontSize: responsiveFontSize(1.3), color: '#BBB2F9' }}>
                           {' '}
                           {latestLearningAt}
                         </Text>

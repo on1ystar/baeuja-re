@@ -42,6 +42,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import { Picker } from '@react-native-picker/picker'; // React Native Picker
 
+const getLevel = (score) => {
+  if (score > 85) return 'A+';
+  else if (score > 75) return 'A';
+  else if (score > 60) return 'B';
+  else if (score > 45) return 'C';
+  else if (score === 0) return 'X';
+  else return 'D';
+};
+
 const SentencesReview = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +58,7 @@ const SentencesReview = () => {
   const [randomNumber, setRandomNumber] = useState(Math.random());
   const [sortBy, setSortBy] = useState('latest_learning_at'); // bookmark_at(default) | latest_learning_at
   const [option, setOption] = useState('DESC'); // DESC(default)  | ASC
+  const [startIndex, setStartIndex] = useState(0); // sentences 시작 인덱스
 
   // 리뷰 단어 불러오기
   const loadsentencesReview = () => {
@@ -64,7 +74,7 @@ const SentencesReview = () => {
         const {
           data: { success, sentences, tokenExpired, errorMessage },
         } = await axios.get(
-          `https://dev.k-peach.io/review/sentences?${sortByQeury}&${optionQeury}`,
+          `https://api.k-peach.io/review/sentences?${sortByQeury}&${optionQeury}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -75,7 +85,7 @@ const SentencesReview = () => {
         if (tokenExpired) {
           // login으로 redirect
         }
-        console.log(`success : ${success}\nSentences: ${sentences}`);
+        console.log(`success : ${success}`);
 
         if (!success) throw new Error(errorMessage);
 
@@ -102,7 +112,7 @@ const SentencesReview = () => {
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/sentences/${sentence.sentenceId}`,
+          `https://api.k-peach.io/bookmark/sentences/${sentence.sentenceId}`,
           {},
           {
             headers: {
@@ -132,10 +142,24 @@ const SentencesReview = () => {
     });
   };
 
+  // 무한 스크롤 로딩 함수
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 40;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
   useEffect(loadsentencesReview, [sortBy, option, randomNumber]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      onScroll={({ nativeEvent }) => {
+        if (isCloseToBottom(nativeEvent)) {
+          setStartIndex(() => startIndex + 10);
+        }
+      }}
+      scrollEventThrottle={100}
+    >
       <View style={{ marginBottom: responsiveScreenHeight(3) }}>
         <View
           style={{
@@ -188,7 +212,7 @@ const SentencesReview = () => {
                 borderColor: '#000000',
                 color: '#000000',
                 height: responsiveScreenHeight(5),
-                width: responsiveScreenWidth(40),
+                width: responsiveScreenWidth(43),
                 paddingBottom: 0,
                 paddingTop: 0,
                 borderWidth: 1,
@@ -204,13 +228,13 @@ const SentencesReview = () => {
               />
               <Picker.Item
                 style={{ fontSize: responsiveFontSize(1.5) }}
-                label={'average score'}
+                label={'average level'}
                 value={'average_score'}
                 key={'average_score'}
               />
               <Picker.Item
                 style={{ fontSize: responsiveFontSize(1.5) }}
-                label={'highest score'}
+                label={'highest level'}
                 value={'highest_score'}
                 key={'highest_score'}
               />
@@ -283,7 +307,7 @@ const SentencesReview = () => {
         {isLoading ? (
           <Text></Text>
         ) : (
-          sentences.map((sentence) => {
+          sentences.slice(0, startIndex + 10).map((sentence) => {
             const navigation = useNavigation();
             const sentenceId = sentence.sentenceId;
             const contentId = sentence.contentId;
@@ -360,7 +384,8 @@ const SentencesReview = () => {
                           <Text
                             style={{
                               color: '#444444',
-                              fontSize: responsiveFontSize(2.2),
+                              fontSize: responsiveFontSize(1.7),
+                              opacity: 0.9,
                               width: responsiveScreenWidth(70),
                             }}
                             numberOfLines={1}
@@ -385,7 +410,7 @@ const SentencesReview = () => {
                           color: '#444444',
                         }}
                       >
-                        ▪︎Highest score :
+                        ▪︎Highest level :
                         <Text
                           style={{
                             fontSize: responsiveFontSize(1.5),
@@ -394,7 +419,7 @@ const SentencesReview = () => {
                           }}
                         >
                           {' '}
-                          {sentence.highestScore}
+                          {getLevel(sentence.highestScore)}
                         </Text>
                       </Text>
                       <Text
@@ -404,10 +429,10 @@ const SentencesReview = () => {
                           marginLeft: responsiveScreenWidth(5),
                         }}
                       >
-                        ▪︎Average score :
+                        ▪︎Average level :
                         <Text style={{ fontSize: responsiveFontSize(1.5), color: '#BBB2F9' }}>
                           {' '}
-                          {sentence.averageScore}
+                          {getLevel(sentence.averageScore)}
                         </Text>
                       </Text>
                     </View>

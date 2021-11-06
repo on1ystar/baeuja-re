@@ -42,13 +42,13 @@ const My = ({ navigation: { navigate } }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.mainText}>My Page</Text>
-      <Divider
+      {/* <Divider
         style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
         color="#EEEEEE"
         insetType="middle"
         width={1}
         orientation="horizontal"
-      />
+      /> */}
       <View style={{ flex: 1, alignContent: 'center' }}>
         {/* Profile 탭 */}
         <View style={{ marginTop: responsiveScreenHeight(10) }}>
@@ -192,11 +192,17 @@ const styles = StyleSheet.create({
   mainText: {
     justifyContent: 'flex-start',
     marginTop: responsiveScreenHeight(2),
-    marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3.4),
-    fontFamily: 'Playball-Regular',
-    // fontWeight: 'bold',
-    color: '#444444',
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
     // backgroundColor: 'black',
   },
   qnaTextContainer: {

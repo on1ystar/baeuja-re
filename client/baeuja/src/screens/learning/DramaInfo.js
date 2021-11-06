@@ -27,7 +27,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import { Card } from 'react-native-elements'; // React Native Elements
 
-const MoreInfo = ({
+const DramaInfo = ({
   route: {
     params: { contentId, contentTitle },
   },
@@ -35,7 +35,6 @@ const MoreInfo = ({
 }) => {
   const [thumbnailUri, setThumbNailUri] = useState(null);
   const [title, setTitle] = useState(null);
-  const [artist, setArtist] = useState(null);
   const [director, setDirector] = useState(null);
   const [description, setDescription] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState(null);
@@ -64,9 +63,8 @@ const MoreInfo = ({
 
         console.log('success getting More Information');
 
-        setThumbNailUri(thumbnailUri);
         setTitle(title);
-        setArtist(artist);
+        setDirector(director);
         setDescription(description);
         setYoutubeUrl(youtubeUrl);
 
@@ -81,21 +79,13 @@ const MoreInfo = ({
     <SafeAreaView style={styles.allContainer}>
       <ScrollView style={{ flex: 1, marginBottom: responsiveScreenHeight(10) }}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>
-            {artist} - {title}
-          </Text>
+          <Text style={styles.title}>{director}</Text>
+          <Text style={styles.title}>{title}</Text>
         </View>
         <View style={styles.thumbnailImageContainer}>
-          {/* <Image
-            style={styles.thumbnailImage}
-            transitionDuration={1000}
-            source={{
-              uri: thumbnailUri,
-            }}
-          /> */}
           <Image
             transitionDuration={1000}
-            source={require('../../assets/img/1_b.png')}
+            source={require('../../assets/img/director2.png')}
             style={styles.thumbnailImage}
           />
         </View>
@@ -142,7 +132,7 @@ const MoreInfo = ({
   );
 };
 
-export default MoreInfo;
+export default DramaInfo;
 
 const styles = StyleSheet.create({
   allContainer: {
@@ -169,7 +159,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   titleContainer: {
-    marginTop: 23,
+    width: responsiveScreenWidth(100),
+    marginTop: responsiveScreenHeight(3),
     justifyContent: 'center',
     alignItems: 'center',
   },

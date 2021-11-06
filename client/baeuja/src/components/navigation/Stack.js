@@ -20,7 +20,10 @@ import SentencesReview from '../../screens/review/SentencesReview';
 import Profile from '../../screens/my/Profile';
 import LearningStatus from '../../screens/my/LearningStatus';
 import AboutUs from '../../screens/my/AboutUs';
-import BookmarkSortModal from '../../screens/bookmark/BookmarkSortModal';
+import Kmovie from '../../screens/learning/Kmovie';
+import Kdrama from '../../screens/learning/Kdrama';
+import DramaInfo from '../../screens/learning/DramaInfo';
+import MovieInfo from '../../screens/learning/MovieInfo';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -39,13 +42,18 @@ const Stack = () => (
     <NativeStack.Screen name="Login" options={{ headerShown: false }} component={Login} />
     <NativeStack.Group screenOptions={{ presentation: 'modal' }}>
       <NativeStack.Screen name="Song Info" component={MoreInfo} />
+      <NativeStack.Screen name="Drama Info" component={DramaInfo} />
+      <NativeStack.Screen name="Movie Info" component={MovieInfo} />
+
       <NativeStack.Screen name="Help" component={Help} />
     </NativeStack.Group>
-    <NativeStack.Screen name="K-pop" component={GetKpopLearningContents} />
+    <NativeStack.Screen name="K-Pop" component={GetKpopLearningContents} />
+    <NativeStack.Screen name="K-Drama" component={Kdrama} />
+    <NativeStack.Screen name="K-Movie" component={Kmovie} />
+
     <NativeStack.Screen name="Learning Word" component={LearningWord} />
     <NativeStack.Screen options={{ flex: 1 }} name="Units" component={LearningUnits} />
     <NativeStack.Screen name="Learning Unit" component={LearningUnit} />
-    <NativeStack.Screen name="Sort Options" component={BookmarkSortModal} />
     <NativeStack.Screen name="Words Review" component={WordsReview} />
     <NativeStack.Screen name="Sentences Review" component={SentencesReview} />
     <NativeStack.Screen name="Profile" component={Profile} />

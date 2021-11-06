@@ -48,7 +48,7 @@ const LearningWord = ({
 
         const {
           data: { sentences },
-        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}/sentences`, {
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}/sentences`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,7 +56,7 @@ const LearningWord = ({
 
         const {
           data: { success, word, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/learning/words/${wordId}`, {
+        } = await axios.get(`https://api.k-peach.io/learning/words/${wordId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,7 +95,7 @@ const LearningWord = ({
         const {
           data: { success, isBookmark },
         } = await axios.post(
-          `https://dev.k-peach.io/bookmark/words/${wordId}`,
+          `https://api.k-peach.io/bookmark/words/${wordId}`,
           {},
           {
             headers: {
@@ -157,7 +157,7 @@ const LearningWord = ({
           <View style={styles.wordToolsContainer}>
             <WordTools words={word} />
           </View>
-          <ScrollView>
+          <ScrollView style={{ height: responsiveScreenHeight(50) }}>
             <View
               style={{
                 marginTop: responsiveScreenHeight(3),
@@ -253,8 +253,12 @@ const DrawExampleSentences = ({ sentence }) => {
     >
       <View style={{ flexDirection: 'row' }}>
         <View>
-          <Text style={styles.relatedKoreanSentences}>{drawKoreanSentence()}</Text>
-          <Text style={styles.relatedEnglishSentences}>{sentence.translatedText}</Text>
+          <Text style={styles.relatedKoreanSentences} numberOfLines={1} ellipsizeMode="tail">
+            {drawKoreanSentence()}
+          </Text>
+          <Text style={styles.relatedEnglishSentences} numberOfLines={1} ellipsizeMode="tail">
+            {sentence.translatedText}
+          </Text>
         </View>
         <TouchableOpacity
           style={styles.goToLearnArrow}
@@ -295,9 +299,9 @@ const styles = StyleSheet.create({
   },
   translatedWord: {
     color: '#666666',
-    fontSize: responsiveScreenFontSize(2.2),
+    fontSize: responsiveScreenFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    opacity: 0.9,
     marginTop: responsiveScreenHeight(1),
   },
   wordImportance: {
@@ -312,22 +316,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   relatedKoreanSentences: {
+    width: responsiveScreenWidth(90),
     color: '#666666',
     fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    marginBottom: responsiveScreenHeight(2),
+    marginBottom: responsiveScreenHeight(1),
   },
   relatedEnglishSentences: {
+    width: responsiveScreenWidth(80),
     color: '#666666',
-    fontSize: responsiveScreenFontSize(1.7),
+    fontSize: responsiveScreenFontSize(1.4),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    opacity: 0.9,
   },
   goToLearnArrow: {
     position: 'absolute',
     right: responsiveScreenWidth(-3),
-    top: responsiveScreenHeight(1.25),
+    top: responsiveScreenHeight(0.5),
   },
   wordBookmarkIcon: {
     position: 'absolute',

@@ -104,7 +104,7 @@ class Login extends Component {
     const country = RNLocalize.getCountry();
     const platform = Platform.OS;
 
-    const url = `https://dev.k-peach.io/users`;
+    const url = `https://api.k-peach.io/users`;
     try {
       if (authMethod === 'google') {
         config = {

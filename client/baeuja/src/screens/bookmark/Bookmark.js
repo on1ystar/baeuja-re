@@ -24,11 +24,24 @@ import { Picker } from '@react-native-picker/picker'; // React Native Picker
 import GetBookmarkedWords from '../../components/bookmark/GetBookmarkedWords';
 import GetBookmarkedSentences from '../../components/bookmark/GetBookmarkedSentences';
 
-const Bookmark = () => {
+const Bookmark = ({ reload }) => {
   const [selector, setSelector] = useState(false);
   const [sortBy, setSortBy] = useState('bookmark_at'); // bookmark_at(default) | latest_learning_at
   const [option, setOption] = useState('DESC'); // DESC(default)  | ASC
   const navigation = useNavigation();
+  const [sentencesStartIndex, setSentencesStartIndex] = useState(0); // sentences 시작 인덱스
+  const [wordsStartIndex, setWordsStartIndex] = useState(0); // words 시작 인덱스
+
+  // 무한 스크롤 로딩 함수
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 40;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
+  useEffect(() => {
+    setSentencesStartIndex(0);
+    setWordsStartIndex(0);
+  }, [reload]);
 
   //Bookmark Screen Return
   return (
@@ -36,13 +49,13 @@ const Bookmark = () => {
       {
         <View style={styles.allContainer}>
           <Text style={styles.bookmarkTitle}>Bookmark</Text>
-          <Divider
+          {/* <Divider
             style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
             color="#EEEEEE"
             insetType="middle"
-            width={1}
+            width={1}GetBookmarkedSentences
             orientation="horizontal"
-          />
+          /> */}
           <View style={styles.selectButtonContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -212,16 +225,30 @@ const Bookmark = () => {
               </Picker>
             </View>
           </View>
-          {/* 정렬 기능 구현시 사용 */}
-          {/* <View style={styles.timeContainer}>
-            <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
-            <Text style={styles.timeText}>2021. 10.</Text>
-          </View> */}
-          <ScrollView>
+
+          <ScrollView
+            onScroll={({ nativeEvent }) => {
+              if (isCloseToBottom(nativeEvent)) {
+                if (selector) setWordsStartIndex(() => wordsStartIndex + 10);
+                else setSentencesStartIndex(() => sentencesStartIndex + 10);
+              }
+            }}
+            scrollEventThrottle={100}
+          >
             {selector ? (
-              <GetBookmarkedWords sortBy={sortBy} option={option} />
+              <GetBookmarkedWords
+                sortBy={sortBy}
+                option={option}
+                reload={Date.now()}
+                startIndex={wordsStartIndex}
+              />
             ) : (
-              <GetBookmarkedSentences sortBy={sortBy} option={option} />
+              <GetBookmarkedSentences
+                sortBy={sortBy}
+                option={option}
+                reload={Date.now()}
+                startIndex={sentencesStartIndex}
+              />
             )}
           </ScrollView>
         </View>
@@ -235,14 +262,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bookmarkTitle: {
+    justifyContent: 'flex-start',
     marginTop: responsiveScreenHeight(2),
-    marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveScreenFontSize(3.5),
-    // fontFamily: 'NanumSquareOTFB',
-    // fontWeight: 'bold',
-    fontFamily: 'Playball-Regular',
-
-    color: '#444444',
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
+    // backgroundColor: 'black',
   },
   selectButtonContainer: {
     flexDirection: 'row',

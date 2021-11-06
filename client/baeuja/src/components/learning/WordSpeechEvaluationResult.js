@@ -4,7 +4,7 @@ import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } f
 import { Chart, Line, Area, HorizontalAxis, VerticalAxis } from 'react-native-responsive-linechart'; // React Native Responsive Linechart (피치 그래프 그리기)
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
-import { Divider } from 'react-native-elements'; // React Native Elements
+import { Divider, Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import {
   responsiveFontSize,
@@ -24,7 +24,7 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
   if (userScore == 0) {
     progress = 0;
   } else {
-    progress = userScore * 0.01 + 0.2;
+    progress = (userScore * 0.01) / 0.8;
   }
 
   const render = () => {
@@ -39,59 +39,71 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
       {isLoading ? (
         <></>
       ) : (
-        <View>
+        <View style={{ marginTop: responsiveScreenHeight(2) }}>
           {/* 발화 평가 등급 */}
-
-          <View style={styles.rankingChart}>
-            {console.log('Word Speech Evaluation Result user Score :', userScore)}
-            <Progress.Circle
-              size={130}
-              animated={true}
-              color={'#9388E8'}
-              progress={progress}
-              thickness={10}
-              strokeCap={'round'}
-              showsText={true}
-              formatText={() => {
-                if (userScore > 85) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>A+</Text>
-                    </View>
-                  );
-                } else if (userScore > 75) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>A</Text>
-                    </View>
-                  );
-                } else if (userScore > 60) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>B</Text>
-                    </View>
-                  );
-                } else if (userScore > 45) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>C</Text>
-                    </View>
-                  );
-                } else {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>D</Text>
-                    </View>
-                  );
-                }
-              }}
-            />
-            {/* <Divider
+          <Card containerStyle={{ borderWidth: 1, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text
+                style={{
+                  color: '#444444',
+                  marginTop: responsiveScreenHeight(1),
+                  fontSize: responsiveFontSize(2.3),
+                  fontWeight: '700',
+                }}
+              >
+                Your speech level
+              </Text>
+            </View>
+            <View style={styles.rankingChart}>
+              {console.log('Word Speech Evaluation Result user Score :', userScore)}
+              <Progress.Circle
+                size={130}
+                animated={true}
+                color={'#9388E8'}
+                progress={progress}
+                thickness={10}
+                strokeCap={'round'}
+                showsText={true}
+                formatText={() => {
+                  if (userScore > 85) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>A+</Text>
+                      </View>
+                    );
+                  } else if (userScore > 75) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>A</Text>
+                      </View>
+                    );
+                  } else if (userScore > 60) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>B</Text>
+                      </View>
+                    );
+                  } else if (userScore > 45) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>C</Text>
+                      </View>
+                    );
+                  } else {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>D</Text>
+                      </View>
+                    );
+                  }
+                }}
+              />
+              {/* <Divider
               style={{
                 width: '15%',
                 shadowColor: '#000000',
@@ -109,17 +121,18 @@ const WordSpeechEvaluationResult = ({ evaluatedWord }) => {
               width={1}
               orientation="horizontal"
             /> */}
-            <View
-              style={{
-                width: responsiveScreenWidth(5),
-                marginTop: responsiveScreenHeight(0.5),
-                height: responsiveScreenHeight(0.5),
-                backgroundColor: '#000000',
-                opacity: 0.15,
-                borderRadius: 10,
-              }}
-            ></View>
-          </View>
+              <View
+                style={{
+                  width: responsiveScreenWidth(5),
+                  marginTop: responsiveScreenHeight(0.5),
+                  height: responsiveScreenHeight(0.5),
+                  backgroundColor: '#000000',
+                  opacity: 0.15,
+                  borderRadius: 10,
+                }}
+              ></View>
+            </View>
+          </Card>
 
           {/* 발화 평가 피치 그래프 주석 */}
         </View>
@@ -136,8 +149,8 @@ const styles = StyleSheet.create({
   rankingChart: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: responsiveScreenHeight(7),
-    marginBottom: responsiveScreenHeight(5),
+    marginTop: responsiveScreenHeight(2),
+    marginBottom: responsiveScreenHeight(2),
   },
   rankingContainer: { justifyContent: 'center', alignItems: 'center' },
   rankingText: {

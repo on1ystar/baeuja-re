@@ -85,7 +85,7 @@ const LearningStyles = StyleSheet.create({
     borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1.5,
-    borderColor: '#555555',
+    borderColor: '#9388E8',
     marginRight: 20,
   },
   learningButtondisable: {
@@ -107,7 +107,9 @@ const LearningStyles = StyleSheet.create({
     borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1.5,
-    borderColor: '#9388E8',
+    color: '#FFFFFF',
+    borderColor: '#AAAAAA',
+    backgroundColor: '#9388E8',
     marginRight: 20,
   },
   learningButtonHidden: {
@@ -129,7 +131,7 @@ const LearningStyles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#9388E8',
     marginRight: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#9388E8',
     position: 'absolute',
     left: responsiveScreenWidth(39),
   },

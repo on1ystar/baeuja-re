@@ -52,7 +52,7 @@ import LearningStyles from '../../styles/LearningStyle';
 const audioRecorderPlayer = new AudioRecorderPlayer();
 let userPermission = 'a';
 
-const Tools = ({ currentSentence }) => {
+const Tools = ({ currentSentence, isPlaying, setIsPlaying }) => {
   const [isResponsedEvaluationResult, setIsResponsedEvaluationResult] = useState(false);
   const [evaluatedSentence, setEvaluatedSentence] = useState(null);
   const [correctText, setCorrectText] = useState('');
@@ -68,6 +68,7 @@ const Tools = ({ currentSentence }) => {
   // currentSentence.perfectVoiceUri
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
+    setIsPlaying(false);
     setIsPlayPerfectVoice(true);
     setButtonControl(true);
     const music = new Sound(currentSentence.perfectVoiceUri, '', (error) => {
@@ -97,7 +98,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -160,6 +161,7 @@ const Tools = ({ currentSentence }) => {
 
         // permission 있을 경우 음성 녹음
         if (permission) {
+          setIsPlaying(false);
           setButtonControl(true);
           console.log('-------------음성 녹음 시작-------------');
           setIsResponsedEvaluationResult(false);
@@ -198,7 +200,6 @@ const Tools = ({ currentSentence }) => {
     }
     setIsRecordingUserVoice(false);
     setIsResponsedEvaluationResult(true);
-    console.log(recoredUserVoice);
     console.log('-------------음성 녹음 중지 완료------------');
 
     try {
@@ -213,9 +214,6 @@ const Tools = ({ currentSentence }) => {
             name: DEFAULT_RECOREDED_FILE_NAME_iOS, //파일 이름
           }
         );
-        console.log(Platform.OS);
-        console.log(formData);
-        console.log(formData._parts[0][1]);
       } else if (Platform.OS === 'android') {
         formData.append(
           'userVoice', //업로드할 파일의 폼
@@ -225,9 +223,6 @@ const Tools = ({ currentSentence }) => {
             name: DEFAULT_RECOREDED_FILE_NAME_Android, //파일 이름
           }
         );
-        console.log(Platform.OS);
-        console.log(formData);
-        console.log(formData._parts[0][1]);
       }
 
       AsyncStorage.getItem('token', async (error, token) => {
@@ -240,7 +235,7 @@ const Tools = ({ currentSentence }) => {
 
         await axios
           .post(
-            `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
+            `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceEvaluation`,
             formData,
             {
               headers: {
@@ -254,7 +249,6 @@ const Tools = ({ currentSentence }) => {
             console.log(
               `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
             );
-            console.log(`pitchData : ${pitchData.userVoice}`);
 
             setEvaluatedSentence(evaluatedSentence);
             setCorrectText(evaluatedSentence.correctText);
@@ -314,7 +308,7 @@ const Tools = ({ currentSentence }) => {
         const {
           data: { success, sentenceHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
+          `https://api.k-peach.io/learning/sentences/${currentSentence.sentenceId}/userSentenceHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -336,6 +330,12 @@ const Tools = ({ currentSentence }) => {
       }
     });
   };
+
+  // useEffect
+  useEffect(() => {
+    setIsResponsedEvaluationResult(false);
+    setEvaluatedSentence(null);
+  }, [isPlaying]);
 
   // 학습 도구 부분 리턴
   return (
@@ -366,7 +366,7 @@ const Tools = ({ currentSentence }) => {
               }}
               disabled={isPlayPerfectVoice || buttonControl}
             >
-              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+              <Ionicons name="volume-high-outline" size={30} color="#FFFFFF"></Ionicons>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -383,7 +383,7 @@ const Tools = ({ currentSentence }) => {
               <Ionicons
                 name="volume-off-outline"
                 size={30}
-                color={buttonControl ? '#DDDDDD' : '#555555'}
+                color={buttonControl ? '#DDDDDD' : '#9388E8'}
               ></Ionicons>
             </TouchableOpacity>
           )}
@@ -400,7 +400,7 @@ const Tools = ({ currentSentence }) => {
             }}
             disabled={buttonControl}
           >
-            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#9388E8'} />
           </TouchableOpacity>
           {/* 음성 중지 버튼으로 바뀌는 부분 */}
           <TouchableOpacity
@@ -413,7 +413,7 @@ const Tools = ({ currentSentence }) => {
               onStopRecord();
             }}
           >
-            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
+            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#FFFFFF" />
           </TouchableOpacity>
 
           {/* 유저 음성 재생 버튼 */}
@@ -433,7 +433,7 @@ const Tools = ({ currentSentence }) => {
                 style={{ marginTop: 2 }}
                 name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
                 size={27}
-                color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
+                color={buttonControl ? (isPlayUserVoice ? '#FFFFFF' : '#DDDDDD') : '#9388E8'}
               />
             </TouchableOpacity>
           ) : (

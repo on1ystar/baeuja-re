@@ -4,7 +4,7 @@ import { StyleSheet, Button, View, Alert, Text, TouchableOpacity, ScrollView } f
 import { Chart, Line, Area, HorizontalAxis, VerticalAxis } from 'react-native-responsive-linechart'; // React Native Responsive Linechart (피치 그래프 그리기)
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
-import { Divider } from 'react-native-elements'; // React Native Elements
+import { Divider, Card } from 'react-native-elements'; // React Native Elements
 import { VictoryBar, VictoryChart, VictoryTheme, VictoryLine } from 'victory-native'; // React Native victory-native
 // import {
 //   VictoryPie,
@@ -141,62 +141,82 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
 
   // 발화평가 결과 받아오기
   return (
-    <View>
+    <View style={{ marginBottom: responsiveScreenHeight(2) }}>
       {isLoading ? (
         <></>
       ) : (
         <View style={LearningStyles.voiceEvaluationContainer}>
           {/* 발화 평가 등급 */}
-          <View style={styles.rankingChart}>
-            <Progress.Circle
-              size={responsiveScreenWidth(35)}
-              borderWidth={3}
-              animated={true}
-              color={'#9388E8'}
-              progress={userScore * 0.01}
-              thickness={10}
-              strokeCap={'round'}
-              showsText={true}
-              formatText={() => {
-                if (userScore > 85) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>A+</Text>
-                    </View>
-                  );
-                } else if (userScore > 75) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>A</Text>
-                    </View>
-                  );
-                } else if (userScore > 60) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>B</Text>
-                    </View>
-                  );
-                } else if (userScore > 45) {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>C</Text>
-                    </View>
-                  );
-                } else {
-                  return (
-                    <View style={styles.rankingContainer}>
-                      <Text style={styles.rankingText}>Rank</Text>
-                      <Text style={styles.rankingResultText}>D</Text>
-                    </View>
-                  );
-                }
-              }}
-            />
-            {/* <Divider
+          <Card
+            containerStyle={{
+              borderWidth: 1,
+              borderRadius: 10,
+              backgroundColor: '#FBFBFB',
+              marginTop: responsiveScreenHeight(4),
+            }}
+          >
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text
+                style={{
+                  color: '#444444',
+                  marginTop: responsiveScreenHeight(1),
+                  fontSize: responsiveFontSize(2.3),
+                  fontWeight: '700',
+                }}
+              >
+                Your speech level
+              </Text>
+            </View>
+            <View style={styles.rankingChart}>
+              <Progress.Circle
+                size={responsiveScreenWidth(35)}
+                borderWidth={3}
+                animated={true}
+                color={'#9388E8'}
+                progress={userScore * 0.01}
+                thickness={10}
+                strokeCap={'round'}
+                showsText={true}
+                formatText={() => {
+                  if (userScore > 85) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>A+</Text>
+                      </View>
+                    );
+                  } else if (userScore > 75) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>A</Text>
+                      </View>
+                    );
+                  } else if (userScore > 60) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>B</Text>
+                      </View>
+                    );
+                  } else if (userScore > 45) {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>C</Text>
+                      </View>
+                    );
+                  } else {
+                    return (
+                      <View style={styles.rankingContainer}>
+                        <Text style={styles.rankingText}>Rank</Text>
+                        <Text style={styles.rankingResultText}>D</Text>
+                      </View>
+                    );
+                  }
+                }}
+              />
+              {/* <Divider
               style={{
                 width: '15%',
                 shadowColor: '#000000',
@@ -214,26 +234,26 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               width={1}
               orientation="horizontal"
             /> */}
+              <View
+                style={{
+                  width: responsiveScreenWidth(5),
+                  marginTop: responsiveScreenHeight(0.5),
+                  height: responsiveScreenHeight(0.5),
+                  backgroundColor: '#000000',
+                  opacity: 0.15,
+                  borderRadius: 10,
+                }}
+              ></View>
+            </View>
             <View
               style={{
-                width: responsiveScreenWidth(5),
-                marginTop: responsiveScreenHeight(0.5),
-                height: responsiveScreenHeight(0.5),
-                backgroundColor: '#000000',
-                opacity: 0.15,
-                borderRadius: 10,
+                marginTop: responsiveScreenHeight(2),
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
-            ></View>
-          </View>
-          <View
-            style={{
-              marginTop: responsiveScreenHeight(2),
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {/* Correct Words 부분 */}
-            {/* <Text
+            >
+              {/* Correct Words 부분 */}
+              {/* <Text
               style={{
                 fontWeight: '700',
                 fontSize: responsiveFontSize(2.2),
@@ -244,33 +264,34 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               ✅ Correct Words{'\n'}
               <Text>{correctWords}</Text>
             </Text> */}
-            <Text
+              <Text
+                style={{
+                  fontWeight: '700',
+                  fontSize: responsiveFontSize(2.2),
+                  color: '#484848',
+                }}
+              >
+                {/* <Ionicons name="checkmark-circle-outline" color={'#CBFFCE'} size={18}></Ionicons>{' '} */}
+                Letters Checking
+              </Text>
+            </View>
+            <View
               style={{
-                fontWeight: '700',
-                fontSize: responsiveFontSize(2.2),
-                color: '#484848',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              {/* <Ionicons name="checkmark-circle-outline" color={'#CBFFCE'} size={18}></Ionicons>{' '} */}
-              Letters Checking
-            </Text>
-          </View>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: '700',
-                fontSize: responsiveFontSize(2.2),
-                color: '#484848',
-              }}
-            >
-              [ {correctLetters} ]
-            </Text>
-          </View>
+              <Text
+                style={{
+                  fontWeight: '700',
+                  fontSize: responsiveFontSize(2.2),
+                  color: '#484848',
+                }}
+              >
+                [ {correctLetters} ]
+              </Text>
+            </View>
+          </Card>
           <View
             style={{
               justifyContent: 'center',
@@ -287,73 +308,83 @@ const SpeechEvaluationResult = ({ evaluatedSentence, pitchData }) => {
               width={4}
               orientation="horizontal"
             />
-            <Text
-              style={{
-                color: '#444444',
-                marginTop: responsiveScreenHeight(3),
-                fontSize: responsiveFontSize(2.3),
-                fontWeight: '700',
-              }}
-            >
-              Pitch graph
-            </Text>
           </View>
           <View
             style={{
-              marginTop: responsiveScreenHeight(2),
-              flex: 1,
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-              marginRight: responsiveScreenWidth(15),
-              marginBottom: 0,
-              paddingBottom: 0,
+              width: responsiveScreenWidth(99),
             }}
           >
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: '#444444' }}>Voice Actor </Text>
-              <Divider
+            <Card containerStyle={{ borderWidth: 1, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    color: '#444444',
+                    marginTop: responsiveScreenHeight(1),
+                    fontSize: responsiveFontSize(2.3),
+                    fontWeight: '700',
+                  }}
+                >
+                  Pitch graph
+                </Text>
+              </View>
+              <View
                 style={{
-                  width: '12%',
+                  marginTop: responsiveScreenHeight(2),
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  marginRight: responsiveScreenWidth(15),
+                  marginBottom: 0,
+                  paddingBottom: 0,
                 }}
-                color="#9388E8"
-                insetType="middle"
-                width={4}
-                orientation="horizontal"
-              />
-            </View>
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: '#444444' }}>You </Text>
-              <Divider
-                style={{
-                  width: '12%',
-                }}
-                color="#88E889"
-                insetType="middle"
-                width={4}
-                orientation="horizontal"
-              />
-            </View>
-          </View>
-          <View style={styles.chartContainer}>
-            <VictoryChart
-              style={{ backgroundColor: '#FFFFFF', marginTop: responsiveScreenHeight(0) }}
-              width={responsiveScreenWidth(90)}
-              height={responsiveScreenHeight(30)}
-              theme={VictoryTheme.material}
-            >
-              <VictoryLine
-                style={{
-                  data: { stroke: '#9388E8', strokeWidth: 3 },
-                }}
-                data={perfectVoiceData}
-              />
-              <VictoryLine
-                style={{
-                  data: { stroke: '#88E889', strokeWidth: 3 },
-                }}
-                data={userVoiceData}
-              />
-            </VictoryChart>
+              >
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ color: '#444444' }}>Voice Actor </Text>
+                  <Divider
+                    style={{
+                      width: '12%',
+                    }}
+                    color="#9388E8"
+                    insetType="middle"
+                    width={4}
+                    orientation="horizontal"
+                  />
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ color: '#444444' }}>You </Text>
+                  <Divider
+                    style={{
+                      width: '12%',
+                    }}
+                    color="#88E889"
+                    insetType="middle"
+                    width={4}
+                    orientation="horizontal"
+                  />
+                </View>
+              </View>
+              <View style={styles.chartContainer}>
+                <VictoryChart
+                  style={{ backgroundColor: '#FFFFFF', marginTop: responsiveScreenHeight(0) }}
+                  width={responsiveScreenWidth(90)}
+                  height={responsiveScreenHeight(30)}
+                  theme={VictoryTheme.material}
+                >
+                  <VictoryLine
+                    style={{
+                      data: { stroke: '#9388E8', strokeWidth: 3 },
+                    }}
+                    data={perfectVoiceData}
+                  />
+                  <VictoryLine
+                    style={{
+                      data: { stroke: '#88E889', strokeWidth: 3 },
+                    }}
+                    data={userVoiceData}
+                  />
+                </VictoryChart>
+              </View>
+            </Card>
           </View>
         </View>
       )}
@@ -442,11 +473,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-
+  voiceEvaluationContainer: {
+    marginBottom: responsiveScreenHeight(2),
+    width: responsiveScreenWidth(99),
+  },
   rankingChart: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: responsiveScreenHeight(5),
+    marginTop: responsiveScreenHeight(3),
   },
   rankingContainer: { justifyContent: 'center', alignItems: 'center' },
   rankingText: {

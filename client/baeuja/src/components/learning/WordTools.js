@@ -96,7 +96,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=perfectVoiceCounts`,
           {},
           {
             headers: {
@@ -239,7 +239,7 @@ const WordTools = ({ words }) => {
 
         await axios
           .post(
-            `https://dev.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
+            `https://api.k-peach.io/learning/words/${words.wordId}/userWordEvaluation`,
             formData,
             {
               headers: {
@@ -307,7 +307,7 @@ const WordTools = ({ words }) => {
         const {
           data: { success, wordHistory },
         } = await axios.post(
-          `https://dev.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
+          `https://api.k-peach.io/learning/words/${words.wordId}/userWordHistory?column=userVoiceCounts`,
           {},
           {
             headers: {
@@ -332,7 +332,7 @@ const WordTools = ({ words }) => {
 
   // 학습 도구 부분 리턴
   return (
-    <View>
+    <View style={{ marginBottom: responsiveScreenHeight(4) }}>
       <View style={LearningStyles.learningButtonContainer}>
         {/* 성우 음성 재생 버튼 */}
         {isPlayPerfectVoice ? (
@@ -343,7 +343,7 @@ const WordTools = ({ words }) => {
             }}
             disabled={isPlayPerfectVoice || buttonControl}
           >
-            <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+            <Ionicons name="volume-high-outline" size={30} color="#FFFFFF"></Ionicons>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -360,7 +360,7 @@ const WordTools = ({ words }) => {
             <Ionicons
               name="volume-off-outline"
               size={30}
-              color={buttonControl ? '#DDDDDD' : '#555555'}
+              color={buttonControl ? '#DDDDDD' : '#9388E8'}
             ></Ionicons>
           </TouchableOpacity>
         )}
@@ -377,7 +377,7 @@ const WordTools = ({ words }) => {
           }}
           disabled={buttonControl}
         >
-          <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+          <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#9388E8'} />
         </TouchableOpacity>
         {/* 음성 중지 버튼으로 바뀌는 부분 */}
         <TouchableOpacity
@@ -390,7 +390,7 @@ const WordTools = ({ words }) => {
             onStopRecord();
           }}
         >
-          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
+          <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* 유저 음성 재생 버튼 */}
@@ -410,7 +410,7 @@ const WordTools = ({ words }) => {
               style={{ marginTop: 2 }}
               name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
               size={27}
-              color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
+              color={buttonControl ? (isPlayUserVoice ? '#FFFFFF' : '#DDDDDD') : '#9388E8'}
             />
           </TouchableOpacity>
         ) : (
