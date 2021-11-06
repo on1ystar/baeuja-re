@@ -27,7 +27,14 @@ export const getNewContents = async (
     const contents: NewContentsDTO[] =
       await ContentRepository.joinUnitAndSentenceAndSentenceWord(client, [
         {
-          Content: ['contentId', 'title', 'artist', 'director', 'thumbnailUri']
+          Content: [
+            'contentId',
+            'classification',
+            'title',
+            'artist',
+            'director',
+            'thumbnailUri'
+          ]
         }
       ]);
     await UserRepository.updateLatestLogin(client, userId);

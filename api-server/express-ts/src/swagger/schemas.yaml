@@ -14,6 +14,8 @@ NewContents:
             type: string
           contentId:
             type: number
+          classification:
+            type: string
           title:
             type: string
           artist:
