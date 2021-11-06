@@ -108,7 +108,7 @@ export default class UserRepository {
       const { user_id, email, nickname } = (
         await client.query(
           `UPDATE users
-            SET latest_login = default
+            SET latest_login_at = default
             WHERE user_id = ${userId}
             RETURNING user_id, email, nickname`
         )
