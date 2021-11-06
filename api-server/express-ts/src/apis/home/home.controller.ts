@@ -53,6 +53,7 @@ export const getRecommendations = async (req: Request, res: Response) => {
     for (let i = 0; i < 5; i++) {
       const randomWordId: number =
         Math.floor(Math.random() * (max - min + 1)) + min;
+      if (randomWordId === 334) continue;
       const word: RecommendationsOfWordDTO = {
         ...(await WordRepository.findOne(client, randomWordId, [
           'wordId',
