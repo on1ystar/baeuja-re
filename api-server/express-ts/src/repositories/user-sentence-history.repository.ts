@@ -215,7 +215,7 @@ export default class UserSentenceHistoryRepository {
       const isBookmark: boolean = (
         await client.query(
           `UPDATE user_sentence_history
-          SET is_bookmark = NOT is_bookmark, bookmark_at = default
+          SET is_bookmark = NOT is_bookmark, bookmark_at = CURRENT_TIMESTAMP(0)
           WHERE user_id = $1 AND sentence_id = $2
           RETURNING is_bookmark`,
           [userId, sentenceId]
