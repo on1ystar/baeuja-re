@@ -87,6 +87,7 @@ export const getRecommendations = async (req: Request, res: Response) => {
           ]
         )
       };
+      if (word.sentences.length === 0) continue;
       words.push(word);
     }
     return res.status(200).json({ success: true, words });
