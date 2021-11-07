@@ -3,7 +3,7 @@
  @version feature/api/PEAC-36-auth-for-sign-iu-and-sign-up
  */
 
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import { pool } from '../../db';
 import User from '../../entities/user.entity';
@@ -17,8 +17,6 @@ import UserContentHistoryRepository from '../../repositories/user-content-histor
 import UserUnitHistoryRepository from '../../repositories/user-unit-history.repository';
 import UserSentenceHistoryRepository from '../../repositories/user-sentence-history.repository';
 import UserWordHistoryRepository from '../../repositories/user-word-history.repository';
-import UserSentenceEvaluationRepository from '../../repositories/user-sentence-evaluation.repository';
-import UserWordEvaluationRepository from '../../repositories/user-word-evaluation.repository';
 
 // GET /users
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
