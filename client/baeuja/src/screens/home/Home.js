@@ -37,6 +37,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [randomNumber, setRandomNumber] = useState(Math.random()); // 새로고침용 변수
 
+  // 무한 스크롤 함수
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 40;
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
