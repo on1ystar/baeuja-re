@@ -36,6 +36,7 @@ const Tabs = () => (
       backgroundColor: '#FFFFFF',
     }}
   >
+    {/* Learning 탭 */}
     <Tab.Screen
       name="Learning"
       component={LearningMain}
@@ -45,6 +46,20 @@ const Tabs = () => (
         },
       }}
     />
+
+    {/* Bookmark 탭 */}
+    <Tab.Screen
+      name="Bookmark"
+      children={() => <Bookmark reload={Date.now()} />}
+      // component={Bookmark}
+      options={{
+        tabBarIcon: ({ focused, color, size }) => {
+          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
+        },
+      }}
+    />
+
+    {/* Home 탭 */}
     <Tab.Screen
       name="Home"
       component={Home}
@@ -54,19 +69,12 @@ const Tabs = () => (
         },
       }}
     />
-    <Tab.Screen
-      name="Bookmark"
-      component={Bookmark}
-      options={{
-        tabBarIcon: ({ focused, color, size }) => {
-          return <Antdesign name={focused ? 'star' : 'staro'} color={color} size={size} />;
-        },
-      }}
-    />
 
-    {/* <Tab.Screen
+    {/* Review 탭 */}
+    <Tab.Screen
       name="Review"
-      component={Review}
+      children={() => <Review reload={Date.now()} />}
+      // component={Review}
       options={{
         tabBarIcon: ({ focused, color, size }) => {
           return (
@@ -74,8 +82,10 @@ const Tabs = () => (
           );
         },
       }}
-    /> */}
-    {/* <Tab.Screen
+    />
+
+    {/* My 탭 */}
+    <Tab.Screen
       name="My"
       component={My}
       options={{
@@ -85,7 +95,7 @@ const Tabs = () => (
           );
         },
       }}
-    /> */}
+    />
   </Tab.Navigator>
 );
 

@@ -58,8 +58,6 @@ const LearningUnit = ({
     params: { contentId, unitIndex },
   },
 }) => {
-  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
-
   // state
   const [unit, setUnit] = useState({});
   const [sentences, setSentences] = useState([]);
@@ -157,7 +155,7 @@ const LearningUnit = ({
   };
 
   // -------------------------------------useEffect----------------------------------------
-  useEffect(loadUnit, []);
+  useEffect(loadUnit, [contentId, unitIndex]);
 
   useEffect(() => {
     // 유튜브 영상 시간 가져오는 인터벌 실행
@@ -169,7 +167,12 @@ const LearningUnit = ({
           const sentenceEndTimeToSec = parseInt(sentenceMin) * 60 + parseInt(sentenceSec);
           return curruentTime <= sentenceEndTimeToSec;
         });
-        setCurrentSentence(() => filteredSentences[0]);
+        setCurrentSentence(() => {
+          if (filteredSentences.length === 0) {
+            return sentences[sentences.length - 1];
+          }
+          return filteredSentences[0];
+        });
       } else if (!isPlaying) clearInterval(intervalId);
     }, 100);
     return () => {
@@ -180,6 +183,7 @@ const LearningUnit = ({
   // 영상 끝났을 때
   useEffect(() => {
     if (isEnded) {
+      console.log(sentences[0]);
       youtubeRef.current.seekTo(
         parseInt(unit.startTime.split(':')[0]) * 60 + parseInt(unit.startTime.split(':')[1])
       );
@@ -216,38 +220,62 @@ const LearningUnit = ({
               }}
               height={responsiveScreenHeight(26)}
               onChangeState={onStateChange}
-              volume={50}
+              volume={100}
             />
           </View>
           {/* 스크립트, 단어 그리기 */}
           <View style={{ flex: 1 }}>
             <Script currentSentence={currentSentence} updateIsBookmark={updateIsBookmark} />
           </View>
-          <TouchableOpacity
-            style={{
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-              marginRight: responsiveScreenWidth(10),
-              marginTop: responsiveScreenHeight(2),
-            }}
-            onPress={() =>
-              navigation.navigate('Stack', {
-                screen: 'Help',
-              })
-            }
-          >
-            <Text style={{ color: '#AAAAAA' }}>help?</Text>
-          </TouchableOpacity>
+
           {/* 학습 도구 모음 부분  */}
           <View style={LearningStyles.learningButtonContainer}>
-            {Object.keys(currentSentence).length !== 0 &&
-            currentSentence !== undefined &&
-            isPlaying === false &&
-            currentSentence.perfectVoiceUri != 'NULL' ? (
-              <Tools currentSentence={currentSentence} />
-            ) : (
-              <Text></Text>
-            )}
+            {
+              Object.keys(currentSentence).length !== 0 &&
+              currentSentence !== undefined &&
+              // isPlaying === false ?
+
+              currentSentence.perfectVoiceUri === 'NULL' ? (
+                <View>
+                  <Text
+                    style={{
+                      marginTop: responsiveScreenHeight(3),
+                      color: '#BBBBBB',
+                    }}
+                  >
+                    {'Sorry, This is not learning sentence 😅'}
+                  </Text>
+                </View>
+              ) : (
+                <Tools
+                  currentSentence={currentSentence}
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                />
+              )
+
+              // : (
+              //   <View>
+              //     <Text
+              //       style={{
+              //         marginTop: responsiveScreenHeight(3),
+              //         color: '#BBBBBB',
+              //       }}
+              //     >
+              //       {'When you pause the video,'}
+              //     </Text>
+              //     <Text
+              //       style={{
+              //         marginTop: responsiveScreenHeight(1.5),
+              //         marginLeft: responsiveScreenWidth(20),
+              //         color: '#BBBBBB',
+              //       }}
+              //     >
+              //       {'we provide learning tools 👍'}
+              //     </Text>
+              //   </View>
+              // )
+            }
           </View>
         </View>
       )}

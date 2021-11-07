@@ -37,6 +37,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [randomNumber, setRandomNumber] = useState(Math.random()); // 새로고침용 변수
 
+  // 무한 스크롤 함수
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 40;
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
@@ -68,13 +69,13 @@ const Home = () => {
       // }
     >
       <Text style={styles.mainText}>New</Text>
-      <Divider
+      {/* <Divider
         style={{ width: responsiveScreenWidth(100), marginTop: responsiveScreenHeight(1) }}
         color="#EEEEEE"
         insetType="middle"
         width={1}
         orientation="horizontal"
-      />
+      /> */}
       <ScrollView nestedScrollEnabled={true} horizontal showsHorizontalScrollIndicator={false}>
         <GetNewContents />
       </ScrollView>
@@ -113,12 +114,18 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginLeft: responsiveScreenWidth(5),
-    marginTop: responsiveScreenHeight(3),
-    fontSize: responsiveFontSize(3),
+    marginTop: responsiveScreenHeight(2),
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#444444',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
     // backgroundColor: 'black',
   },
   recommendWordConatainer: {

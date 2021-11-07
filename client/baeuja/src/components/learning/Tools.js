@@ -10,6 +10,7 @@ import {
   ScrollView,
   Platform,
   PermissionsAndroid,
+  Animated,
 } from 'react-native'; // React Native Component
 import {
   responsiveHeight,
@@ -38,7 +39,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicons
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 import * as Progress from 'react-native-progress'; // React Native Progress
 import 'react-native-gesture-handler'; // React Native Gesture Handler
-
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'; // React Native Countdown Circle Timer
+import { useNavigation } from '@react-navigation/native'; // Navigation
 // import RNFS from 'react-native-fs'; // React Native File System
 
 // Component import
@@ -50,9 +52,10 @@ import LearningStyles from '../../styles/LearningStyle';
 const audioRecorderPlayer = new AudioRecorderPlayer();
 let userPermission = 'a';
 
-const Tools = ({ currentSentence }) => {
+const Tools = ({ currentSentence, isPlaying, setIsPlaying }) => {
   const [isResponsedEvaluationResult, setIsResponsedEvaluationResult] = useState(false);
   const [evaluatedSentence, setEvaluatedSentence] = useState(null);
+  const [correctText, setCorrectText] = useState('');
   const [pitchData, setPitchData] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isPlayPerfectVoice, setIsPlayPerfectVoice] = useState(false);
@@ -60,9 +63,12 @@ const Tools = ({ currentSentence }) => {
   const [isPlayUserVoice, setIsPlayUserVoice] = useState(false);
   const [userVoiceScore, setUserVoiceScore] = useState(0);
   const [buttonControl, setButtonControl] = useState(false);
+  const navigation = useNavigation();
 
+  // currentSentence.perfectVoiceUri
   // 성우 음성 재생
   const onPlayPerfectVoice = async () => {
+    setIsPlaying(false);
     setIsPlayPerfectVoice(true);
     setButtonControl(true);
     const music = new Sound(currentSentence.perfectVoiceUri, '', (error) => {
@@ -72,7 +78,6 @@ const Tools = ({ currentSentence }) => {
       }
       console.log('-------------성우 음성 재생-------------');
       music.play((success) => {
-        music.setVolume(150);
         if (success) {
           setIsPlayPerfectVoice(false);
           setButtonControl(false);
@@ -156,6 +161,7 @@ const Tools = ({ currentSentence }) => {
 
         // permission 있을 경우 음성 녹음
         if (permission) {
+          setIsPlaying(false);
           setButtonControl(true);
           console.log('-------------음성 녹음 시작-------------');
           setIsResponsedEvaluationResult(false);
@@ -194,7 +200,6 @@ const Tools = ({ currentSentence }) => {
     }
     setIsRecordingUserVoice(false);
     setIsResponsedEvaluationResult(true);
-    console.log(recoredUserVoice);
     console.log('-------------음성 녹음 중지 완료------------');
 
     try {
@@ -209,9 +214,6 @@ const Tools = ({ currentSentence }) => {
             name: DEFAULT_RECOREDED_FILE_NAME_iOS, //파일 이름
           }
         );
-        console.log(Platform.OS);
-        console.log(formData);
-        console.log(formData._parts[0][1]);
       } else if (Platform.OS === 'android') {
         formData.append(
           'userVoice', //업로드할 파일의 폼
@@ -221,9 +223,6 @@ const Tools = ({ currentSentence }) => {
             name: DEFAULT_RECOREDED_FILE_NAME_Android, //파일 이름
           }
         );
-        console.log(Platform.OS);
-        console.log(formData);
-        console.log(formData._parts[0][1]);
       }
 
       AsyncStorage.getItem('token', async (error, token) => {
@@ -250,9 +249,9 @@ const Tools = ({ currentSentence }) => {
             console.log(
               `score: ${evaluatedSentence.score} | evaluatedSentence: ${evaluatedSentence.sttResult}`
             );
-            console.log(`pitchData : ${pitchData.userVoice}`);
 
             setEvaluatedSentence(evaluatedSentence);
+            setCorrectText(evaluatedSentence.correctText);
             setUserVoiceScore(evaluatedSentence.score);
             setPitchData(pitchData);
 
@@ -332,10 +331,31 @@ const Tools = ({ currentSentence }) => {
     });
   };
 
+  // useEffect
+  useEffect(() => {
+    setIsResponsedEvaluationResult(false);
+    setEvaluatedSentence(null);
+  }, [isPlaying]);
+
   // 학습 도구 부분 리턴
   return (
     <View>
       <View>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            marginRight: responsiveScreenWidth(10),
+            marginTop: responsiveScreenHeight(2),
+          }}
+          onPress={() =>
+            navigation.navigate('Stack', {
+              screen: 'Help',
+            })
+          }
+        >
+          <Text style={{ color: '#AAAAAA' }}>help?</Text>
+        </TouchableOpacity>
         <View style={LearningStyles.learningButtonContainer}>
           {/* 성우 음성 재생 버튼 */}
           {isPlayPerfectVoice ? (
@@ -346,7 +366,7 @@ const Tools = ({ currentSentence }) => {
               }}
               disabled={isPlayPerfectVoice || buttonControl}
             >
-              <Ionicons name="volume-high-outline" size={30} color="#9388E8"></Ionicons>
+              <Ionicons name="volume-high-outline" size={30} color="#FFFFFF"></Ionicons>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -363,7 +383,7 @@ const Tools = ({ currentSentence }) => {
               <Ionicons
                 name="volume-off-outline"
                 size={30}
-                color={buttonControl ? '#DDDDDD' : '#555555'}
+                color={buttonControl ? '#DDDDDD' : '#9388E8'}
               ></Ionicons>
             </TouchableOpacity>
           )}
@@ -380,7 +400,7 @@ const Tools = ({ currentSentence }) => {
             }}
             disabled={buttonControl}
           >
-            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#555555'} />
+            <Ionicons name="mic-outline" size={30} color={buttonControl ? '#DDDDDD' : '#9388E8'} />
           </TouchableOpacity>
           {/* 음성 중지 버튼으로 바뀌는 부분 */}
           <TouchableOpacity
@@ -393,7 +413,7 @@ const Tools = ({ currentSentence }) => {
               onStopRecord();
             }}
           >
-            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#9388E8" />
+            <Ionicons style={{ marginTop: 2 }} name="stop" size={27} color="#FFFFFF" />
           </TouchableOpacity>
 
           {/* 유저 음성 재생 버튼 */}
@@ -413,7 +433,7 @@ const Tools = ({ currentSentence }) => {
                 style={{ marginTop: 2 }}
                 name={buttonControl ? (isPlayUserVoice ? 'ear' : 'ear-outline') : 'ear-outline'}
                 size={27}
-                color={buttonControl ? (isPlayUserVoice ? '#9388E8' : '#DDDDDD') : '#555555'}
+                color={buttonControl ? (isPlayUserVoice ? '#FFFFFF' : '#DDDDDD') : '#9388E8'}
               />
             </TouchableOpacity>
           ) : (
@@ -427,6 +447,43 @@ const Tools = ({ currentSentence }) => {
           )}
         </View>
 
+        {/* 음성 녹음 진행 중 타이머 */}
+        <View>
+          {isRecordingUserVoice ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: responsiveScreenHeight(5),
+              }}
+            >
+              <CountdownCircleTimer
+                size={responsiveScreenWidth(30)}
+                renderAriaTime={'Hello'}
+                strokeWidth={responsiveScreenWidth(2.5)}
+                isPlaying
+                duration={15}
+                initialRemainingTime={15}
+                colors={[
+                  ['#004777', 0.4],
+                  ['#F7B801', 0.4],
+                  ['#A30000', 0.2],
+                ]}
+              >
+                {({ remainingTime, animatedColor }) => (
+                  <Animated.Text style={{ color: animatedColor }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ color: '#BBBBBB' }}>Recording...</Text>
+                      <Text style={{ color: '#BBBBBB' }}>{remainingTime}</Text>
+                    </View>
+                  </Animated.Text>
+                )}
+              </CountdownCircleTimer>
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
         {/* 발화 평가 결과 */}
         <View>
           {isResponsedEvaluationResult ? (
@@ -438,9 +495,15 @@ const Tools = ({ currentSentence }) => {
                 />
               </View>
             ) : (
-              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80 }}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: responsiveScreenHeight(10),
+                }}
+              >
                 <Progress.Circle
-                  size={60}
+                  size={responsiveScreenWidth(20)}
                   animated={true}
                   color={'#9388E8'}
                   borderWidth={8}

@@ -15,6 +15,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import io.xogus.reactnative.versioncheck.RNVersionCheckPackage; // 11.03 수정
 // import co.apptailor.googlesignin.RNGoogleSigninPackage; // 10.26 수정
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
