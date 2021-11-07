@@ -54,11 +54,19 @@ import LearningStyles from '../../styles/LearningStyle';
 const Help = () => {
   return (
     <View style={styles.allContainer}>
-      <Image
-        transitionDuration={1000}
-        source={require('../../assets/img/help.png')}
-        style={styles.helpImage}
-      />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/img/help.png')}
+          style={styles.helpImage}
+        />
+      </View>
     </View>
   );
 };
@@ -69,8 +77,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   helpImage: {
-    height: responsiveScreenHeight(90),
-    width: responsiveScreenWidth(100),
+    height: responsiveScreenHeight(100),
+    width: responsiveScreenWidth(95),
   },
 });
 

@@ -42,44 +42,142 @@ const My = ({ navigation: { navigate } }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.mainText}>My Page</Text>
-      <Divider
+      {/* <Divider
         style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
         color="#EEEEEE"
         insetType="middle"
         width={1}
         orientation="horizontal"
-      />
-      <View style={{ flex: 1, marginTop: responsiveScreenHeight(2) }}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('Stack', {
-              screen: 'Qna',
-            })
-          }
-        >
-          <View style={styles.qnaTextContainer}>
-            <Text style={styles.titleText}>Q&A</Text>
-            <Ionicons
-              style={{ marginLeft: responsiveScreenWidth(5) }}
-              size={30}
-              color={'#444444'}
-              name="chevron-forward-outline"
-            ></Ionicons>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={{ flex: 1 }}>
-        <TouchableOpacity>
-          <View style={styles.qnaTextContainer}>
-            <Text style={styles.titleText}>Change Nickname</Text>
-            <Ionicons
-              style={{ marginLeft: responsiveScreenWidth(5) }}
-              size={30}
-              color={'#444444'}
-              name="chevron-forward-outline"
-            ></Ionicons>
-          </View>
-        </TouchableOpacity>
+      /> */}
+      <View style={{ flex: 1, alignContent: 'center' }}>
+        {/* Profile 탭 */}
+        <View style={{ marginTop: responsiveScreenHeight(10) }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'Profile',
+              })
+            }
+          >
+            <View style={styles.qnaTextContainer}>
+              <Ionicons color={'#444444'} size={30} name="person"></Ionicons>
+              <Text style={styles.titleText}>Profile</Text>
+              <Ionicons
+                style={{ marginLeft: responsiveScreenWidth(2) }}
+                size={30}
+                color={'#444444'}
+                name="chevron-forward-outline"
+              ></Ionicons>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Divider
+          style={{
+            width: '60%',
+            marginTop: responsiveScreenHeight(1),
+            marginLeft: responsiveScreenWidth(20),
+          }}
+          color="#DDDDDD"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
+        {/* Learning status 탭 */}
+        <View style={{ marginTop: responsiveScreenHeight(5) }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'Learning Status',
+              })
+            }
+          >
+            <View style={styles.qnaTextContainer}>
+              <Ionicons color={'#444444'} size={30} name="stats-chart"></Ionicons>
+              <Text style={styles.titleText}>Learning status</Text>
+              <Ionicons
+                style={{ marginLeft: responsiveScreenWidth(2) }}
+                size={30}
+                color={'#444444'}
+                name="chevron-forward-outline"
+              ></Ionicons>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Divider
+          style={{
+            width: '60%',
+            marginTop: responsiveScreenHeight(1),
+            marginLeft: responsiveScreenWidth(20),
+          }}
+          color="#DDDDDD"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
+        {/* Contact us 탭 */}
+        <View style={{ marginTop: responsiveScreenHeight(5) }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'Contact Us',
+              })
+            }
+          >
+            <View style={styles.qnaTextContainer}>
+              <Ionicons color={'#444444'} size={30} name="mail-open"></Ionicons>
+              <Text style={styles.titleText}>Contact us</Text>
+              <Ionicons
+                style={{ marginLeft: responsiveScreenWidth(2) }}
+                size={30}
+                color={'#444444'}
+                name="chevron-forward-outline"
+              ></Ionicons>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Divider
+          style={{
+            width: '60%',
+            marginTop: responsiveScreenHeight(1),
+            marginLeft: responsiveScreenWidth(20),
+          }}
+          color="#DDDDDD"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
+        {/* App info 탭 */}
+        <View style={{ marginTop: responsiveScreenHeight(5) }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Stack', {
+                screen: 'About Us',
+              })
+            }
+          >
+            <View style={styles.qnaTextContainer}>
+              <Ionicons color={'#444444'} size={30} name="information-circle"></Ionicons>
+              <Text style={styles.titleText}>About us</Text>
+              <Ionicons
+                style={{ marginLeft: responsiveScreenWidth(2) }}
+                size={30}
+                color={'#444444'}
+                name="chevron-forward-outline"
+              ></Ionicons>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Divider
+          style={{
+            width: '60%',
+            marginTop: responsiveScreenHeight(1),
+            marginLeft: responsiveScreenWidth(20),
+          }}
+          color="#DDDDDD"
+          insetType="middle"
+          width={1}
+          orientation="horizontal"
+        />
       </View>
     </View>
   );
@@ -93,15 +191,22 @@ const styles = StyleSheet.create({
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(3),
-    marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3),
+    marginTop: responsiveScreenHeight(2),
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#444444',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
     // backgroundColor: 'black',
   },
   qnaTextContainer: {
+    marginLeft: responsiveScreenWidth(20),
     width: responsiveScreenWidth(100),
     alignItems: 'center',
     flexDirection: 'row',
@@ -109,7 +214,7 @@ const styles = StyleSheet.create({
   titleText: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: responsiveScreenWidth(5),
+    marginLeft: responsiveScreenWidth(1),
     fontSize: responsiveFontSize(2.8),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',

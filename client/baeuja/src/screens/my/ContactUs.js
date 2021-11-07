@@ -20,7 +20,7 @@ import { Card } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
 // Q&A 화면 전체 그리는 함수
-const sendQna = () => {
+const ContactUs = () => {
   const [qnaTypes, setQnaTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [randomNumber, setRandomNumber] = useState(Math.random());
@@ -36,7 +36,7 @@ const sendQna = () => {
         if (error) throw error;
         const {
           data: { success, qnaTypes, tokenExpired, errorMessage },
-        } = await axios.get(`https://dev.k-peach.io/qnas/types`, {
+        } = await axios.get(`https://api.k-peach.io/qnas/types`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -65,37 +65,75 @@ const sendQna = () => {
   // send Qna Screen 전체 렌더링
   return (
     <View style={styles.allContainer}>
-      <Text style={styles.selectQnaType}>Please select a Q&A type</Text>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: responsiveScreenWidth(50),
+        }}
+      >
+        <Image
+          transitionDuration={1000}
+          source={require('../../assets/icons/captureLogo.png')}
+          style={styles.thumbnailImage}
+        />
+      </View>
       {isLoading ? (
         <Text></Text>
       ) : (
-        qnaTypes.map((qnaType) => {
-          const navigation = useNavigation();
-          const qnaTypeId = qnaType.qnaTypeId;
-          return (
-            <TouchableOpacity
-              key={qnaTypeId}
-              onPress={() =>
-                navigation.navigate('Stack', {
-                  screen: 'qnaInput',
-                  params: {
-                    qnaTypeId,
-                  },
-                })
-              }
-            >
-              <View key={qnaTypeId} style={styles.qnaTypeContainer}>
-                <Text style={styles.qnaTypeText}>{qnaType.name}</Text>
-                <Ionicons
-                  style={{ marginLeft: responsiveScreenWidth(5) }}
-                  size={30}
-                  color={'#444444'}
-                  name="chevron-forward-outline"
-                ></Ionicons>
-              </View>
-            </TouchableOpacity>
-          );
-        })
+        <View style={{ flex: 1, marginTop: responsiveScreenHeight(2) }}>
+          {qnaTypes.map((qnaType, index) => {
+            const navigation = useNavigation();
+            const qnaTypeId = qnaType.qnaTypeId;
+            return (
+              <Card
+                key={qnaTypeId}
+                containerStyle={{
+                  width: responsiveScreenWidth(90),
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  backgroundColor: '#FBFBFB',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Stack', {
+                      screen: 'Inquiry',
+                      params: {
+                        qnaTypeId,
+                      },
+                    })
+                  }
+                >
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{
+                        marginLeft: responsiveScreenWidth(5),
+                      }}
+                    >
+                      <Text
+                        style={{ color: '#000000', fontSize: responsiveFontSize(2.3) }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        {`${index + 1}. `}
+                        {qnaType.name}
+                      </Text>
+                    </View>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                      <Ionicons
+                        style={{ marginLeft: responsiveScreenWidth(5) }}
+                        size={25}
+                        color={'#9388E8'}
+                        name="arrow-redo-outline"
+                      ></Ionicons>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+            );
+          })}
+        </View>
       )}
     </View>
   );
@@ -115,16 +153,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   qnaTypeContainer: {
-    justifyContent: 'center',
-    marginTop: responsiveScreenHeight(5),
+    justifyContent: 'flex-start',
+    marginTop: responsiveScreenHeight(7),
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   qnaTypeText: {
     color: '#000000',
-    fontSize: responsiveScreenFontSize(3),
+    fontSize: responsiveScreenFontSize(2.3),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   bookmarkedKoreanSentences: {
     color: '#000000',
@@ -145,6 +184,12 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(-0.5),
     justifyContent: 'flex-end',
   },
+  thumbnailImage: {
+    marginTop: responsiveScreenHeight(5),
+    width: responsiveScreenWidth(44),
+    height: responsiveScreenHeight(24),
+    borderRadius: 10,
+  },
 });
 
-export default sendQna;
+export default ContactUs;

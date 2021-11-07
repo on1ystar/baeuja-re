@@ -18,6 +18,7 @@ import {
   responsiveScreenWidth,
   responsiveScreenFontSize,
   useResponsiveScreenWidth,
+  responsiveHeight,
 } from 'react-native-responsive-dimensions'; // React Native Responsive Layout
 import { Divider } from 'react-native-elements'; // Elements
 import { useNavigation } from '@react-navigation/native'; // Navigation
@@ -33,13 +34,13 @@ class LearningMain extends React.Component {
     return (
       <View style={styles.allContainer}>
         <Text style={styles.mainText}>Learning</Text>
-        <Divider
+        {/* <Divider
           style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
           color="#EEEEEE"
           insetType="middle"
-          width={1}
+          width={5}
           orientation="horizontal"
-        />
+        /> */}
         <View style={{ flex: 1 }}>
           <ScrollView>
             <View style={styles.kpopTextContainer}>
@@ -48,7 +49,7 @@ class LearningMain extends React.Component {
                 style={styles.moreText}
                 onPress={() =>
                   navigate('Stack', {
-                    screen: 'GetKpopLearningContents',
+                    screen: 'K-Pop',
                   })
                 }
               >
@@ -67,18 +68,27 @@ class LearningMain extends React.Component {
               width={1}
               orientation="horizontal"
             />
-            <Text style={styles.titleText}>K-Drama</Text>
-            <View style={{ height: responsiveScreenHeight(22) }}>
+            <View style={styles.kdramaTextContainer}>
+              <Text style={styles.titleText}>K-Drama</Text>
+              <TouchableOpacity
+                style={styles.kmoviemoreText}
+                onPress={() =>
+                  navigate('Stack', {
+                    screen: 'K-Drama',
+                  })
+                }
+              >
+                <Text style={{ color: '#666666', fontWeight: 'bold' }}>more</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: responsiveScreenHeight(32) }}>
               <ScrollView
                 nestedScrollEnabled={true}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.kdramaScrollViewContainer}
               >
-                <View style={styles.kdramaScrollViewHider}>
-                  <GetKdramaLearningContents />
-                </View>
-                <Text style={styles.comingSoon}>Coming Soon...</Text>
+                <GetKdramaLearningContents />
               </ScrollView>
             </View>
             <Divider
@@ -88,18 +98,27 @@ class LearningMain extends React.Component {
               width={1}
               orientation="horizontal"
             />
-            <Text style={styles.titleText}>K-Movie</Text>
-            <View style={{ height: responsiveScreenHeight(22) }}>
+            <View style={styles.kmovieTextContainer}>
+              <Text style={styles.titleText}>K-Movie</Text>
+              <TouchableOpacity
+                style={styles.kmoviemoreText}
+                onPress={() =>
+                  navigate('Stack', {
+                    screen: 'K-Movie',
+                  })
+                }
+              >
+                <Text style={{ color: '#666666', fontWeight: 'bold' }}>more</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: responsiveScreenHeight(32) }}>
               <ScrollView
                 nestedScrollEnabled={true}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.kmovieScrollViewContainer}
               >
-                <View style={styles.kmovieScrollViewHider}>
-                  <GetKmovieLearningContents />
-                </View>
-                <Text style={styles.comingSoon}>Coming Soon...</Text>
+                <GetKmovieLearningContents />
               </ScrollView>
             </View>
           </ScrollView>
@@ -112,19 +131,33 @@ class LearningMain extends React.Component {
 const styles = StyleSheet.create({
   allContainer: {
     flex: 1,
-    marginBottom: responsiveScreenHeight(7),
+    marginBottom: responsiveScreenHeight(10),
   },
   mainText: {
     justifyContent: 'flex-start',
-    marginTop: responsiveScreenHeight(3),
-    marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveFontSize(3),
+    marginTop: responsiveScreenHeight(2),
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#444444',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
     // backgroundColor: 'black',
   },
   kpopTextContainer: {
+    width: responsiveScreenWidth(100),
+    flexDirection: 'row',
+  },
+  kdramaTextContainer: {
+    width: responsiveScreenWidth(100),
+    flexDirection: 'row',
+  },
+  kmovieTextContainer: {
     width: responsiveScreenWidth(100),
     flexDirection: 'row',
   },
@@ -132,6 +165,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     marginLeft: responsiveScreenWidth(60),
+  },
+  kmoviemoreText: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    marginLeft: responsiveScreenWidth(55),
   },
   kpopScrollViewContainer: {
     flex: 1,

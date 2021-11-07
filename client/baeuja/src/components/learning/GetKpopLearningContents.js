@@ -74,7 +74,11 @@ class GetKpopLearningContents extends React.Component {
         {isLoading ? (
           <Text> </Text>
         ) : (
-          contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
+          contents.map((content) => {
+            if (content.classification === 'K-POP') {
+              return <DrawingContent key={content.contentId} content={content} />;
+            }
+          })
         )}
       </ScrollView>
     );
@@ -84,6 +88,8 @@ class GetKpopLearningContents extends React.Component {
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
+  const contentTitle = content.title;
+
   return (
     <SafeAreaView style={styles.allContainer}>
       <View style={styles.kpopContainer}>
@@ -103,9 +109,10 @@ const DrawingContent = ({ content }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningUnits',
+                screen: 'Units',
                 params: {
                   contentId,
+                  contentTitle,
                 },
               })
             }
@@ -140,9 +147,10 @@ const DrawingContent = ({ content }) => {
         <TouchableOpacity
           onPress={() => {
             return navigation.navigate('Stack', {
-              screen: 'MoreInfo',
+              screen: 'Song Info',
               params: {
                 contentId,
+                contentTitle,
               },
             });
           }}
@@ -168,6 +176,7 @@ const styles = StyleSheet.create({
     width: responsiveScreenWidth(100),
   },
   thumbnailImage: {
+    marginTop: responsiveScreenHeight(1.5),
     width: responsiveScreenWidth(18),
     height: responsiveScreenWidth(18),
     borderRadius: 10,
@@ -185,8 +194,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   artist: {
-    marginTop: responsiveScreenHeight(1),
-    fontSize: responsiveFontSize(1.9),
+    marginTop: responsiveScreenHeight(0.5),
+    fontSize: responsiveFontSize(1.6),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
     color: '#666666',
@@ -200,6 +209,9 @@ const styles = StyleSheet.create({
   infoIcon: {
     color: '#aaaaaa',
     fontSize: responsiveFontSize(3),
+  },
+  progressContainer: {
+    marginTop: responsiveScreenHeight(0.5),
   },
 });
 

@@ -17,6 +17,8 @@ import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import { ProgressBar } from '@react-native-community/progress-bar-android'; // RN Progress bar android
+
 class GetKdramaLearningContents extends React.Component {
   state = {
     count: 0,
@@ -24,11 +26,11 @@ class GetKdramaLearningContents extends React.Component {
     contents: [],
   };
 
-  // ComponentDidMount
-  //   componentDidMount() {
-  //     this.getContents();
-  //     console.log('Component rendered');
-  //   }
+  ComponentDidMount;
+  componentDidMount() {
+    this.getContents();
+    console.log('Component rendered');
+  }
 
   // 컨텐츠 가져오기
   getContents = () => {
@@ -52,7 +54,7 @@ class GetKdramaLearningContents extends React.Component {
 
         if (!success) throw new Error(errorMessage);
 
-        console.log('success getting contents');
+        console.log('success getting K-Drama Contents');
         this.setState({ isLoading: false, contents });
       } catch (error) {
         console.log(error);
@@ -65,13 +67,17 @@ class GetKdramaLearningContents extends React.Component {
     const { contents, isLoading } = this.state;
     return (
       <View style={styles.kdramaAllContainer}>
-        {/* 실제 드라마 데이터 있을경우 바꾸기
         {isLoading ? (
           <Text> </Text>
         ) : (
-          contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
-        )} */}
-        <View style={styles.kdramaContainer}>
+          contents.map((content) => {
+            if (content.classification === 'K-DRAMA') {
+              return <DrawingContent key={content.contentId} content={content} />;
+            }
+          })
+        )}
+        {/*  하드코딩 데이터 */}
+        {/* <View style={styles.kdramaContainer}>
           <Image
             transitionDuration={1000}
             source={require('../../assets/img/moviePoster.jpg')}
@@ -96,72 +102,7 @@ class GetKdramaLearningContents extends React.Component {
               <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
             </TouchableOpacity>
           </View>
-          <View>
-            <Text style={styles.kdramaProgress}>Progress : ∙ ∙ ∙ ∙ ∙ </Text>
-          </View>
-        </View>
-        <View style={styles.kdramaContainer}>
-          <Image
-            transitionDuration={1000}
-            source={require('../../assets/img/moviePoster.jpg')}
-            style={styles.thumbnailImage}
-          />
-          <View style={styles.kdramaTitleContainer}>
-            <Text style={styles.kdramaTitle} numberOfLines={1} ellipsizeMode="tail">
-              KINGDOM
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                return navigation.navigate('Stack', {
-                  screen: 'MoreInfo',
-                  params: {
-                    contentId,
-                  },
-                });
-              }}
-              style={styles.infoIconContainer}
-              disabled={true}
-            >
-              <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={styles.kdramaProgress}>Progress : ∙ ∙ ∙ ∙ ∙ </Text>
-          </View>
-        </View>
-        <View style={styles.kdramaContainer}>
-          <Image
-            transitionDuration={1000}
-            source={require('../../assets/img/moviePoster.jpg')}
-            style={styles.thumbnailImage}
-          />
-          <View style={styles.kdramaTitleContainer}>
-            <Text style={styles.kdramaTitle} numberOfLines={1} ellipsizeMode="tail">
-              ITAEWON CLASS
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                return navigation.navigate('Stack', {
-                  screen: 'MoreInfo',
-                  params: {
-                    contentId,
-                  },
-                });
-              }}
-              style={styles.infoIconContainer}
-              disabled={true}
-            >
-              <Ionicons
-                color={'#666666'}
-                style={styles.infoIcon}
-                name="ellipsis-vertical"
-              ></Ionicons>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={styles.kdramaProgress}>Progress : ∙ ∙ ∙ ∙ ∙ </Text>
-          </View>
-        </View>
+        </View> */}
       </View>
     );
   }
@@ -171,46 +112,81 @@ class GetKdramaLearningContents extends React.Component {
 const DrawingContent = ({ content }) => {
   const navigation = useNavigation();
   const contentId = content.contentId;
+  const contentTitle = content.title;
+
   return (
     <View>
-      <View style={styles.kpopContainer}>
-        <Image
-          transitionDuration={1000}
-          source={{
-            uri: content.thumbnailUri,
-          }}
-          style={styles.thumbnailImage}
-        />
-        <View style={styles.titleContainer}>
+      <View style={styles.kdramaContainer}>
+        <View style={styles.kdramaTitleContainer}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningUnits',
+                screen: 'Units',
                 params: {
                   contentId,
+                  contentTitle,
                 },
               })
             }
           >
-            <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            <Image
+              transitionDuration={1000}
+              source={require('../../assets/img/moviePoster.jpg')}
+              style={styles.thumbnailImage}
+            />
+            <Text style={styles.kdramaTitle} numberOfLines={1} ellipsizeMode="tail">
               {content.title}
             </Text>
-            <Text style={styles.artist}>{content.artist}</Text>
+            <Text style={styles.kdramaDirector} numberOfLines={1} ellipsizeMode="tail">
+              {content.director}
+            </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            return navigation.navigate('Stack', {
-              screen: 'MoreInfo',
-              params: {
-                contentId,
-              },
-            });
+        <View
+          style={{
+            position: 'absolute',
+            top: responsiveScreenHeight(25),
+            right: 0,
+            height: responsiveScreenHeight(2.75),
+            width: responsiveScreenWidth(5.5),
+            zIndex: 1,
           }}
-          style={styles.infoIconContainer}
         >
-          <Ionicons style={styles.infoIcon} name="ellipsis-vertical"></Ionicons>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              return navigation.navigate('Stack', {
+                screen: 'Drama Info',
+                params: {
+                  contentId,
+                  contentTitle,
+                },
+              });
+            }}
+            style={styles.infoIconContainer}
+          >
+            <Ionicons style={styles.infoIcon} name="information-circle-outline"></Ionicons>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.progressContainer}>
+          <Text
+            style={{
+              color: '#000000',
+              fontSize: responsiveScreenFontSize(1.3),
+            }}
+          >
+            Progress
+          </Text>
+          <ProgressBar
+            style={{
+              width: responsiveScreenWidth(33),
+            }}
+            styleAttr="Horizontal"
+            indeterminate={false}
+            color={'#9388E8'}
+            progress={content.progressRate * 0.01}
+          />
+        </View>
       </View>
     </View>
   );
@@ -221,6 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   kdramaAllContainer: {
+    flex: 1,
     flexDirection: 'row',
     marginLeft: responsiveScreenWidth(5),
     marginTop: responsiveScreenHeight(1.5),
@@ -236,8 +213,15 @@ const styles = StyleSheet.create({
   },
   kdramaTitle: {
     color: '#666666',
-    width: responsiveScreenWidth(23),
+    width: responsiveScreenWidth(30),
     fontSize: responsiveScreenFontSize(2),
+    fontFamily: 'NanumSquareOTFB',
+    fontWeight: 'bold',
+  },
+  kdramaDirector: {
+    color: '#666666',
+    width: responsiveScreenWidth(30),
+    fontSize: responsiveScreenFontSize(1.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
   },
@@ -248,8 +232,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(26),
-    height: responsiveScreenHeight(13),
+    width: responsiveScreenWidth(33),
+    height: responsiveScreenHeight(20),
     borderRadius: 10,
   },
   infoIconContainer: {
@@ -257,6 +241,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     // backgroundColor: '#000000',
   },
+  infoIcon: {
+    color: '#aaaaaa',
+    fontSize: responsiveFontSize(3),
+  },
+  progressContainer: {},
 });
 
 export default GetKdramaLearningContents;

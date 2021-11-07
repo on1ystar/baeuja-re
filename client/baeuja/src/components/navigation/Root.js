@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'; // 
 import { StyleSheet, View, Text, TouchableOpacity, Image, BackHandler, Alert } from 'react-native'; // React Native Elements
 import React, { useState, useCallback, useRef, Component, useEffect } from 'react'; // React Hooks
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+// import SplashScreen from 'react-native-splash-screen';
 
 // Component import
 import Tabs from './Tabs';
@@ -30,6 +31,10 @@ const RootNavigation = () => {
 
     return () => backHandler.remove();
   }, []);
+
+  // useEffect(() => {
+  //   SplashScreen.hide();
+  // }, []);
 
   return (
     <Nav.Navigator

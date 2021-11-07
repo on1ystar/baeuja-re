@@ -111,6 +111,15 @@ const LearningWord = ({
         setWord(newWord);
         console.log(`Bookmark Post Success is :${success}`);
         console.log(`After Post, Word isBookmark is :${isBookmark}`);
+
+        if (isBookmark) {
+          Alert.alert('Added', 'Added to Bookmark', [{ text: 'Confirm', onPress: () => null }]);
+        } else {
+          Alert.alert('Deleted', 'Deleted from Bookmark', [
+            { text: 'Confirm', onPress: () => null },
+          ]);
+        }
+
         if (!success) throw new Error(errorMessage);
       } catch (error) {
         console.log(error);
@@ -127,8 +136,8 @@ const LearningWord = ({
       {isLoading ? (
         <Text> </Text>
       ) : (
-        <View style={styles.allContainer}>
-          <Card containerStyle={{ borderWidth: 0, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
+        <View style={styles.wordAllContainer}>
+          <Card containerStyle={{ borderWidth: 0.5, borderRadius: 10, backgroundColor: '#FBFBFB' }}>
             <Text style={styles.koreanWord}>{word.korean}</Text>
             <Text style={styles.translatedWord}>{word.translation}</Text>
             <Text style={styles.wordImportance}>importance : {word.importance}</Text>
@@ -148,8 +157,13 @@ const LearningWord = ({
           <View style={styles.wordToolsContainer}>
             <WordTools words={word} />
           </View>
-          <ScrollView>
-            <View style={{ marginTop: responsiveScreenHeight(5) }}>
+          <ScrollView style={{ height: responsiveScreenHeight(50) }}>
+            <View
+              style={{
+                marginTop: responsiveScreenHeight(3),
+                marginBottom: responsiveScreenHeight(1),
+              }}
+            >
               {exampleSentences.map((sentence) => (
                 <DrawExampleSentences key={sentence.sentenceId} sentence={sentence} />
               ))}
@@ -161,32 +175,96 @@ const LearningWord = ({
   );
 };
 
+// 예시 문장 그리기
 const DrawExampleSentences = ({ sentence }) => {
   const navigation = useNavigation();
   const contentId = sentence.contentId;
   const unitIndex = sentence.unitIndex;
-  console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
+  let koreanResult = [];
+
+  // 예시 문장 정해진 단어에 색칠
+  const drawKoreanSentence = () => {
+    koreanResult = [sentence.koreanText];
+
+    const resultKoreanhWords = [sentence.koreanInText];
+
+    resultKoreanhWords.forEach((word) => {
+      let idx;
+      let temp = [];
+      let findFlag = false;
+      koreanResult.forEach((element) => {
+        if (typeof element === 'string') {
+          idx = element.indexOf(sentence.koreanInText);
+          if (idx === -1 || findFlag === true) idx = undefined;
+          else findFlag = true;
+        }
+        if (idx !== undefined) {
+          temp.push(element.slice(0, idx));
+          temp.push(
+            // '(            )'
+            <Text
+              key={sentence.sentenceId}
+              style={{
+                fontSize: responsiveFontSize(1.75),
+                color: '#4278A4',
+                textDecorationLine: 'underline',
+              }}
+            >
+              {sentence.koreanInText}
+            </Text>
+            // <Text
+            //   style={{
+            //     fontSize: responsiveFontSize(1.7),
+            //     color: '#000000',
+            //   }}
+            // >
+            //   ( )
+            // </Text>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
+          );
+          temp.push(element.slice(idx + sentence.koreanInText.length));
+        } else {
+          temp.push(element);
+        }
+        idx = undefined;
+      });
+      koreanResult = temp;
+    });
+    return koreanResult;
+  };
 
   return (
     <Card
       containerStyle={{
         marginTop: responsiveScreenHeight(2),
-        borderWidth: 0,
+        borderWidth: 0.5,
         borderRadius: 10,
         backgroundColor: '#FBFBFB',
       }}
     >
       <View style={{ flexDirection: 'row' }}>
         <View>
-          <Text style={styles.relatedKoreanSentences}>{sentence.koreanText}</Text>
-          <Text style={styles.relatedEnglishSentences}>{sentence.translatedText}</Text>
+          <Text style={styles.relatedKoreanSentences} numberOfLines={1} ellipsizeMode="tail">
+            {drawKoreanSentence()}
+          </Text>
+          <Text style={styles.relatedEnglishSentences} numberOfLines={1} ellipsizeMode="tail">
+            {sentence.translatedText}
+          </Text>
         </View>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={styles.goToLearnArrow}
           onPress={() => {
-            console.log(`contentId is : ${contentId} unitIndex is : ${unitIndex}`);
             navigation.navigate('Stack', {
-              screen: 'LearningUnit',
+              screen: 'Learning Unit',
               params: {
                 contentId,
                 unitIndex,
@@ -195,7 +273,7 @@ const DrawExampleSentences = ({ sentence }) => {
           }}
         >
           <Ionicons size={30} color={'#444444'} name="chevron-forward-outline"></Ionicons>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
     </Card>
   );
@@ -203,6 +281,10 @@ const DrawExampleSentences = ({ sentence }) => {
 
 const styles = StyleSheet.create({
   allContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  wordAllContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
@@ -217,9 +299,9 @@ const styles = StyleSheet.create({
   },
   translatedWord: {
     color: '#666666',
-    fontSize: responsiveScreenFontSize(2.2),
+    fontSize: responsiveScreenFontSize(1.8),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    opacity: 0.9,
     marginTop: responsiveScreenHeight(1),
   },
   wordImportance: {
@@ -231,24 +313,27 @@ const styles = StyleSheet.create({
   },
   wordToolsContainer: {
     marginTop: responsiveScreenHeight(5),
+    justifyContent: 'center',
   },
   relatedKoreanSentences: {
+    width: responsiveScreenWidth(90),
     color: '#666666',
     fontSize: responsiveScreenFontSize(1.7),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    marginBottom: responsiveScreenHeight(2),
+    marginBottom: responsiveScreenHeight(1),
   },
   relatedEnglishSentences: {
+    width: responsiveScreenWidth(80),
     color: '#666666',
-    fontSize: responsiveScreenFontSize(1.7),
+    fontSize: responsiveScreenFontSize(1.4),
     fontFamily: 'NanumSquareOTFB',
-    fontWeight: 'bold',
+    opacity: 0.9,
   },
   goToLearnArrow: {
     position: 'absolute',
     right: responsiveScreenWidth(-3),
-    top: responsiveScreenHeight(1.25),
+    top: responsiveScreenHeight(0.5),
   },
   wordBookmarkIcon: {
     position: 'absolute',

@@ -18,13 +18,30 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
 import Antdesign from 'react-native-vector-icons/AntDesign'; // AntDesign
 import { Card, Divider } from 'react-native-elements'; // React Native Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
+import { Picker } from '@react-native-picker/picker'; // React Native Picker
 
 // Component import
 import GetBookmarkedWords from '../../components/bookmark/GetBookmarkedWords';
 import GetBookmarkedSentences from '../../components/bookmark/GetBookmarkedSentences';
 
-const Bookmark = () => {
+const Bookmark = ({ reload }) => {
   const [selector, setSelector] = useState(false);
+  const [sortBy, setSortBy] = useState('bookmark_at'); // bookmark_at(default) | latest_learning_at
+  const [option, setOption] = useState('DESC'); // DESC(default)  | ASC
+  const navigation = useNavigation();
+  const [sentencesStartIndex, setSentencesStartIndex] = useState(0); // sentences 시작 인덱스
+  const [wordsStartIndex, setWordsStartIndex] = useState(0); // words 시작 인덱스
+
+  // 무한 스크롤 로딩 함수
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 40;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
+  useEffect(() => {
+    setSentencesStartIndex(0);
+    setWordsStartIndex(0);
+  }, [reload]);
 
   //Bookmark Screen Return
   return (
@@ -32,13 +49,13 @@ const Bookmark = () => {
       {
         <View style={styles.allContainer}>
           <Text style={styles.bookmarkTitle}>Bookmark</Text>
-          <Divider
+          {/* <Divider
             style={{ width: '100%', marginTop: responsiveScreenHeight(1) }}
             color="#EEEEEE"
             insetType="middle"
-            width={1}
+            width={1}GetBookmarkedSentences
             orientation="horizontal"
-          />
+          /> */}
           <View style={styles.selectButtonContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -70,7 +87,26 @@ const Bookmark = () => {
                 </Text>
               </View>
             </TouchableOpacity>
-            {/* 정렬 기능 구현시 사용 */}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: responsiveScreenHeight(2),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {/* 정렬 기능 (Sortby) */}
+            {/* <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Stack', {
+                  screen: 'Sort Options',
+                  params: {
+                    sortBy,
+                  },
+                })
+              }
+            > */}
             {/* <View
               style={{
                 backgroundColor: '#EFEFEF',
@@ -81,17 +117,140 @@ const Bookmark = () => {
                 height: responsiveScreenWidth(10),
               }}
             >
-              <TouchableOpacity>
-                <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
-              </TouchableOpacity>
+              <Ionicons color={'#000000'} size={30} name="options"></Ionicons>
             </View> */}
+            <View
+              style={{
+                borderColor: '#000000',
+                color: '#000000',
+                paddingBottom: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingLeft: 0,
+                borderRadius: 10,
+                height: responsiveScreenHeight(6.5),
+                width: responsiveScreenWidth(40),
+                marginRight: responsiveScreenWidth(5),
+              }}
+            >
+              <Picker
+                style={{
+                  backgroundColor: '#FBFBFB',
+                  borderColor: '#000000',
+                  color: '#000000',
+                  height: responsiveScreenHeight(5),
+                  width: responsiveScreenWidth(40),
+                  paddingBottom: 0,
+                  paddingTop: 0,
+                  borderWidth: 1,
+                }}
+                selectedValue={sortBy}
+                onValueChange={(itemValue, itemIndex) => setSortBy(itemValue)}
+              >
+                <Picker.Item
+                  style={{ fontSize: responsiveFontSize(1.5) }}
+                  label={'bookmark at'}
+                  value={'bookmark_at'}
+                  key={'bookmark_at'}
+                />
+                <Picker.Item
+                  style={{ fontSize: responsiveFontSize(1.5) }}
+                  label={'latest learning at'}
+                  value={'latest_learning_at'}
+                  key={'latest_learning_at'}
+                />
+              </Picker>
+            </View>
+            {/* </TouchableOpacity> */}
+
+            {/* 정렬 기능 (Option) */}
+            {/* <TouchableOpacity> */}
+            {/* <View
+              style={{
+                backgroundColor: '#F3F3F3',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: responsiveScreenWidth(10),
+                height: responsiveScreenWidth(10),
+                marginLeft: responsiveScreenWidth(2),
+              }}
+            >
+              <Ionicons
+                color={'#000000'}
+                size={25}
+                name={option === 'DESC' ? 'arrow-down-outline' : 'arrow-up-outline'}
+              ></Ionicons>
+            </View> */}
+            {/* </TouchableOpacity> */}
+            <View
+              style={{
+                borderColor: '#000000',
+                color: '#000000',
+                paddingBottom: 0,
+                paddingTop: 0,
+                paddingRight: 0,
+                paddingLeft: 0,
+                borderRadius: 10,
+                height: responsiveScreenHeight(6.5),
+                width: responsiveScreenWidth(40),
+              }}
+            >
+              <Picker
+                style={{
+                  backgroundColor: '#FBFBFB',
+                  borderColor: '#000000',
+                  color: '#000000',
+                  height: responsiveScreenHeight(5),
+                  width: responsiveScreenWidth(40),
+                  paddingBottom: 0,
+                  paddingTop: 0,
+                  borderWidth: 1,
+                }}
+                selectedValue={option}
+                onValueChange={(itemValue, itemIndex) => setOption(itemValue)}
+              >
+                <Picker.Item
+                  style={{ fontSize: responsiveFontSize(1.5) }}
+                  label={'Descending'}
+                  value={'DESC'}
+                  key={'DESC'}
+                />
+                <Picker.Item
+                  style={{ fontSize: responsiveFontSize(1.5) }}
+                  label={'Ascending'}
+                  value={'ASC'}
+                  key={'ASC'}
+                />
+              </Picker>
+            </View>
           </View>
-          {/* 정렬 기능 구현시 사용 */}
-          {/* <View style={styles.timeContainer}>
-            <Ionicons color={'#000000'} size={25} name="time-outline"></Ionicons>
-            <Text style={styles.timeText}>2021. 10.</Text>
-          </View> */}
-          <ScrollView>{selector ? <GetBookmarkedWords /> : <GetBookmarkedSentences />}</ScrollView>
+
+          <ScrollView
+            onScroll={({ nativeEvent }) => {
+              if (isCloseToBottom(nativeEvent)) {
+                if (selector) setWordsStartIndex(() => wordsStartIndex + 10);
+                else setSentencesStartIndex(() => sentencesStartIndex + 10);
+              }
+            }}
+            scrollEventThrottle={100}
+          >
+            {selector ? (
+              <GetBookmarkedWords
+                sortBy={sortBy}
+                option={option}
+                reload={Date.now()}
+                startIndex={wordsStartIndex}
+              />
+            ) : (
+              <GetBookmarkedSentences
+                sortBy={sortBy}
+                option={option}
+                reload={Date.now()}
+                startIndex={sentencesStartIndex}
+              />
+            )}
+          </ScrollView>
         </View>
       }
     </View>
@@ -103,12 +262,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bookmarkTitle: {
-    marginTop: responsiveScreenHeight(3),
-    marginLeft: responsiveScreenWidth(5),
-    fontSize: responsiveScreenFontSize(3),
+    justifyContent: 'flex-start',
+    marginTop: responsiveScreenHeight(2),
+    paddingLeft: responsiveScreenWidth(5),
+    paddingBottom: responsiveScreenHeight(1),
+    // marginLeft: responsiveScreenWidth(5),
+    fontSize: responsiveFontSize(3.5),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: 'bold',
-    color: '#444444',
+    // fontFamily: 'Playball-Regular',
+    color: '#9388E8',
+    // marginRight: responsiveScreenWidth(5),
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 3,
+    // backgroundColor: 'black',
   },
   selectButtonContainer: {
     flexDirection: 'row',

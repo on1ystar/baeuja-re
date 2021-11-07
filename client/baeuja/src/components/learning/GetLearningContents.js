@@ -47,7 +47,7 @@ const GetLearningContents = () => {
 
         setContents(contents);
         setIsLoading(false);
-        console.log('success getting contents');
+        console.log('success getting K-POP Contents');
       } catch (error) {
         console.log(error);
       }
@@ -62,7 +62,11 @@ const GetLearningContents = () => {
       {isLoading ? (
         <Text> </Text>
       ) : (
-        contents.map((content) => <DrawingContent key={content.contentId} content={content} />)
+        contents.map((content) => {
+          if (content.classification === 'K-POP') {
+            return <DrawingContent key={content.contentId} content={content} />;
+          }
+        })
       )}
     </View>
   );
@@ -91,7 +95,7 @@ const DrawingContent = ({ content }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningUnits',
+                screen: 'Units',
                 params: {
                   contentId,
                   contentTitle,
@@ -129,9 +133,10 @@ const DrawingContent = ({ content }) => {
         <TouchableOpacity
           onPress={() => {
             return navigation.navigate('Stack', {
-              screen: 'MoreInfo',
+              screen: 'Song Info',
               params: {
                 contentId,
+                contentTitle,
               },
             });
           }}
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   artist: {
-    fontSize: responsiveFontSize(1.9),
+    fontSize: responsiveFontSize(1.6),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
     color: '#666666',

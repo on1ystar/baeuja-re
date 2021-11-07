@@ -29,7 +29,7 @@ import { Card } from 'react-native-elements'; // React Native Elements
 
 const MoreInfo = ({
   route: {
-    params: { contentId },
+    params: { contentId, contentTitle },
   },
   navigation: { navigate },
 }) => {
@@ -126,9 +126,10 @@ const MoreInfo = ({
         <TouchableOpacity
           onPress={() =>
             navigate('Stack', {
-              screen: 'LearningUnits',
+              screen: 'Units',
               params: {
                 contentId,
+                contentTitle,
               },
             })
           }

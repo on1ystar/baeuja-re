@@ -22,10 +22,10 @@ import {
 import { useNavigation } from '@react-navigation/native'; // Navigation
 import axios from 'axios'; // axios
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Ionicon
-import { Divider } from 'react-native-elements'; // Elements
+import { Divider, Card } from 'react-native-elements'; // Elements
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage
 
-// 새로운 콘텐츠 가져오기
+// 추천 단어 가져오기
 const GetRecommandWords = ({ randomNumber }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [recommendationWords, setRecommendationWords] = useState([]);
@@ -34,7 +34,7 @@ const GetRecommandWords = ({ randomNumber }) => {
   const loadRecommendationWords = () => {
     console.log(`Load New Contents ...`);
 
-    // New Contents 데이터 조회
+    // 추천 단어 데이터 요청
     AsyncStorage.getItem('token', async (error, token) => {
       try {
         if (token === null) {
@@ -82,7 +82,7 @@ const GetRecommandWords = ({ randomNumber }) => {
 
   // GetRecommandWords return 부분
   return (
-    <ScrollView style={{ marginLeft: responsiveScreenWidth(5) }}>
+    <ScrollView>
       {isLoading ? (
         <Text style={{ color: '#444444' }}> Loading... Please wait...</Text>
       ) : (
@@ -104,7 +104,7 @@ const GetRecommandWords = ({ randomNumber }) => {
   );
 };
 
-// 새로운 콘텐츠 그리기
+// 추천 단어 그리기
 const DrawRecommandWords = ({ word }) => {
   const navigation = useNavigation();
   const sameRecommandWord = word.sentences;
@@ -119,7 +119,7 @@ const DrawRecommandWords = ({ word }) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Stack', {
-                screen: 'LearningWord',
+                screen: 'Learning Word',
                 params: {
                   wordId,
                 },
@@ -145,10 +145,117 @@ const DrawRecommandWords = ({ word }) => {
   );
 };
 
+// 동일한 표현 그려주는 것 (옆으로)
 const DrawSameRecommandWords = ({ sentences, word }) => {
   const navigation = useNavigation();
   const contentId = sentences.contentId;
   const unitIndex = sentences.unitIndex;
+  let koreanResult = [];
+  let englishResult = [];
+  let wordId = word.wordId;
+
+  // 한국어 문장에 빈칸 뚫기
+  const drawKoreanSentence = () => {
+    koreanResult = [sentences.koreanText];
+
+    const resultKoreanhWords = [sentences.koreanInText];
+
+    resultKoreanhWords.forEach((word) => {
+      let idx;
+      let temp = [];
+      let findFlag = false;
+      koreanResult.forEach((element) => {
+        if (typeof element === 'string') {
+          idx = element.indexOf(sentences.koreanInText);
+          if (idx === -1 || findFlag === true) idx = undefined;
+          else findFlag = true;
+        }
+        if (idx !== undefined) {
+          temp.push(element.slice(0, idx));
+          temp.push(
+            '(            )'
+            // <Text
+            //   style={{
+            //     fontSize: responsiveFontSize(1.7),
+            //     color: '#000000',
+            //   }}
+            // >
+            //   ( )
+            // </Text>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
+          );
+          temp.push(element.slice(idx + sentences.koreanInText.length));
+        } else {
+          temp.push(element);
+        }
+        idx = undefined;
+      });
+      koreanResult = temp;
+    });
+    return koreanResult;
+  };
+
+  // 영어 문장에 빈칸 뚫기
+  const drawEnglishSentence = () => {
+    englishResult = [sentences.translatedText];
+
+    let wordId = word.wordId;
+    const resultEnglishWords = [sentences.translationInText];
+
+    resultEnglishWords.forEach((word) => {
+      let idx;
+      let temp = [];
+      englishResult.forEach((element) => {
+        if (typeof element === 'string') {
+          idx =
+            element.toLowerCase().indexOf(sentences.translationInText.toLowerCase()) === -1
+              ? undefined
+              : element.toLowerCase().indexOf(sentences.translationInText.toLowerCase());
+        }
+        if (idx !== undefined) {
+          temp.push(element.slice(0, idx));
+          temp.push(
+            '(            )'
+            // <Text
+            //   key={word.wordId}
+            //   style={{
+            //     fontSize: responsiveFontSize(2.1),
+            //     color: '#4278A4',
+            //     textDecorationLine: 'underline',
+            //   }}
+            // >
+            //   {word.translationInText}
+            // </Text>
+
+            // <View
+            //   key={wordId}
+            //   style={{
+            //     backgroundColor: '#E7E7E7',
+            //     borderRadius: 20,
+            //     width: responsiveScreenWidth(15),
+            //     height: responsiveScreenHeight(2.5),
+            //   }}
+            // ></View>
+          );
+          temp.push(element.slice(idx + sentences.translationInText.length));
+        } else {
+          temp.push(element);
+        }
+        idx = undefined;
+      });
+      englishResult = temp;
+    });
+    return englishResult;
+  };
 
   return (
     <ScrollView horizontal nestedScrollEnabled={true} showsHorizontalScrollIndicator={false}>
@@ -156,7 +263,7 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Stack', {
-              screen: 'LearningUnit',
+              screen: 'Learning Unit',
               params: {
                 contentId,
                 unitIndex,
@@ -164,13 +271,13 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
             })
           }
         >
-          {/* <Image
+          <Image
             transitionDuration={1000}
             source={{
               uri: sentences.thumbnailUri,
             }}
             style={styles.thumbnailImage}
-          /> */}
+          />
           {/* <Image
             transitionDuration={1000}
             source={require('../../assets/img/kpopunit.png')}
@@ -178,18 +285,40 @@ const DrawSameRecommandWords = ({ sentences, word }) => {
           /> */}
 
           <View style={styles.recommandWordKoreanSentenceContainer}>
-            <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+            {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.koreanText}
+            </Text> */}
+
+            <Text style={styles.newWordKoreanSentence} numberOfLines={1} ellipsizeMode="tail">
+              {drawKoreanSentence()}
             </Text>
           </View>
           <View style={styles.recommandWordEnglishSentenceContainer}>
+            {/* <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
+              {sentences.translatedText}
+            </Text> */}
+
             <Text style={styles.newWordSentence} numberOfLines={1} ellipsizeMode="tail">
               {sentences.translatedText}
             </Text>
           </View>
+          <View
+            style={{
+              marginRight: responsiveScreenWidth(3.5),
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+            }}
+          >
+            <Text style={{ color: '#4278A4', fontWeight: '700' }}>Let's Learn →</Text>
+          </View>
         </TouchableOpacity>
+
         <Divider
-          style={{ width: '107%', marginTop: responsiveScreenHeight(2) }}
+          style={{
+            marginLeft: responsiveScreenWidth(5),
+            width: '107%',
+            marginTop: responsiveScreenHeight(2),
+          }}
           color="#EEEEEE"
           insetType="middle"
           width={4}
@@ -210,7 +339,8 @@ const styles = StyleSheet.create({
   },
   recommandWordTextContainer: {
     flexDirection: 'row',
-    marginTop: responsiveScreenHeight(3),
+    marginTop: responsiveScreenHeight(2),
+    marginLeft: responsiveScreenWidth(5),
     width: responsiveScreenWidth(80),
   },
   recommandWord: {
@@ -231,13 +361,16 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(1),
   },
   recommandWordContainer: {
-    // width: responsiveScreenWidth(100),
+    width: responsiveScreenWidth(90),
     marginTop: responsiveScreenHeight(2),
-    marginRight: responsiveScreenWidth(5),
+    marginLeft: responsiveScreenWidth(3.5),
+    // height: responsiveScreenHeight(21),
+    // marginRight: responsiveScreenWidth(-3),
   },
   recommandWordKoreanSentenceContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
     marginTop: responsiveScreenHeight(1.5),
   },
   recommandWordEnglishSentenceContainer: {
@@ -246,11 +379,24 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(0.5),
   },
   newWordSentence: {
+    justifyContent: 'center',
+    alignItems: 'center',
     color: '#444444',
-    width: responsiveScreenWidth(80),
+    width: responsiveScreenWidth(85),
     fontSize: responsiveScreenFontSize(1.7),
+    opacity: 0.9,
+    fontFamily: 'NanumSquareOTFB',
+    paddingBottom: responsiveScreenHeight(1),
+  },
+  newWordKoreanSentence: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#444444',
+    width: responsiveScreenWidth(85),
+    fontSize: responsiveScreenFontSize(2),
     fontFamily: 'NanumSquareOTFB',
     fontWeight: '600',
+    paddingBottom: responsiveScreenHeight(1),
   },
   recommandWordSentenceInfo: {
     fontSize: responsiveScreenFontSize(1.5),
@@ -260,7 +406,7 @@ const styles = StyleSheet.create({
     color: '#9388E8',
   },
   thumbnailImage: {
-    width: responsiveScreenWidth(87),
+    width: responsiveScreenWidth(90),
     height: responsiveScreenHeight(22),
     borderRadius: 10,
   },
