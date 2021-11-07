@@ -1,0 +1,16 @@
+model/
+sounds/
+log/
+tmp/
+lat/
+flask/howtoexec
+*ctm*
+*lat*
+*config*
+*path*
+*test*
+*nohup*
+*.txt
+*.flac
+*.wav
+*.m4a
