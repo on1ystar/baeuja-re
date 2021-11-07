@@ -115,4 +115,25 @@ export default class UserContentHistoryRepository {
       throw error;
     }
   };
+
+  static getUserHistoryCounts = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const countsOfContents: number = (
+        await client.query(
+          `SELECT count(*) FROM user_content_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].count;
+
+      return countsOfContents;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user-content-history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
 }

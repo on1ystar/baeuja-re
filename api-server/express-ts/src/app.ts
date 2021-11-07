@@ -19,6 +19,7 @@ import { checkUserId } from './utils/Auth';
 import homeApp from './apis/home';
 import bookmarkApp from './apis/bookmark';
 import qnasApp from './apis/qnas';
+import reviewApp from './apis/review';
 
 const app: Application = express();
 const logger = morgan('dev');
@@ -43,6 +44,7 @@ app.use('/home', checkUserId, homeApp); // injecting home app
 app.use('/users', usersApp); // injecting users app
 app.use('/learning', checkUserId, learningApp); // injecting learning app
 app.use('/bookmark', checkUserId, bookmarkApp); // injecting bookmark app
+app.use('/review', checkUserId, reviewApp); // injecting review app
 app.use('/qnas', checkUserId, qnasApp); // injecting qna app
 
 export default app;

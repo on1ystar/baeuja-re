@@ -144,4 +144,25 @@ export default class UserUnitHistoryRepository {
       throw error;
     }
   };
+
+  static getUserHistoryCounts = async (
+    client: PoolClient,
+    userId: number
+  ): Promise<number> => {
+    try {
+      const countsOfUnits: number = (
+        await client.query(
+          `SELECT count(*) FROM user_unit_history
+        WHERE user_id = ${userId}`
+        )
+      ).rows[0].count;
+
+      return countsOfUnits;
+    } catch (error) {
+      console.warn(
+        '❌ Error: user_unit_history.repository.ts getUserHistoryCounts function '
+      );
+      throw error;
+    }
+  };
 }

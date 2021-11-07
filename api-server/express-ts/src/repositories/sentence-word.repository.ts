@@ -54,7 +54,7 @@ export default class SentenceWordRepository {
         ON sentence.content_id = unit.content_id AND sentence.unit_index = unit.unit_index
         WHERE sentence_word.word_id = ${wordId}`
       );
-      if (!queryResult.rowCount) throw new Error('wordId does not exist');
+      // if (!queryResult.rowCount) throw new Error('wordId does not exist');
       return queryResult.rows;
     } catch (error) {
       console.warn(

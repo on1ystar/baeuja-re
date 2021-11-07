@@ -129,10 +129,10 @@ export default class UnitRepository {
   ): Promise<any[]> => {
     try {
       const queryResult: QueryResult<any> = await client.query(
-        `SELECT unit.unit_index, count(*) FROM unit
+        `SELECT unit.unit_index, count(sentence_word.word_id) FROM unit
         JOIN sentence
         ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index
-        JOIN sentence_word
+        LEFT JOIN sentence_word
         ON sentence.sentence_id = sentence_word.sentence_id
         WHERE unit.content_id = $1
         GROUP BY unit.unit_index
@@ -143,6 +143,52 @@ export default class UnitRepository {
       return queryResult.rows;
     } catch (error) {
       console.warn('❌ Error: unit.repository.ts getWordsCounts function ');
+      throw error;
+    }
+  };
+
+  // 유닛 별 회화표현 존재 여부
+  static getIsConversations = async (
+    client: PoolClient,
+    contentId: number
+  ): Promise<any[]> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT unit.unit_index, count(sentence.sentence_id) FROM unit
+        LEFT JOIN sentence
+        ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index  AND sentence.is_conversation = true
+        WHERE unit.content_id = $1
+        GROUP BY unit.unit_index
+        ORDER BY unit.unit_index;`,
+        [contentId]
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+      return queryResult.rows;
+    } catch (error) {
+      console.warn('❌ Error: unit.repository.ts getIsConversations function ');
+      throw error;
+    }
+  };
+
+  // 유닛 별 명대사 존재 여부
+  static getIsFamousLines = async (
+    client: PoolClient,
+    contentId: number
+  ): Promise<any[]> => {
+    try {
+      const queryResult: QueryResult<any> = await client.query(
+        `SELECT unit.unit_index, count(sentence.sentence_id) FROM unit
+        LEFT JOIN sentence
+        ON unit.content_id = sentence.content_id AND unit.unit_index = sentence.unit_index  AND sentence.is_famous_line = true
+        WHERE unit.content_id = $1
+        GROUP BY unit.unit_index
+        ORDER BY unit.unit_index;`,
+        [contentId]
+      );
+      if (!queryResult.rowCount) throw new Error('contentId does not exist');
+      return queryResult.rows;
+    } catch (error) {
+      console.warn('❌ Error: unit.repository.ts getIsFamousLines function ');
       throw error;
     }
   };

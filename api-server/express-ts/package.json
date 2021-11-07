@@ -12,6 +12,7 @@
     "build:dev": "sudo pm2 stop baeuja-dev && npm run api-docs:dev && tsc --outDir build-dev/ && npm run pm2:dev:reload",
     "pm2:dev:start": "npm run api-docs:dev && tsc --outDir build-dev/ && sudo NODE_ENV=dev pm2 start ecosystem.config.js --time --env --watch",
     "pm2:dev:reload": "sudo pm2 reload baeuja-dev --time --update-env",
+    
     "dev:ts": "npm run api-docs:dev && NODE_ENV=dev nodemon --watch '*.ts' --exec 'ts-node' src/server.ts",
     "test:e2e": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
     "test:file": "NODE_ENV=test nodemon --exec 'ts-node' src/test.ts"

@@ -22,6 +22,8 @@ export const getQnas = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -55,6 +57,8 @@ export const postQna = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -78,6 +82,8 @@ export const getQna = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -98,6 +104,8 @@ export const answerQna = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -114,6 +122,8 @@ export const remove = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -132,6 +142,8 @@ export const getQnaTypes = async (req: Request, res: Response) => {
   } catch (error) {
     console.warn(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();

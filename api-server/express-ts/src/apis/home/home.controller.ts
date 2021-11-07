@@ -14,7 +14,7 @@ import WordRepository from '../../repositories/word.repository';
 import NewContentsDTO from './dto/new-contents.dto';
 import RecommendationsOfWordDTO from './dto/recommendationsOfWord.dto';
 
-const NUM_OF_LAST_WORD_ID = 275;
+const NUM_OF_LAST_WORD_ID = 682;
 
 // GET /home/contents
 export const getNewContents = async (
@@ -27,7 +27,14 @@ export const getNewContents = async (
     const contents: NewContentsDTO[] =
       await ContentRepository.joinUnitAndSentenceAndSentenceWord(client, [
         {
-          Content: ['contentId', 'title', 'artist', 'director', 'thumbnailUri']
+          Content: [
+            'contentId',
+            'classification',
+            'title',
+            'artist',
+            'director',
+            'thumbnailUri'
+          ]
         }
       ]);
     await UserRepository.updateLatestLogin(client, userId);
@@ -35,6 +42,8 @@ export const getNewContents = async (
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
@@ -51,6 +60,7 @@ export const getRecommendations = async (req: Request, res: Response) => {
     for (let i = 0; i < 5; i++) {
       const randomWordId: number =
         Math.floor(Math.random() * (max - min + 1)) + min;
+      if (randomWordId === 334) continue;
       const word: RecommendationsOfWordDTO = {
         ...(await WordRepository.findOne(client, randomWordId, [
           'wordId',
@@ -77,12 +87,15 @@ export const getRecommendations = async (req: Request, res: Response) => {
           ]
         )
       };
+      if (word.sentences.length === 0) continue;
       words.push(word);
     }
     return res.status(200).json({ success: true, words });
   } catch (error) {
     console.log(error);
     const errorMessage = (error as Error).message;
+    if (errorMessage === 'TokenExpiredError')
+      return res.status(401).json({ success: false, errorMessage });
     return res.status(400).json({ success: false, errorMessage });
   } finally {
     client.release();
