@@ -1,9 +1,16 @@
+# -*- coding: utf-8 -*-
+# Author: Park Yeong Jun
+# Email: qkrdudwns98@naver.com
+# Description: define data class
+# Modified: 2021.11.07
+# Version: 1.0.0
+
 from dataclasses import dataclass
 
 @dataclass
 class VoiceInfo:
 	id: str
-	uri: str
+	uri: str = None
 	text: str = None
 	path: str = None
 	pitch: list = None
@@ -14,16 +21,4 @@ class VoiceInfo:
 class Command:
 	convert: str
 	decode: str
-
-
-if __name__== "__main__":
-	user = User(id=1, uri="/home/arong/1.flac", text="안녕하세요")
-	print('user id is ', user.id)
-	print('user uri is ', user.uri)
-	print('user text is ', user.text)
-	test = list()
-	for i in range(0, 100):
-		test.append(i)
-	user.pitch = test
-
-	print(user.pitch)
+	lat: str = None

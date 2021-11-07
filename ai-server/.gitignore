@@ -2,6 +2,10 @@ model/
 sounds/
 log/
 tmp/
+lat/
+flask/howtoexec
+*ctm*
+*lat*
 *config*
 *path*
 *test*

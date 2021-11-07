@@ -2,48 +2,40 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process STT score
-# Modified: 2021.10.05
-# Version: 0.4.1
+# Modified: 2021.11.07
+# Version: 1.0.0
 
 import re
 import sys
 import io
 import hgtk
-from hanspell import spell_checker
 
-def getKoreanText(decoded_file: str) -> str:
+def getKoreanText(file_path: str) -> str:
 	"""
-	:description:			extract only korean text from decoded_file
-	:param decoded_file:	str, log file path
-	:return:				str, grammer korean text
+	:description:			extract space and korean text from ctm file
+	:param file_path:		str, ctm file path
+	:return:				str, korean text
 	"""
 
 	# open log file
-	reader = io.open(decoded_file, 'r', encoding='utf8')
-
-	# korean regex
-	regex_korean = re.compile('[^가-힣]+') 
-	regex_filter = re.compile('[가-힣]+')
+	reader = io.open(file_path, 'r', encoding='utf8')
 
 	# read all line
-	fileLines = reader.readlines() 
-	origin_result = ""
+	lines = reader.readlines()
+	silence = "<eps>"
+	korean_index = 4
+	result = ""
 
-	for line in fileLines:
-		# if only one korean in line
-		if regex_filter.findall(line): 
-			# get line
-			origin_result+=str(line)
+	for line in lines:
+		splited = line.split(' ')
+		if splited[korean_index] == silence: 
+			result += ' '
+		else:
+			result += splited[korean_index]
 
-	# remove space
-	non_space_result = regex_korean.sub('', origin_result)
+	return result.strip()
 
-	# add space with grammer
-	grammer_result = spell_checker.check(non_space_result).checked
-
-	return grammer_result
-
-def levenshtein(perfect_str: str, user_str: str) -> int:
+def levenshtein(perfect_str: str, user_str: str, weight: int) -> int:
     """
     :description:				compare string with levenshtein
     :param perfect_str:			str, original string
@@ -51,15 +43,17 @@ def levenshtein(perfect_str: str, user_str: str) -> int:
     :return:					int, evaluation score
     """
 
-    # divide korean text to consonant and vowel
-    perfect_str = hgtk.text.decompose(perfect_str)
-    user_str = hgtk.text.decompose(user_str)
-
     if len(perfect_str) < len(user_str):
-        return levenshtein(user_str, perfect_str)
+        return levenshtein(user_str, perfect_str, weight)
 
     if len(user_str) == 0:
         return 0
+
+    # divide korean text to consonant and vowel
+    perfect_str = perfect_str.replace(' ', '')
+    user_str = user_str.replace(' ', '')
+    perfect_str = hgtk.text.decompose(perfect_str)
+    user_str = hgtk.text.decompose(user_str)
 
     # compare perfect_str and user_str by using levenshtein
     previous_row = range(len(user_str) + 1)
@@ -77,4 +71,4 @@ def levenshtein(perfect_str: str, user_str: str) -> int:
     # calculate real score
     score = (len(perfect_str) - levenshtein_score) / len(perfect_str)
 
-    return int(score * 80)
+    return int(score * weight)

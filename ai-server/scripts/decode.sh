@@ -6,25 +6,20 @@
 # Apache 2.0
 #
 #
+
+# execute when execute decode.sh directly
+#. ./config.sh 
+
 . $SCRIPT_DIR/cmd.sh
 . $SCRIPT_DIR/path.sh
 
 decoder=$KALDI_ROOT/src/online2bin/online2-wav-nnet3-latgen-faster
 
 
-#if [ "$#" -ne 3 ]; then
-#	echo "Usage $0 <filename> <model-dir> <output-dir>"
-#	echo "    ex: $0 test_sample/219_004_2890.flac test/models/korean/zeroth test_output"
-#	exit 1
-#fi
-dir=$MODEL_DIR/dir
+latdir=$LAT_DIR
+latfile="lat.$2.gz"
 srcdir=$MODEL_DIR
 filename=$1
-
-if [ ! -d $dir ]; then
-    mkdir -p $dir
-fi
-
 do_endpointing=false
 frames_per_chunk=20
 extra_left_context_initial=0
@@ -52,11 +47,11 @@ if [ -f $srcdir/frame_subsampling_factor ]; then
   frame_subsampling_opt="--frame-subsampling-factor=$(cat $srcdir/frame_subsampling_factor)"
 fi
 
-lat_wspecifier="ark:|gzip -c >$dir/lat.1.gz"
+lat_wspecifier="ark:|gzip -c >$latdir/$latfile"
 if [ "$post_decode_acwt" == 1.0 ]; then
-  lat_wspecifier="ark:|gzip -c >$dir/lat.1.gz"
+  lat_wspecifier="ark:|gzip -c >$latdir/$latfile"
 else
-  lat_wspecifier="ark:|lattice-scale --acoustic-scale=$post_decode_acwt ark:- ark:- | gzip -c >$dir/lat.1.gz"
+  lat_wspecifier="ark:|lattice-scale --acoustic-scale=$post_decode_acwt ark:- ark:- | gzip -c >$latdir/$latfile"
 fi
 online=false
 echo "#### Decoding ####"

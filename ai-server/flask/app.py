@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: baeuja ai server
-# Modified: 2021.10.12
-# Version: 0.4.3
+# Modified: 2021.11.07
+# Version: 1.0.0
 
 from flask import Flask
 from flask import request
@@ -17,7 +17,6 @@ from src import path
 
 from src.data import VoiceInfo
 from src.data import Command
-
 
 import subprocess
 import os
@@ -60,31 +59,27 @@ def evaluationWord():
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
-					"success":False,
+					"success": False,
+					"error": "convert timeout in word-user"
 				})
 
 		# stt
 		user_decoder_worker = subprocess.Popen([user_command.decode], shell=True)
-		
+		stt_weight = 100
+		extension_ctm = ".ctm"
+
 		# speech to text and get stt score
 		try:
 			user_decoder_worker.wait(timeout=10)
-			user.text = korean.getKoreanText(path.getLogDir() + user.id + ".log")
-			stt_score = korean.levenshtein(perfect.text, user.text)
+			# get
+			user.text = korean.getKoreanText(path.getLatDir() + user.id + extension_ctm)
+			stt_score = korean.levenshtein(perfect.text, user.text, stt_weight)
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
 					"success": False,
-					"error": "decode timeout"
+					"error": "decode timeout in word"
 				})
-		print('')
-		print('user_id is ', user.id)
-		print('user_uri is ', user.uri)
-		print('user_path is ', user.path)
-		print('user_convert_command is ', user_command.convert)
-		print('user_decode_command is ', user_command.decode)
-		print('user_text is ', user.text)
-		print('')
 
 		# calculate real score
 		result_score = stt_score
@@ -111,9 +106,6 @@ def evaluationWord():
 					}
 				})
 
-if __name__ == "__main__":
-	app.run(host='0.0.0.0', port=8080)
-
 @app.route('/evaluation/sentence', methods = ['GET', 'POST'])
 def evaluationSentence():
 	"""
@@ -121,15 +113,14 @@ def evaluationSentence():
 	:return:		int, evaluation score
 	"""
 	if request.method == 'POST':
-
 		# get data from request.json
 		user = VoiceInfo(id = str(request.json['userId']),
 				uri = request.json['userVoiceUri']
 			)
 
-		perfect = VoiceInfo(id = str(request.json['sentence']['sentenceId']),
-				uri = request.json['sentence']['perfectVoiceUri'],
-				text = request.json['sentence']['koreanText']
+		tmp_id = str(request.json['sentence']['sentenceId'])
+		perfect = VoiceInfo(id = tmp_id),
+				text = korean.getKoreanText(path.getPerfectSentenceCtmDir() + tmp_id  + ".ctm")
 			)
 
 		# log about request
@@ -152,37 +143,47 @@ def evaluationSentence():
 		except subprocess.TimeoutExpired:
 			return jsonify({
 					"success":False,
+					"error": "convert timeout in sentence-user"
 				})
 
 		# stt
 		user_decoder_worker = subprocess.Popen([user_command.decode], shell=True)
 
 		# get pitch and from flac
-		perfect.path = path.getPerfectSentenceDir() + perfect.id + ".flac"
+		extension_flac = ".flac"
+		perfect.path = path.getPerfectSentenceDir() + perfect.id + extension_flac
 		perfect.pitch, perfect.time, perfect.duration = evaluation.getPitch(perfect.path, sample_rate=16000) # normalized pitch
 
+		user.path = path.getUserSentenceDir() + user.id + extension_flac
+		user.pitch, user.time, user.duration = evaluation.getPitch(user.path, sample_rate=16000)
+		
 		if perfect.pitch is None:
 			return jsonify({
 					"success": False,
-					"error": "cannot found pitch"
+					"error": "cannot found pitch from perfect"
 				})
 
-		user.path = path.getUserSentenceDir() + user.id + ".flac"
-		user.pitch, user.time, user.duration = evaluation.getPitch(user.path, sample_rate=16000)
+		if user.pitch is None:
+			return jsonify({
+					"success": False,
+					"error": "cannot found pitch from user"
+				})
 
 		# get dtw score from pitch
 		pitch_score = evaluation.getPitchScore(perfect, user)
 		
+		extension_ctm = ".ctm"
+		stt_weight = 80
 		# speech to text and get stt score
 		try:
 			user_decoder_worker.wait(timeout=10)
-			user.text = korean.getKoreanText(path.getLogDir() + user.id + ".log")
-			stt_score = korean.levenshtein(perfect.text, user.text)
+			user.text = korean.getKoreanText(path.getLatDir() + user.id + extension_ctm)
+			stt_score = korean.levenshtein(perfect.text, user.text, stt_weight)
 
 		except subprocess.TimeoutExpired:
 			return jsonify({
 					"success": False,
-					"error": "decode timeout"
+					"error": "decode timeout in sentence"
 				})
 
 		# calculate real score
@@ -190,6 +191,7 @@ def evaluationSentence():
 
 		# log
 		utils.makeLog({'result_stt': user.text, 'result_score': result_score})
+
 
 		return jsonify({
 				"success":True,
@@ -208,6 +210,7 @@ def evaluationSentence():
 						}
 					}
 				})
-
+	else:
+		print('GET')
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=8080)

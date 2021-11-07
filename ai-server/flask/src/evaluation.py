@@ -2,8 +2,8 @@
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
 # Description: process pitch score
-# Modified: 2021.10.13
-# Version: 0.4.3
+# Modified: 2021.11.07
+# Version: 1.0.0
 
 import numpy as np
 import librosa, librosa.display

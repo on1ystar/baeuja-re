@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # Author: Park Yeong Jun
 # Email: qkrdudwns98@naver.com
-# Modified: 2021.10.06
-# Version: 0.4.2
+# Modified: 2021.11.07
+# Version: 1.0.0
 
 import os
 import sys
