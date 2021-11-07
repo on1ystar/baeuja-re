@@ -1,6 +1,6 @@
 <br>
 
-<div align= center><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/b46c8e26-16e1-407d-8cf2-12a65c098bff/SWM_Logos_Color_CMYK1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T083040Z&X-Amz-Expires=86400&X-Amz-Signature=67044f152227d3c78524ef20f07b884a92a7f85e71df5faef83c26a3138a383d&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22SWM_Logos_Color_CMYK1.png%22" width="300"> </div>
+<div align= center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/SWM_Logos_Color_CMYK2.png" width="300"> </div>
 
 <br>
 <br>
@@ -8,7 +8,7 @@
 ## <span style="color:#9388E8">✨ Team. 1412S(KIDS)</span> 
 ### 안녕하세요! K-Contents를 통한 한국어 학습 앱 <span style="color:#9388E8">배우자</span>입니다!
 ### _Hello! We are a <span style="color:#9388E8">BAEUJA</span> of Korean learning app through K-Contents_
-<div align= center> <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/ab9a3faa-b5c3-4ea6-8c3b-559f11563d1a/BAEUJA_LOGO_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T063726Z&X-Amz-Expires=86400&X-Amz-Signature=2a92d669c3b006c03b4db8dc6f4f4d261781021230b445869cd6007bbe588425&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22BAEUJA_LOGO_%25E1%2584%258E%25E1%2585%25AC%25E1%2584%258C%25E1%2585%25A9%25E1%2586%25BC.png%22" width="300" height="230"></div>
+<div align= center> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/BAEUJA_LOGO_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC.png" width="300" height="230"></div>
 
 ## 📚 <span style="color:#9388E8">INDEX</span>
 [1. Introduce 배우자](#Introduce-배우자)<br>
@@ -35,57 +35,91 @@
 <br/>
 
 ## 📱 <span style="color:#9388E8">Main UI</span>
-### │ 메인 화면, 학습 컨텐츠 선택 화면 │
-<div align= center> <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/ed9a8055-e916-41b8-9b34-096604fc9bfd/4._%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB_-_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T065551Z&X-Amz-Expires=86400&X-Amz-Signature=7b1e2f95a75d0e67e092d6e1cd27a18941cdb661d5378e0c301b049b02514850&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%224.%2520%25E1%2584%2586%25E1%2585%25A6%25E1%2584%258B%25E1%2585%25B5%25E1%2586%25AB%2520-%2520%25E1%2584%2589%25E1%2585%25AE%25E1%2584%258C%25E1%2585%25A5%25E1%2586%25BC%25E1%2584%258B%25E1%2585%25AA%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25AD.png%22" width="300" height="800"> <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d378d812-5890-4664-8674-2001906aa629/5._%E1%84%92%E1%85%A1%E1%86%A8%E1%84%89%E1%85%B3%E1%86%B8_%E1%84%8F%E1%85%A9%E1%86%AB%E1%84%90%E1%85%A6%E1%86%AB%E1%84%8E%E1%85%B3_%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_-_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T070221Z&X-Amz-Expires=86400&X-Amz-Signature=70677674453815904f4270b0ab2afa71b7c565354b77faa7c8525484c03e9067&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%225.%2520%25E1%2584%2592%25E1%2585%25A1%25E1%2586%25A8%25E1%2584%2589%25E1%2585%25B3%25E1%2586%25B8%2520%25E1%2584%258F%25E1%2585%25A9%25E1%2586%25AB%25E1%2584%2590%25E1%2585%25A6%25E1%2586%25AB%25E1%2584%258E%25E1%2585%25B3%2520%25E1%2584%2589%25E1%2585%25A5%25E1%2586%25AB%25E1%2584%2590%25E1%2585%25A2%25E1%2586%25A8%2520%25E1%2584%2592%25E1%2585%25AA%25E1%2584%2586%25E1%2585%25A7%25E1%2586%25AB%2520-%2520%25E1%2584%2589%25E1%2585%25AE%25E1%2584%258C%25E1%2585%25A5%25E1%2586%25BC%25E1%2584%258B%25E1%2585%25AA%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25AD.png%22" width="300" height="800"></div>
+### │ Login & Home 화면 │
+<div align= center> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EA%B5%AC%EA%B8%80%20%EB%A1%9C%EA%B7%B8%EC%9D%B81.png" width="300" height="800"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%E1%84%92%E1%85%A9%E1%86%B7_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_1.png" width="300" height="800"></div>
 
 <br/>
 
-### │ 학습 단락 선택 화면(K-POP, K-MOVIE or K-DRAMA) │
-<div align= center> <center><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/720d9193-5b03-4b01-b22e-1d2a306c9d44/6-1._%E1%84%92%E1%85%A1%E1%86%A8%E1%84%89%E1%85%B3%E1%86%B8_%E1%84%83%E1%85%A1%E1%86%AB%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_-_kpop__-_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T065828Z&X-Amz-Expires=86400&X-Amz-Signature=da0479f6fbbc513d8dc420e13b8eeb9d4fb35f4d5e657d9ea079863ad81b4702&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%226-1.%2520%25E1%2584%2592%25E1%2585%25A1%25E1%2586%25A8%25E1%2584%2589%25E1%2585%25B3%25E1%2586%25B8%2520%25E1%2584%2583%25E1%2585%25A1%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25A1%25E1%2586%25A8%2520%25E1%2584%2589%25E1%2585%25A5%25E1%2586%25AB%25E1%2584%2590%25E1%2585%25A2%25E1%2586%25A8%2520%25E1%2584%2592%25E1%2585%25AA%25E1%2584%2586%25E1%2585%25A7%25E1%2586%25AB%2520-%2520kpop%2520%2520-%2520%25E1%2584%2589%25E1%2585%25AE%25E1%2584%258C%25E1%2585%25A5%25E1%2586%25BC%25E1%2584%258B%25E1%2585%25AA%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25AD.png%22" width="300" height="620"> <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d8283e29-e564-4684-9fa8-3f1b065d8ad4/6-2._%E1%84%92%E1%85%A1%E1%86%A8%E1%84%89%E1%85%B3%E1%86%B8_%E1%84%83%E1%85%A1%E1%86%AB%E1%84%85%E1%85%A1%E1%86%A8_%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB__%E1%84%8B%E1%85%A7%E1%86%BC%E1%84%92%E1%85%AA-%E1%84%83%E1%85%B3%E1%84%85%E1%85%A1%E1%84%86%E1%85%A1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T070103Z&X-Amz-Expires=86400&X-Amz-Signature=a856825211514854a4d87dfc55388585c024da11ab541c3b65f68d2968677723&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%226-2.%2520%25E1%2584%2592%25E1%2585%25A1%25E1%2586%25A8%25E1%2584%2589%25E1%2585%25B3%25E1%2586%25B8%2520%25E1%2584%2583%25E1%2585%25A1%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25A1%25E1%2586%25A8%2520%25E1%2584%2589%25E1%2585%25A5%25E1%2586%25AB%25E1%2584%2590%25E1%2585%25A2%25E1%2586%25A8%2520%25E1%2584%2592%25E1%2585%25AA%25E1%2584%2586%25E1%2585%25A7%25E1%2586%25AB%2520%25E2%2580%2593%2520%25E1%2584%258B%25E1%2585%25A7%25E1%2586%25BC%25E1%2584%2592%25E1%2585%25AA-%25E1%2584%2583%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25A1%25E1%2584%2586%25E1%2585%25A1.png%22" width="300" height="620"></center></div>
+### │ Learning(K-Pop) & Learning - Units │
+<div align= center> <center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB3_%E1%84%8F%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%91%E1%85%A1%E1%86%B8_%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%8E%E1%85%A6%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5_.png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%9F%AC%EB%8B%9D%20%ED%99%94%EB%A9%B47(%EC%9C%A0%EB%8B%9B%20%EB%A6%AC%EC%8A%A4%ED%8A%B8).png" width="300" height="620"></center></div>
 
 <br/>
 
-### │ 학습 화면, 복습 퀴즈 화면 │
-<div align= center><center><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/b2455144-2565-4129-8211-b2148f30ae93/7-2._%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB_%E1%84%92%E1%85%A1%E1%86%A8%E1%84%89%E1%85%B3%E1%86%B8%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_%28%E1%84%89%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A2%E1%86%A8_-_%E1%84%80%E1%85%A7%E1%86%AF%E1%84%80%E1%85%AA%E1%84%80%E1%85%A1%E1%86%B9%29_-_%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T070344Z&X-Amz-Expires=86400&X-Amz-Signature=e5fdc7be54f76401a2c9544689f05678e27cb67a0494c6ef1c7959e2bab124ec&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%227-2.%2520%25E1%2584%2586%25E1%2585%25A6%25E1%2584%258B%25E1%2585%25B5%25E1%2586%25AB%2520%25E1%2584%2592%25E1%2585%25A1%25E1%2586%25A8%25E1%2584%2589%25E1%2585%25B3%25E1%2586%25B8%25E1%2584%2592%25E1%2585%25AA%25E1%2584%2586%25E1%2585%25A7%25E1%2586%25AB%2520%28%25E1%2584%2589%25E1%2585%25A5%25E1%2586%25AB%25E1%2584%2590%25E1%2585%25A2%25E1%2586%25A8%2520-%2520%25E1%2584%2580%25E1%2585%25A7%25E1%2586%25AF%25E1%2584%2580%25E1%2585%25AA%25E1%2584%2580%25E1%2585%25A1%25E1%2586%25B9%29%2520-%2520%25E1%2584%2589%25E1%2585%25AE%25E1%2584%258C%25E1%2585%25A5%25E1%2586%25BC%25E1%2584%258B%25E1%2585%25AA%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25AD.png%22" width="300" height="620"> <img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9e9cc8c4-e108-4c59-9310-ea797895846a/14.__%E1%84%8F%E1%85%B1%E1%84%8C%E1%85%B3_%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB_-__%E1%84%89%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T072047Z&X-Amz-Expires=86400&X-Amz-Signature=e455c0559af2baa72e9cc12d41ee26abcd0a081e7086b2849b973e5aa236add3&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%2214.%2520%2520%25E1%2584%258F%25E1%2585%25B1%25E1%2584%258C%25E1%2585%25B3%2520%25E1%2584%2592%25E1%2585%25AA%25E1%2584%2586%25E1%2585%25A7%25E1%2586%25AB%2520-%2520%2520%25E1%2584%2589%25E1%2585%25AE%25E1%2584%258C%25E1%2585%25A5%25E1%2586%25BC%25E1%2584%258B%25E1%2585%25AA%25E1%2586%25AB%25E1%2584%2585%25E1%2585%25AD.png%22" width="300" height="620"></center></div>
+### │ Learning - Unit & Learning - Word │
+<div align= center><center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%9F%AC%EB%8B%9D%20%ED%99%94%EB%A9%B48(%EC%9C%A0%EB%8B%9B%20%ED%95%99%EC%8A%B5%20%ED%99%94%EB%A9%B4).png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%9F%AC%EB%8B%9D%20%ED%99%94%EB%A9%B411(%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%8C%EC%84%B1%20%ED%8F%89%EA%B0%80%20%EA%B2%B0%EA%B3%BC).png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%9F%AC%EB%8B%9D%20%ED%99%94%EB%A9%B4%2016(%EB%8B%A8%EC%96%B4%20%EB%B0%9C%EC%9D%8C%20%ED%8F%89%EA%B0%80%20%EA%B2%B0%EA%B3%BC).png" width="300" height="620"></center></div>
+
+<br/>
+
+### │ Bookmark │
+<div align= center><center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%B6%81%EB%A7%88%ED%81%AC%20%ED%99%94%EB%A9%B45(%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0%20%EB%8B%A8%EC%96%B4%20%EB%A6%AC%EC%8A%A4%ED%8A%B8).png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%B6%81%EB%A7%88%ED%81%AC%20%ED%99%94%EB%A9%B46(%EC%A6%90%EA%B2%A8%EC%B0%BE%EA%B8%B0%20%EB%AC%B8%EC%9E%A5%20%EB%A6%AC%EC%8A%A4%ED%8A%B8).png" width="300" height="620"></center></div>
+
+<br/>
+
+### │ Review │
+<div align= center><center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%A6%AC%EB%B7%B0%20%ED%99%94%EB%A9%B41(%EB%A6%AC%EB%B7%B0%20%EB%A9%94%EC%9D%B8).png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%A6%AC%EB%B7%B0%20%ED%99%94%EB%A9%B42(%ED%95%99%EC%8A%B5%20%EB%AC%B8%EC%9E%A5).png" width="300" height="620"> </center></div>
+
+<br/>
+
+### │ My │
+<div align= center><center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%A7%88%EC%9D%B4%20%ED%8E%98%EC%9D%B4%EC%A7%801(%EB%A9%94%EC%9D%B8).png" width="300" height="620"> <img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%EB%A7%88%EC%9D%B4%20%ED%8E%98%EC%9D%B4%EC%A7%80%20%EB%AC%B8%EC%9D%98%20%EC%82%AC%ED%95%AD%201(%EB%AC%B8%EC%9D%98%20%EC%9C%A0%ED%98%95%20%EC%84%A0%ED%83%9D).png" width="300" height="620"></center></div>
 
 <br/>
 
 ## 🛠 <span style="color:#9388E8">System Architecture</span>
-<div align= center><center><img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/1e8c9acd-c00f-4c92-a680-c4ae500cf991/%EC%BA%A1%EC%B2%98.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210817%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210817T073206Z&X-Amz-Expires=86400&X-Amz-Signature=309d0268448753b5b3c6f9fc9ac1824a73392a2143138dbc8f36042ef8f123af&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22%25EC%25BA%25A1%25EC%25B2%2598.JPG.jpg%22"></center></div>
+<div align= center><center><img src="https://git.swmgit.org/tjdwls0607/1412s-peach/-/raw/master/img/%E1%84%89%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%A6%E1%86%B7_%E1%84%8B%E1%85%A1%E1%84%8F%E1%85%B5%E1%84%90%E1%85%A6%E1%86%A8%E1%84%8E%E1%85%A5.jpg"></center></div>
 
 <br/>
 
 ## ⚙️ <span style="color:#9388E8">Development</span>
 ```
-┌─1412s-peach
-│　　├─client
-│　　│　├─App
-│　　│　├─.expo
-│　　│　├─assets
-│　　│　└─screens
-│　　├─api-server
-│　　│　└─express
-│　　│　　 └─src
-│　　│　　　　├─config
-│　　│　　　　├─confrollers/api
-│　　│　　　　├─date
-│　　│　　　　├─public
-│　　│　　　　├─routers
-│　　│　　　　├─swagger
-│　　│　　　　└─upload
-│　　└─ai-server
-│　　 　└─flask
-│　　 　　 └─model
+──1412s-peach
+   ├─client (front-end)
+   │  ├─baeuja
+   │  │  ├─index.js (entry point)
+   │  │  ├─adroid (android 설정 폴더)
+   │  │  ├─ios (ios 설정 폴더)
+   │  │  └─src
+   │  │     ├─App.js (root component)
+   │  │     ├─components (자식 components 모음 폴더)
+   │  │     └─screens (부모 components(각 메뉴 화면) 모음 폴더)
+   ├─api-server
+   │　└─express-ts
+   │    ├─app.ts (root app entry point)
+   │    ├─server.ts (server 설정 파일)
+   │    └─src
+   │       ├─apis (api 모듈 앱 폴더)
+   │       ├─comfig (환경변수 객체화)
+   │       ├─db (database 설정 및 커넥션)
+   │       ├─entities (각 database table entity class)
+   │       ├─repositories (각 database table repository(for query) class)
+   │       ├─swagger (swagger yaml 파일 모음 폴더)
+   │       ├─tests (jest e2e 테스팅 파일 모음 폴더)
+   │       └─utils  
+   └─ai-server
+      ├─flask
+      │  ├─app.py (ai server entry point)
+      │  └─src
+      │     ├─data.py (api 서버와 통신을 위한 데이터 구조체)
+      │     ├─evaluation.py (ptich data 산출)
+      │     ├─korean.py (levenshtein distance를 이용한 텍스트 비교 결과 산출)
+      │     └─utils.py 
+      └─scripts
+         ├─convert.sh (.wav 포맷 파일을 zeroth input 포맷에 맞게 전처리)
+         ├─decode.sh (학습한 kaldi stt 모델 실행)
+         ├─execute.sh (명령행 인자 파일)
+         └─path.sh (학습한 kaldi 모델 실행 전 경로 세팅을 위한 파일)
 ```
 <br/>
 
 ## 🔬 <span style="color:#9388E8">Technology</span>
 __BAEUJA uses a number of open source projects to work properly:__
 
-- [Expo] - Making universal native apps for Android, iOS, Web with JavaScript and React.!
-- [node.js] - evented I/O for the backend
-- [Express] - fast node.js network app framework
-- [Flask] - Python Web Framework
+- [React Native] - create native apps for Android and iOS 0.6+
+- [node.js] - evented I/O for the backend v14.17.1
+- [ExpressJS] - fast node.js network app framework 4.17+
+- [PM2] - Advanced Production Process Manager for node.js 5.1.2+
+- [Python] - AI server language 2.7+ & 3.7+
+- [Flask] - Python Web Framework 2.0+
 - [Kaldi] - https://kaldi-asr.org/  open-source speech recognition toolkit written in C++
 - [Zeroth] - https://github.com/goodatlas/zeroth Kaldi-based Korean ASR open-source project
 - [librosa] - python package for music and audio analysis
