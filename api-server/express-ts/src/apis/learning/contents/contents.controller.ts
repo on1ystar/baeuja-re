@@ -306,9 +306,10 @@ export const getSentences = async (
       }))
     ) {
       // 문장 학습 기록 생성
-      const sentenceIdList: number[] = sentences.map(
-        sentence => sentence.sentenceId
-      );
+      const sentenceIdList: number[] = sentences
+        .filter(sentence => sentence.perfectVoiceUri !== 'NULL')
+        .map(sentence => sentence.sentenceId);
+      console.log(sentenceIdList);
       await UserSentenceHistoryRepository.createList(
         client,
         userId,
