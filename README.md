@@ -76,7 +76,7 @@
    ├─client (front-end)
    │  ├─baeuja
    │  │  ├─index.js (entry point)
-   │  │  ├─adroid (android 설정 폴더)
+   │  │  ├─android (android 설정 폴더)
    │  │  ├─ios (ios 설정 폴더)
    │  │  └─src
    │  │     ├─App.js (root component)
@@ -88,7 +88,7 @@
    │    ├─server.ts (server 설정 파일)
    │    └─src
    │       ├─apis (api 모듈 앱 폴더)
-   │       ├─comfig (환경변수 객체화)
+   │       ├─config (환경변수 객체화)
    │       ├─db (database 설정 및 커넥션)
    │       ├─entities (각 database table entity class)
    │       ├─repositories (각 database table repository(for query) class)
@@ -114,15 +114,33 @@
 ## 🔬 <span style="color:#9388E8">Technology</span>
 __BAEUJA uses a number of open source projects to work properly:__
 
-- [React Native] - create native apps for Android and iOS 0.6+
-- [node.js] - evented I/O for the backend v14.17.1
-- [ExpressJS] - fast node.js network app framework 4.17+
-- [PM2] - Advanced Production Process Manager for node.js 5.1.2+
-- [Python] - AI server language 2.7+ & 3.7+
-- [Flask] - Python Web Framework 2.0+
-- [Kaldi] - https://kaldi-asr.org/  open-source speech recognition toolkit written in C++
-- [Zeroth] - https://github.com/goodatlas/zeroth Kaldi-based Korean ASR open-source project
-- [librosa] - python package for music and audio analysis
+- `React Native` - create native apps for Android and iOS 0.6+
+- `node.js` - evented I/O for the backend v14.17.1
+- `ExpressJS` - fast node.js network app framework 4.17+
+- `PM2` - Advanced Production Process Manager for node.js 5.1.2+
+- `Python` - AI server language 2.7+ & 3.7+
+- `Flask ` - Python Web Framework 2.0+
+- `Kaldi ` - https://kaldi-asr.org/  open-source speech recognition toolkit written in C++
+- `Zeroth` - https://github.com/goodatlas/zeroth Kaldi-based Korean ASR open-source project
+- `librosa` - python package for music and audio analysis
+
+<br/>
+
+## 💾 <span style="color:#9388E8">Data Set for Model Training</span>
+
+### 음성 데이터:
+
+   - 카이스트 오디오북 중 동화, 소설 데이터 130468초
+   - 감성대화 말뭉치: 59002초
+   - 성우 음성 데이터: 1094초
+   - zeroth 제공 data: 186046초
+   
+     -> __총 376613초__(_약 104.5시간_)
+
+### LM 데이터:
+   - zeroth 기본 제공 13GB 텍스트 말뭉치
+   - 크롤링을 통해 획득한 한국어 노래 가사 60MB
+
 
 <br/>
 
